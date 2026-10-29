@@ -37,7 +37,14 @@ def isolated_operation(operation, request, *, timeout_seconds=30, cancel_event=N
 
 
 def _run_worker(work, operation, timeout_seconds, cancel_event, *, phase_limits=None):
-    env = os.environ.copy()
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if not (
+            k.endswith(("_KEY", "_TOKEN", "_SECRET", "_PASSWORD"))
+            or k in ("AWS_SESSION_TOKEN",)
+        )
+    }
     source = str(Path(__file__).resolve().parents[1])
     env["PYTHONPATH"] = source + os.pathsep + env.get("PYTHONPATH", "")
     env["OMP_NUM_THREADS"] = "1"
@@ -102,7 +109,9 @@ def main():
     import resource
 
     cpu_limit = (
-        180 if len(sys.argv) > 2 and sys.argv[2] in ("plan", "ai_verify") else 60
+        180
+        if len(sys.argv) > 2 and sys.argv[2] in ("plan", "ai_verify", "http_export")
+        else 60
     )
     resource.setrlimit(resource.RLIMIT_CPU, (cpu_limit, cpu_limit))
     if sys.platform == "linux":
@@ -123,6 +132,10 @@ def main():
             from .planning.runner import run_native
 
             result = run_native(work)
+        elif operation in ("http_fixture", "http_import", "http_export"):
+            from .api.native import run
+
+            result = run(work, operation)
         elif operation in ("ai_construct", "ai_verify"):
             from .ai.native import run_ai_operation
 
