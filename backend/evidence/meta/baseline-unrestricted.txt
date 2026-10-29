@@ -1,0 +1,72 @@
+........................................................................ [ 32%]
+........................................................................ [ 65%]
+........................................................................ [ 98%]
+....                                                                     [100%]
+=============================== warnings summary ===============================
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:609
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:609: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    simple_dir = oneOf(["X", "Y", "Z", "XY", "XZ", "YZ"])
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:613
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:613: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    cqtype = oneOf(
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:616
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:616: PyparsingDeprecationWarning: 'setParseAction' deprecated - use 'set_parse_action'
+    cqtype = cqtype.setParseAction(pyparsing_common.upcaseTokens)
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:622
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:622: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    direction_op = oneOf([">", "<"])
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:625
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:625: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    center_nth_op = oneOf([">>", "<<"])
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:635
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:635: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    other_op = oneOf(["|", "#", "+", "-"])
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:638
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:638: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    named_view = oneOf(["front", "back", "left", "right", "top", "bottom"])
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:763
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:763: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    delta_op = oneOf(["exc", "except"])
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:770
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:770: PyparsingDeprecationWarning: 'setParseAction' deprecated - use 'set_parse_action'
+    atom.setParseAction(atom_callback)
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:793
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/selectors.py:793: PyparsingDeprecationWarning: 'infixNotation' deprecated - use 'infix_notation'
+    expr = infixNotation(
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:65
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:65: PyparsingDeprecationWarning: 'delimitedList' deprecated - use 'DelimitedList'
+    Name = delimitedList(
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:67
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:67: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("name")
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:68
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:68: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    Tag = Word(alphas, alphanums + "_").setResultsName("tag")
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:69
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:69: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    Selector = _selector_grammar.setResultsName("selector")
+
+../../../../Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:73
+  /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.venv/lib/python3.12/site-packages/cadquery/assembly.py:73: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("selector_kind")
+
+tests/test_import_package.py::test_zip_symlink_and_duplicate
+  /opt/homebrew/Cellar/python@3.12/3.12.16/Frameworks/Python.framework/Versions/3.12/lib/python3.12/zipfile/__init__.py:1650: UserWarning: Duplicate name: 'manifest.json'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /Users/shreyaspabbu/Documents/Upload_hackathon/backend/.work/meta-validation/baseline-unrestricted.xml -
+220 passed, 16 warnings in 175.56s (0:02:55)

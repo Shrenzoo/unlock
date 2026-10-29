@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "provider": "offline scripted; real CAD services",
+  "errors": [],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:8000/v1/projects",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/projects",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/projects/fixture_B02",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/projects/fixture_B02",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/revisions/e48bbe83da5877a7b1277c1900eba5a943c1dad7a2662edba28f2ee961422960",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/revisions/e48bbe83da5877a7b1277c1900eba5a943c1dad7a2662edba28f2ee961422960",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/artifacts/fc038746ca32c56e310c1f3a78617a1889ca54ec54ee14b6344dc8f25d2b9524",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/revisions/e48bbe83da5877a7b1277c1900eba5a943c1dad7a2662edba28f2ee961422960/runs",
+      "status": 202
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/jobs/job_8517fe5d969a4c389fd97baf/events",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5/redesign",
+      "status": 202
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/jobs/job_ff0b81cda2e14e45b47ddd87/events",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/artifacts/c0bec1b98daf8ae148725ca947fbf8381fc60f2b3c7690f035464afa5303e471",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/candidates/candidate_bfd07b79f41ea8b0de51c9e8ffaa5852/decision",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/candidates/candidate_bfd07b79f41ea8b0de51c9e8ffaa5852/exports",
+      "status": 202
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/jobs/job_f56fbf53eb0f466d981b37bc/events",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+      "status": 200
+    }
+  ]
+}

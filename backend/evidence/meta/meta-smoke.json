@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-29T23:08:46.722523+00:00",
+  "provider": {
+    "provider": "meta",
+    "base_url": "https://api.meta.ai/v1",
+    "model": "muse-spark-1.3",
+    "reasoning_effort": "medium",
+    "request_timeout_s": 45.0,
+    "max_retries": 2,
+    "temperature": null,
+    "credentials": "missing",
+    "price_source": null
+  },
+  "live_enabled": false,
+  "checks": [],
+  "requests": [],
+  "status": "skipped",
+  "reason": "MODEL_API_KEY not set; live integration remains unverified"
+}

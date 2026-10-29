@@ -1,0 +1,116 @@
+{
+  "generated_at": "2026-10-29T23:16:30.282495+00:00",
+  "python": "3.12.16",
+  "branch": "codex/meta-model-api-integration",
+  "source_commit": "72bd4481c8c3bbf49bde595e4917981b49d068d5",
+  "baseline": {
+    "passed": 220,
+    "failed": 0,
+    "seconds": 175.56,
+    "restricted_sandbox_failures": 10
+  },
+  "final_pytest": {
+    "tests": 267,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 243.851,
+    "live_tests": "2 deselected from ordinary pytest"
+  },
+  "browser": {
+    "status": "passed",
+    "provider": "offline scripted; real CAD services",
+    "errors": [],
+    "responses": [
+      {
+        "url": "http://127.0.0.1:8000/v1/projects",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/projects",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/projects/fixture_B02",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/projects/fixture_B02",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/revisions/e48bbe83da5877a7b1277c1900eba5a943c1dad7a2662edba28f2ee961422960",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/revisions/e48bbe83da5877a7b1277c1900eba5a943c1dad7a2662edba28f2ee961422960",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/artifacts/fc038746ca32c56e310c1f3a78617a1889ca54ec54ee14b6344dc8f25d2b9524",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/revisions/e48bbe83da5877a7b1277c1900eba5a943c1dad7a2662edba28f2ee961422960/runs",
+        "status": 202
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/jobs/job_8517fe5d969a4c389fd97baf/events",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5/redesign",
+        "status": 202
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/jobs/job_ff0b81cda2e14e45b47ddd87/events",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/artifacts/c0bec1b98daf8ae148725ca947fbf8381fc60f2b3c7690f035464afa5303e471",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/candidates/candidate_bfd07b79f41ea8b0de51c9e8ffaa5852/decision",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/candidates/candidate_bfd07b79f41ea8b0de51c9e8ffaa5852/exports",
+        "status": 202
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/jobs/job_f56fbf53eb0f466d981b37bc/events",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8000/v1/runs/run_9b74eeb074a04c9bbf5d93a5",
+        "status": 200
+      }
+    ]
+  },
+  "live_meta": {
+    "status": "unverified",
+    "reason": "no key and explicit live-test flag configured during this execution",
+    "paid_requests": 0
+  },
+  "commands": {
+    "backend": ".venv/bin/python -m pytest -q --junitxml=.work/meta-validation/final-pytest.xml",
+    "frontend": "npm run build",
+    "lint": ".venv/bin/ruff check src tests scripts",
+    "format": ".venv/bin/ruff format --check src tests scripts",
+    "dependencies": ".venv/bin/python -m pip check",
+    "browser": ".venv/bin/python scripts/browser_qa.py (real loopback servers; AI_PROVIDER=mock)"
+  }
+}
