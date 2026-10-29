@@ -1,4 +1,4 @@
-# Unlock
+# UNLOCK
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/hero/unlock-banner.png">
