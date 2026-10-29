@@ -62,12 +62,42 @@ def run_ai_operation(work: Path, operation: str) -> dict:
         )
     construct_ms = (time.monotonic() - started) * 1000
     if operation == "ai_construct":
-        from ..geometry import difference_volume
+        from ..geometry import boolean, bounds, difference_volume, volume
 
         original = revision.by_id()[candidate.bracket_id].shape
+        modified = candidate.shapes[candidate.bracket_id]
+        removed = boolean("cut", original, modified)
+        added = boolean("cut", modified, original)
+        region = bounds(removed) if removed.Solids() else bounds(added)
+        if request.get("persist_geometry"):
+            import cadquery as cq
+            from ..assembly import export_assembly
+            from ..preview import preview_meshes
+
+            atomic_write(
+                work / "preview.json",
+                json.dumps(preview_meshes(candidate.shapes), allow_nan=False).encode(),
+            )
+            cq.exporters.export(modified.copy(), str(work / "changed_bracket.step"))
+            export_assembly(
+                revision.assembly,
+                work / "constructed_assembly.step",
+                {
+                    revision.by_id()[
+                        candidate.bracket_id
+                    ].source_occurrence_path: modified.copy()
+                },
+            )
         return dict(
             ok=True,
             candidate=candidate.record(),
+            geometry_diff=dict(
+                changed_component_id=candidate.bracket_id,
+                removed_volume_mm3=volume(removed),
+                added_volume_mm3=volume(added),
+                region_min_mm=region.min,
+                region_max_mm=region.max,
+            ),
             changed_volume_mm3=difference_volume(
                 original, candidate.shapes[candidate.bracket_id]
             ),

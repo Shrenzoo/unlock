@@ -52,6 +52,7 @@ class EventLog:
         self.run_id = run_id
         self.identity = identity
         self.events: list[dict] = []
+        self.observer = None
 
     def emit(self, kind, label, **fields):
         event = dict(
@@ -64,6 +65,8 @@ class EventLog:
             **fields,
         )
         self.events.append(event)
+        if self.observer:
+            self.observer(event)
         return event
 
 
@@ -97,7 +100,7 @@ def parse_final(content: str | None) -> dict:
 def estimate_cost(counters: Counters, prices: PriceTable | None) -> dict:
     if prices is None:
         return dict(estimated_usd=None, reason="no price table configured")
-    if counters.usage_reported_turns < counters.turns:
+    if counters.usage_reported_turns < counters.provider_requests:
         return dict(
             estimated_usd=None, reason="provider did not report usage for every turn"
         )
@@ -108,7 +111,15 @@ def estimate_cost(counters: Counters, prices: PriceTable | None) -> dict:
         + counters.output_tokens * prices.output_per_mtok / 1e6
     )
     if cached:
-        usd += cached * (prices.cached_input_per_mtok or prices.input_per_mtok) / 1e6
+        usd += (
+            cached
+            * (
+                prices.cached_input_per_mtok
+                if prices.cached_input_per_mtok is not None
+                else prices.input_per_mtok
+            )
+            / 1e6
+        )
     return dict(
         estimated_usd=round(usd, 6),
         price_source=prices.source,
@@ -129,6 +140,9 @@ class RedesignRun:
         search_policy: SearchPolicy = SearchPolicy(),
         cancel: threading.Event | None = None,
         run_id: str | None = None,
+        on_event=None,
+        session=None,
+        artifact_root=None,
     ):
         self.step_bytes = step_bytes
         self.manifest = manifest
@@ -142,6 +156,9 @@ class RedesignRun:
         self.toolbox: Toolbox | None = None
         self.deadline: Deadline | None = None
         self.log: EventLog | None = None
+        self.on_event = on_event
+        self.precomputed_session = session
+        self.artifact_root = artifact_root
 
     # ── Stage A (shared by the model controller and deterministic selectors) ──
 
@@ -156,13 +173,14 @@ class RedesignRun:
                 **model_identity,
             ),
         )
+        self.log.observer = self.on_event
         self.log.emit(
             "stage",
             "Loading frozen revision and running baseline analysis",
             status="started",
         )
         try:
-            self.session = EngineeringSession.open(
+            self.session = self.precomputed_session or EngineeringSession.open(
                 self.step_bytes,
                 self.manifest,
                 self.target_id,
@@ -181,7 +199,22 @@ class RedesignRun:
                 if self.deadline.cancelled
                 else f"stage_a_{exc.code.lower()}"
             )
+        if self.precomputed_session:
+            from ..contracts import digest
+
+            s = self.session
+            if (
+                s.package.step != self.step_bytes
+                or digest(s.manifest_data) != digest(self.manifest)
+                or s.target_id != self.target_id
+                or s.search_policy != self.search_policy
+                or s.baseline.revision_id != s.revision_hash
+            ):
+                raise EngineError(
+                    "STALE_REVISION", "precomputed baseline does not match frozen run"
+                )
         self.log.identity["revision_id"] = self.session.revision_handle
+        self.session.artifact_root = self.artifact_root
         self.toolbox = Toolbox(
             self.session,
             self.budget,
@@ -224,6 +257,8 @@ class RedesignRun:
                 c
             )  # authoritative planner comparison, also for model-skipped compares
         improved = [c for c in cands if c.final_stage == "VERIFIED_IMPROVEMENT"]
+        if stop_reason == "cancelled" or (self.deadline and self.deadline.cancelled):
+            return "CANCELLED", "Run cancelled; no result was selected for acceptance."
         if improved:
             c = improved[0]
             return "VERIFIED_IMPROVEMENT_FOUND", (
@@ -299,6 +334,22 @@ class RedesignRun:
         selected = next(
             (c.handle for c in cands if c.final_stage == "VERIFIED_IMPROVEMENT"), None
         )
+        if outcome != "VERIFIED_IMPROVEMENT_FOUND":
+            selected = None
+        evidence = s.full_evidence() if s else {}
+        evidence["tool_results"] = (
+            [r.model_dump(mode="json") for r in self.toolbox.results]
+            if self.toolbox
+            else []
+        )
+        if self.artifact_root:
+            from ..artifacts import ArtifactStore
+
+            store = ArtifactStore(self.artifact_root)
+            evidence["input_artifacts"] = {
+                "assembly.step": store.put(self.step_bytes),
+                "manifest.json": store.put_json(self.manifest),
+            }
         if self.log:
             self.log.emit(
                 "final", "Run complete", status=outcome, detail=explanation[:300]
@@ -310,8 +361,12 @@ class RedesignRun:
             outcome=outcome,
             explanation=explanation,
             stop_reason=stop_reason,
-            provenance=provenance,
-            live_model=bool(model and model.get("live")),
+            provenance=(
+                "deterministic_only"
+                if provenance == "live_model" and self.counters.turns == 0
+                else provenance
+            ),
+            live_model=bool(model and model.get("live") and self.counters.turns > 0),
             model=model,
             identity=dict(
                 project_id=s.project_id,
@@ -329,6 +384,7 @@ class RedesignRun:
             ),
             baseline=plan_summary(s.baseline, self.toolbox) if s else None,
             candidates=[c.report() for c in cands],
+            engineering_evidence=evidence,
             selected_candidate=selected,
             final_model_message=dict(
                 final, authority="none: model statement, not engineering evidence"
@@ -371,6 +427,10 @@ def run_with_model(
     prices: PriceTable | None = None,
     request_timeout_s: float = 45.0,
     max_retries: int = 2,
+    on_event=None,
+    session=None,
+    run_id: str | None = None,
+    artifact_root=None,
 ) -> dict:
     run = RedesignRun(
         step_bytes,
@@ -379,6 +439,10 @@ def run_with_model(
         budget=budget,
         search_policy=search_policy,
         cancel=cancel,
+        on_event=on_event,
+        session=session,
+        run_id=run_id,
+        artifact_root=artifact_root,
     )
     model = dict(
         provider=provider.provider,
@@ -411,11 +475,10 @@ def run_with_model(
     tb, c, b, t = run.toolbox, run.counters, budget, run.deadline
     specs = tb.specs()
     messages = [
-        dict(role="system", content=SYSTEM_PROMPT),
+        dict(role="developer", content=SYSTEM_PROMPT),
         dict(role="user", content=initial_context(run.session, tb, budget)),
     ]
     stop, final, model_failed = None, None, False
-    budget_output_used = 0
 
     def call_model(max_tokens):
         attempt = 0
@@ -425,12 +488,29 @@ def run_with_model(
                 raise ProviderError(
                     "TIMEOUT", "run time budget exhausted before the model request"
                 )
-            c.provider_requests += 1
-            try:
-                return provider.complete(
-                    messages, specs, max_output_tokens=max_tokens, timeout_s=timeout
+            cap = min(max_tokens, b.max_output_tokens - c.output_budget_used)
+            if cap < 256:
+                raise ProviderError(
+                    "OUTPUT_BUDGET",
+                    "output budget exhausted, including uncertain billed retries",
                 )
+            c.provider_requests += 1
+            c.output_budget_used += cap
+            try:
+                turn = provider.complete(
+                    messages,
+                    specs,
+                    max_output_tokens=cap,
+                    timeout_s=timeout,
+                    cancel_event=t.event,
+                )
+                if turn.usage.output_tokens is not None:
+                    c.output_budget_used += turn.usage.output_tokens - cap
+                else:
+                    c.uncertain_output_tokens += cap
+                return turn
             except ProviderError as exc:
+                c.uncertain_output_tokens += cap
                 run.log.emit(
                     "provider_error",
                     "Model request failed",
@@ -466,7 +546,7 @@ def run_with_model(
         if c.turns >= b.max_turns:
             stop = "turn_budget"
             break
-        remaining_tokens = b.max_output_tokens - budget_output_used
+        remaining_tokens = b.max_output_tokens - c.output_budget_used
         if remaining_tokens < 256:
             stop = "output_token_budget"
             break
@@ -475,7 +555,9 @@ def run_with_model(
             turn = call_model(max_tokens)
         except ProviderError as exc:
             stop = (
-                "cancelled"
+                "output_token_budget"
+                if exc.kind == "OUTPUT_BUDGET"
+                else "cancelled"
                 if exc.kind == "CANCELLED"
                 else (
                     "time_budget"
@@ -495,17 +577,13 @@ def run_with_model(
         c.model_latency_ms += turn.latency_ms
         u = turn.usage
         if u.output_tokens is not None:
-            c.usage_reported_turns += 1
+            if u.input_tokens is not None and u.total_tokens is not None:
+                c.usage_reported_turns += 1
             c.input_tokens += u.input_tokens or 0
             c.output_tokens += u.output_tokens
             c.total_tokens += u.total_tokens or 0
             c.cached_input_tokens += u.cached_input_tokens or 0
             c.reasoning_tokens += u.reasoning_tokens or 0
-            budget_output_used += u.output_tokens
-        else:
-            budget_output_used += (
-                max_tokens  # unknown usage is charged at the requested cap
-            )
         messages.append(turn.assistant_message)
         run.log.emit(
             "model_turn",
@@ -517,13 +595,36 @@ def run_with_model(
             tool_calls=[tc.name for tc in turn.tool_calls],
             note=(turn.content or "")[:400] if turn.tool_calls else None,
         )
+        if t.cancelled or t.expired:
+            stop = "cancelled" if t.cancelled else "time_budget"
+            break
+        if c.output_budget_used > b.max_output_tokens:
+            stop = "output_token_budget"
+            break
         if not turn.tool_calls:
             final = parse_final(turn.content)
-            stop = "model_final"
+            if not final["structured"] and not tb.candidates:
+                c.schema_errors += 1
+                if c.schema_errors <= b.max_schema_repairs:
+                    messages.append(
+                        dict(
+                            role="user",
+                            content="No engineering outcome is established. Use an allowed tool to investigate, or return the documented final JSON explaining why no supported candidate can be justified. Do not invent a tool call or a passing result.",
+                        )
+                    )
+                    continue
+                stop = "schema_repair_exhausted"
+            else:
+                stop = "model_final"
             break
         budget_hit = False
         for call in turn.tool_calls:
-            if budget_hit or c.tool_calls >= b.max_tool_calls or t.cancelled:
+            if (
+                budget_hit
+                or c.tool_calls >= b.max_tool_calls
+                or t.event.is_set()
+                or c.schema_errors > b.max_schema_repairs
+            ):
                 budget_hit = True
                 content = dict(
                     status="rejected",
@@ -545,6 +646,12 @@ def run_with_model(
                 )
                 continue
             c.tool_calls += 1
+            run.log.emit(
+                "stage",
+                STAGE_LABELS.get(call.name, "Tool call validation"),
+                status="started",
+                tool=call.name[:40],
+            )
             result, schema_error = tb.execute(call)
             if schema_error:
                 c.schema_errors += 1
@@ -585,7 +692,13 @@ def run_with_model(
         if c.schema_errors > b.max_schema_repairs:
             stop = "schema_repair_exhausted"
         elif budget_hit:
-            stop = "cancelled" if t.cancelled else "tool_call_budget"
+            stop = (
+                "cancelled"
+                if t.cancelled
+                else "time_budget"
+                if t.expired
+                else "tool_call_budget"
+            )
     outcome, why = run.derive(stop, model_failed=model_failed, final=final)
     return run.report(
         outcome,

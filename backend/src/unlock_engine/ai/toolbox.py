@@ -10,6 +10,7 @@ validated records and native workers; nothing here decides geometric validity.
 from __future__ import annotations
 
 import json
+import math
 import re
 import time
 from dataclasses import dataclass, field
@@ -45,10 +46,31 @@ class Budget:
     max_schema_repairs: int = 1
     per_turn_output_tokens: int = 4_096
 
+    def __post_init__(self):
+        for name, upper in (
+            ("max_candidates", 3),
+            ("max_tool_calls", 12),
+            ("max_turns", 6),
+            ("max_output_tokens", 16000),
+            ("max_schema_repairs", 1),
+            ("per_turn_output_tokens", 16000),
+        ):
+            value = getattr(self, name)
+            if (
+                not isinstance(value, int)
+                or isinstance(value, bool)
+                or not 0 <= value <= upper
+            ):
+                raise ValueError(f"{name} exceeds the allowed engineering budget")
+        if not math.isfinite(self.max_seconds) or not 0 < self.max_seconds <= 120:
+            raise ValueError("max_seconds must be in (0,120]")
+
 
 @dataclass
 class Counters:
     provider_requests: int = 0
+    output_budget_used: int = 0
+    uncertain_output_tokens: int = 0
     turns: int = 0
     retries: int = 0
     tool_calls: int = 0

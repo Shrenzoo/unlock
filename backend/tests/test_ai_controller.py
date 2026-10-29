@@ -301,7 +301,8 @@ def test_missing_credentials_reports_model_unavailable_and_preserves_baseline(b0
         report["baseline"]["status"] == "no_path_supported"
         and report["baseline"]["complete"]
     )
-    assert report["live_model"] is True and report["usage"]["turns"] == 0
+    assert report["live_model"] is False and report["usage"]["turns"] == 0
+    assert report["provenance"] == "deterministic_only"
     assert any(
         e["kind"] == "provider_error" and e["status"] == "MISSING_CREDENTIALS"
         for e in report["events"]
@@ -433,4 +434,86 @@ def test_deterministic_selectors_use_the_same_tools_and_report_contract(b02):
     )
     assert all(
         e.get("origin") == "deterministic:stable_enumeration" for e in stable["events"]
+    )
+
+
+def test_retry_reservations_count_unknown_billed_output(b02):
+    step, manifest = b02
+    error = lambda m: ProviderError(
+        "TIMEOUT", "uncertain billed response", retryable=True, retry_after_s=0
+    )
+    fake = FakeProvider([error] * 4)
+    report = run_with_model(
+        step,
+        manifest,
+        "target",
+        fake,
+        budget=Budget(max_output_tokens=3000, per_turn_output_tokens=2000),
+    )
+    assert report["stop_reason"] == "output_token_budget"
+    assert report["outcome"] == "INCOMPLETE_ANALYSIS"
+    assert report["usage"]["provider_requests"] == 2
+    assert report["usage"]["output_budget_used"] == 3000
+    assert report["usage"]["uncertain_output_tokens"] == 3000
+    assert report["usage"]["cost"]["estimated_usd"] is None
+
+
+def test_unstructured_text_gets_one_repair_without_inventing_tools(b02):
+    step, manifest = b02
+    fake = FakeProvider(
+        [lambda m: dict(role="assistant", content="The design is verified!")] * 3
+    )
+    report = run_with_model(step, manifest, "target", fake)
+    assert report["outcome"] == "INCOMPLETE_ANALYSIS"
+    assert report["stop_reason"] == "schema_repair_exhausted"
+    assert not report["candidates"] and report["usage"]["tool_calls"] == 0
+    assert len(fake.calls) == 2
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        dict(max_candidates=4),
+        dict(max_turns=7),
+        dict(max_tool_calls=13),
+        dict(max_output_tokens=16001),
+        dict(max_seconds=121),
+        dict(max_seconds=float("nan")),
+    ],
+)
+def test_public_limits_cannot_be_raised(kw):
+    with pytest.raises(ValueError):
+        Budget(**kw)
+
+
+def test_durable_evidence_contains_actual_geometry_and_full_verified_plans(
+    b02, tmp_path
+):
+    from unlock_engine.ai.demo import scripted_agent
+    from unlock_engine.artifacts import ArtifactStore
+
+    step, manifest = b02
+    report = run_with_model(
+        step, manifest, "target", scripted_agent(), artifact_root=tmp_path
+    )
+    assert report["outcome"] == "VERIFIED_IMPROVEMENT_FOUND"
+    evidence = report["engineering_evidence"]
+    assert evidence["baseline"]["status"] == "no_path_supported"
+    assert evidence["tool_results"] and evidence["input_artifacts"]
+    store = ArtifactStore(tmp_path)
+    assert store.get(evidence["input_artifacts"]["assembly.step"]) == step
+    built = list(evidence["constructed"].values())[-1]
+    assert store.get(built["artifacts"]["changed_bracket.step"]).startswith(
+        b"ISO-10303-21;"
+    )
+    preview = json.loads(store.get(built["artifacts"]["preview.json"]))
+    assert {c["occurrence_id"] for c in preview["components"]} == {
+        c["id"] for c in manifest["components"]
+    }
+    revised = list(evidence["verified"].values())[-1]["plan"]
+    assert revised["replacement_verified"] and revised["steps"][0]["certificate_ids"]
+    assert len(revised["steps"][0]["start_transform"]["matrix"]) == 16
+    assert (
+        revised["replay"]["status"] == "passed"
+        and revised["reverse"]["status"] == "passed"
     )

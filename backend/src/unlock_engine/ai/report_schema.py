@@ -75,6 +75,7 @@ class AIRunReport(Model):
     model: dict | None
     identity: dict
     baseline: dict | None
+    engineering_evidence: dict = {}
     candidates: list[CandidateReport]
     selected_candidate: str | None
     final_model_message: dict | None

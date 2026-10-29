@@ -88,6 +88,7 @@ class EngineeringSession:
     timings: dict = field(default_factory=dict)
     constructed: dict = field(default_factory=dict)
     verified: dict = field(default_factory=dict)
+    artifact_root: Path | None = None
 
     @property
     def project_id(self) -> str:
@@ -202,12 +203,32 @@ class EngineeringSession:
             )
             (root / "request.json").write_text(
                 json.dumps(
-                    dict(expected_revision_hash=self.revision_hash, **request),
+                    dict(
+                        expected_revision_hash=self.revision_hash,
+                        persist_geometry=self.artifact_root is not None,
+                        **request,
+                    ),
                     allow_nan=False,
                 )
             )
             limits = dict(NATIVE_PHASES, search=self.search_policy.max_seconds)
-            return _run_worker(root, operation, timeout_s, cancel, phase_limits=limits)
+            result = _run_worker(
+                root, operation, timeout_s, cancel, phase_limits=limits
+            )
+            if self.artifact_root is not None and not cancel.is_set():
+                from ..artifacts import ArtifactStore
+
+                store = ArtifactStore(self.artifact_root)
+                result["artifacts"] = {
+                    name: store.put((root / name).read_bytes())
+                    for name in (
+                        "preview.json",
+                        "changed_bracket.step",
+                        "constructed_assembly.step",
+                    )
+                    if (root / name).is_file()
+                }
+            return result
 
     def construct(
         self, template: dict, *, timeout_s: float, cancel: threading.Event
@@ -269,3 +290,25 @@ class EngineeringSession:
             result["plan"] = PlanResult.model_validate(result["plan"])
         self.verified[candidate_id] = result
         return result, False
+
+    def full_evidence(self):
+        """Authoritative records stay separate from compact model-facing summaries."""
+
+        def encode(value):
+            if hasattr(value, "model_dump"):
+                return value.model_dump(mode="json")
+            raise TypeError(type(value).__name__)
+
+        return json.loads(
+            json.dumps(
+                dict(
+                    inventory=self.inventory,
+                    manifest=self.manifest_data,
+                    baseline=self.baseline.model_dump(mode="json"),
+                    constructed=self.constructed,
+                    verified=self.verified,
+                ),
+                default=encode,
+                allow_nan=False,
+            )
+        )

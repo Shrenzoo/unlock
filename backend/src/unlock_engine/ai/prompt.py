@@ -1,4 +1,4 @@
-"""System prompt and compact Stage A context for Muse Spark Open.
+"""System prompt and compact Stage A context for the configured Muse Spark model.
 
 Most important rules first; no PRD duplication; only current, structured evidence.
 """

@@ -508,6 +508,12 @@
       ],
       "title": "Baseline"
     },
+    "engineering_evidence": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Engineering Evidence",
+      "type": "object"
+    },
     "candidates": {
       "items": {
         "$ref": "#/$defs/CandidateReport"
