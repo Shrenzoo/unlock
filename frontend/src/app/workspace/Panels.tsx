@@ -3,6 +3,7 @@ import type { Axis, Candidate, CheckRecord, Component, PlanResult, Revision, Run
 import { CheckResultTag, Glyph, ProvenanceTag } from '@/ui/Evidence'
 import type { PartId } from '@/three/ModuleAssembly'
 import { REPLAY_SCALE } from '@/api/fixtureApi'
+import { api } from '@/api'
 import { trySetTarget } from './ComponentTree'
 import { selectedCandidate, type Action, type WorkspaceState } from './model'
 
@@ -13,6 +14,8 @@ interface PanelProps {
   revision: Revision
   onRunBaseline: () => void
   onRunRedesign: () => void
+  onDecide: (decision: 'accept' | 'reject') => void
+  onExport: () => void
 }
 
 export function EvidencePanel(props: PanelProps) {
@@ -105,6 +108,7 @@ function EventList({ events, running }: { events: StageEvent[]; running: boolean
 }
 
 function ReplayNote({ run }: { run: RunRecord }) {
+  if (run.provenance.kind !== 'illustrative') return <p className="panel__fine"><ProvenanceTag provenance={run.provenance} /> Real engineering results; events are recorded by the backend worker.</p>
   return (
     <p className="panel__fine">
       Prepared sequence replayed at {Math.round(1 / REPLAY_SCALE)}× from recorded offsets. No planner, model or geometry service ran. <ProvenanceTag provenance={run.provenance} compact />
@@ -256,7 +260,7 @@ function AnalyzePanel({ state, dispatch, run, onRunBaseline }: PanelProps) {
           <span className="chip chip--target mono">{state.target}</span>
           <span>Straight moves along declared axes, budget 30 s or 4,096 states</span>
         </p>
-        {st === 'idle' && (
+        {(st === 'idle' || st === 'failed') && (
           <div className="panel__cta panel__cta--inline">
             <button type="button" className="btn btn--primary" onClick={onRunBaseline}>
               <span className="btn__key" aria-hidden="true" />
@@ -276,7 +280,7 @@ function AnalyzePanel({ state, dispatch, run, onRunBaseline }: PanelProps) {
               {PLAN_HEADLINE[b.status]}
             </p>
             <p className="panel__body">
-              Search {b.complete ? 'complete' : 'incomplete'}: {b.expanded_states} states, {(b.elapsed_ms / 1000).toFixed(1)} s recorded, {b.unresolved_transition_count} unresolved transitions. The bracket is declared fixed, so no supported sequence reaches staging. This says nothing about routes outside the supported operations.
+              Search {b.complete ? 'complete' : 'incomplete'}: {b.expanded_states} states, {(b.elapsed_ms / 1000).toFixed(1)} s recorded, {b.unresolved_transition_count} unresolved transitions. {b.status === 'feasible' ? 'The listed route passed independent replay.' : b.status === 'no_path_supported' ? 'No route exists within the supported finite operations and declared constraints.' : 'Analysis did not establish a complete result.'} This says nothing about routes outside the supported operations.
             </p>
           </Section>
 
@@ -301,7 +305,7 @@ function AnalyzePanel({ state, dispatch, run, onRunBaseline }: PanelProps) {
                 <li key={r.id}>
                   <button type="button" className="block" aria-pressed={state.witness === r.id} onClick={() => dispatch({ type: 'witness', id: state.witness === r.id ? null : r.id })}>
                     <span className="block__head">
-                      <span className="mono">{r.id}</span>
+                      <span className="mono">{r.id.slice(0, 12)}</span>
                       <span className={`level level--${r.evidence_level}`}>{r.evidence_level === 'confirmed_witness' ? 'Confirmed witness' : r.evidence_level === 'proxy_unknown' ? 'Proxy overlap, unknown' : 'Insufficient clearance'}</span>
                     </span>
                     <span className="block__what">
@@ -338,19 +342,19 @@ function RedesignPanel({ state, dispatch, run, revision, onRunRedesign }: PanelP
 
   return (
     <>
-      <Section title="Redesign" aside={<span className="psec__meta mono">{binding.family}</span>}>
+      <Section title="Redesign" aside={<span className="psec__meta mono">{binding?.family ?? 'No supported template family'}</span>}>
         <p className="panel__body">
-          A model chooses one supported edit to <span className="mono">{binding.bracket_id}</span> and its parameters. The server builds the solid, and a separate verifier rebuilds it and checks every declared constraint. The model cannot mark its own proposal as valid.
+          A model chooses one supported edit to <span className="mono">{binding?.bracket_id ?? 'the selected component'}</span> and its parameters. The server builds the solid, and a separate verifier rebuilds it and checks every declared constraint. The model cannot mark its own proposal as valid.
         </p>
         <dl className="kv kv--tight">
           <dt>Model</dt>
-          <dd>{run.model ? <span className="mono">{run.model.id}</span> : 'Not called in this build. Planned: Muse Spark Open.'}</dd>
+          <dd>{run.model ? <span className="mono">{run.model.id}</span> : 'Not called. Configured live model: Muse Spark 1.3.'}</dd>
           <dt>Budget</dt>
           <dd>3 candidates, 12 tool calls, 120 s</dd>
           <dt>Templates</dt>
-          <dd>{binding.templates.map((t) => `${t.id} ${t.label.toLowerCase()}`).join(', ')}</dd>
+          <dd>{binding?.templates.map((t) => `${t.id} ${t.label.toLowerCase()}`).join(', ')}</dd>
         </dl>
-        {st === 'idle' && (
+        {(st === 'idle' || st === 'failed') && (
           <div className="panel__cta panel__cta--inline">
             <button type="button" className="btn btn--primary" onClick={onRunRedesign}>
               <span className="btn__key" aria-hidden="true" />
@@ -362,6 +366,7 @@ function RedesignPanel({ state, dispatch, run, revision, onRunRedesign }: PanelP
         {st !== 'idle' && <ReplayNote run={run} />}
       </Section>
 
+      {st === 'done' && <Section title="Engineering outcome"><p className="panel__body">{run.outcome?.replaceAll('_', ' ') ?? 'Recorded result'}</p><p className="panel__body">{run.explanation ?? 'Inspect the candidate evidence below.'}</p></Section>}
       {visible.length > 0 && (
         <Section title="Candidates" aside={<span className="psec__meta mono">{visible.length} of 3</span>}>
           <ul className="cands">
@@ -375,7 +380,7 @@ function RedesignPanel({ state, dispatch, run, revision, onRunRedesign }: PanelP
                     </strong>
                     <span className="mono">{paramSummary(c)}</span>
                   </span>
-                  <span className="cand__state">{c.state === 'failed' ? <CheckResultTag result="fail" provenance={run.provenance.kind} /> : <CheckResultTag result="pass" provenance={run.provenance.kind} />}</span>
+                  <span className="cand__state">{<CheckResultTag result={c.state === 'failed' ? 'fail' : c.state === 'checked' ? 'pass' : 'unknown'} provenance={run.provenance.kind} />}</span>
                 </button>
               </li>
             ))}
@@ -436,12 +441,14 @@ function CandidateDetail({ c, run, revision, dispatch }: { c: Candidate; run: Ru
                 type="button"
                 className="chip mono"
                 onClick={() => {
-                  if (run.baseline.rejections.some((r) => r.id === id)) {
+                  if (run.baseline?.rejections.some((r) => r.id === (run.evidence_refs?.[id] ?? id))) {
                     dispatch({ type: 'mode', mode: 'analyze' })
-                    dispatch({ type: 'witness', id })
+                    dispatch({ type: 'witness', id: run.evidence_refs?.[id] ?? id })
+                  } else if (api.mode === 'http' && run.ai_report_artifact_id) {
+                    window.open(api.artifactUrl(run.ai_report_artifact_id) + '#' + encodeURIComponent(run.evidence_refs?.[id] ?? id), '_blank', 'noopener')
                   }
                 }}
-                title={run.baseline.rejections.some((r) => r.id === id) ? 'Open this evidence in the analysis' : 'Verification report'}
+                title={run.baseline?.rejections.some((r) => r.id === (run.evidence_refs?.[id] ?? id)) ? 'Open this evidence in the analysis' : 'Verification report'}
               >
                 {id}
               </button>
@@ -517,7 +524,7 @@ function Checks({ checks, run }: { checks: CheckRecord[]; run: RunRecord }) {
 
 /* ── compare ────────────────────────────────────────────────────────────── */
 
-function ComparePanel({ state, run }: PanelProps) {
+function ComparePanel({ state, run, onDecide }: PanelProps) {
   if (!run) return null
   const c = selectedCandidate(run, state)
   const ver = c?.verification
@@ -533,7 +540,7 @@ function ComparePanel({ state, run }: PanelProps) {
         </p>
         <p className="panel__warn">Strength, electrical safety, manufacturing feasibility and restored product function were not assessed.</p>
         <p className="panel__fine">
-          <ProvenanceTag provenance={run.provenance} /> These values come from the fixture, not from a verifier report, so the outcome is shown in outline.
+          <ProvenanceTag provenance={run.provenance} /> {run.provenance.kind === 'illustrative' ? 'These are illustrative fixture values.' : 'These values come from current independent verification and deterministic planning.'}
         </p>
       </Section>
 
@@ -547,7 +554,7 @@ function ComparePanel({ state, run }: PanelProps) {
             </tr>
           </thead>
           <tbody>
-            {run.metrics.map((m) => (
+            {(c?.metrics ?? run.metrics).map((m) => (
               <tr key={m.id}>
                 <th scope="row" title={m.definition}>
                   {m.label}
@@ -583,11 +590,11 @@ function ComparePanel({ state, run }: PanelProps) {
         <ul className="review">
           <li>
             <span>Geometry checks</span>
-            <span>Illustrative, verifier not run</span>
+            <span>{run.provenance.kind === 'illustrative' ? 'Illustrative, verifier not run' : ver?.status ?? 'Not checked'}</span>
           </li>
           <li>
             <span>Engineer acceptance</span>
-            <span>Not recorded</span>
+            <span>{c?.review_decision ?? 'Not recorded'}</span>
           </li>
           <li>
             <span>Engineering release</span>
@@ -595,15 +602,15 @@ function ComparePanel({ state, run }: PanelProps) {
           </li>
         </ul>
         <div className="detail__actions">
-          <button type="button" className="btn btn--primary btn--sm" disabled aria-describedby="accept-why">
+          <button type="button" className="btn btn--primary btn--sm" disabled={api.mode !== 'http' || !c?.verified_improvement || c.review_decision === 'accept'} onClick={() => onDecide('accept')} aria-describedby="accept-why">
             Accept for export
           </button>
-          <button type="button" className="btn btn--quiet btn--sm" disabled aria-describedby="accept-why">
+          <button type="button" className="btn btn--quiet btn--sm" disabled={api.mode !== 'http' || !c} onClick={() => onDecide('reject')} aria-describedby="accept-why">
             Reject candidate
           </button>
         </div>
         <p id="accept-why" className="panel__fine">
-          Review decisions need a verifier report and the review service. Illustrative candidates cannot be accepted.
+          Acceptance records a review decision under the current input hash. Only a verified improvement can be accepted for export. Illustrative candidates cannot be accepted.
         </p>
       </Section>
     </>
@@ -615,23 +622,24 @@ function ComparePanel({ state, run }: PanelProps) {
 const PACKAGE = [
   ['original.step', 'Original assembly, unchanged'],
   ['revised.step', 'Revised assembly'],
-  ['bridge_bracket.step', 'Changed bracket only'],
+  ['changed_bracket.step', 'Changed bracket only'],
   ['manifest.json', 'Revised manifest'],
-  ['parameters.json', 'T01 parameters and constructor version'],
+  ['template_parameters.json', 'Template parameters and constructor version'],
   ['metrics.json', 'Defined metrics, original and revised'],
   ['paths.json', 'Removal and insertion segments'],
   ['verification.json', 'Per-constraint results and evidence'],
-  ['summary.md', 'Human-readable summary with limitations'],
+  ['limitations.txt', 'Human-readable summary with limitations'],
 ]
 
-function ExportPanel({ run }: PanelProps) {
+function ExportPanel({ run, state, onExport }: PanelProps) {
   if (!run) return null
+  const c = selectedCandidate(run, state)
   return (
     <>
       <Section title="Export package">
         <p className="panel__body">STEP carries editable solid geometry. It does not keep the originating feature history or native mates. A GLB preview is never the CAD output.</p>
         <ul className="pkg">
-          {PACKAGE.map(([f, d]) => (
+          {PACKAGE.filter(([f]) => !(run.export?.status === 'changed_part_only' && f === 'revised.step')).map(([f, d]) => (
             <li key={f}>
               <span className="mono">{f}</span>
               <span>{d}</span>
@@ -639,17 +647,17 @@ function ExportPanel({ run }: PanelProps) {
           ))}
         </ul>
         <div className="detail__actions">
-          <button type="button" className="btn btn--primary btn--sm" disabled aria-describedby="export-why">
+          <button type="button" className="btn btn--primary btn--sm" disabled={api.mode !== 'http' || c?.review_decision !== 'accept' || state.redesign.status === 'running'} onClick={onExport} aria-describedby="export-why">
             Download checked package
           </button>
         </div>
         <p id="export-why" className="panel__fine">
-          Export needs an accepted candidate and the export service, which reimports the package and rechecks it before release. Neither is connected in this build. <ProvenanceTag provenance={run.provenance} compact />
+          {run.export ? `Export ${run.export.status}; round trip ${run.export.roundtrip_status}.` : 'Accept the checked candidate first. Export reconstructs the solid, replans the route, and reimports the STEP output before download.'} <ProvenanceTag provenance={run.provenance} compact />
         </p>
       </Section>
       <Section title="Attribution">
         <p className="panel__body">
-          Fixture B02, synthetic, authored by the UNLOCK team. Proposed license CC BY 4.0, not yet granted. Redesign proposals are planned to use Muse Spark Open.
+          {run.model ? `Inference: ${run.model.id}, provider ${run.model.provider}.` : 'No live inference recorded.'} Fixture provenance and engineering limitations are included in the export. Redistribution rights must be confirmed before publication.
         </p>
       </Section>
     </>

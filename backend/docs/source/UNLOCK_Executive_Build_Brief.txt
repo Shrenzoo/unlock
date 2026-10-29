@@ -1,0 +1,41 @@
+UNLOCK Executive Build Brief
+Implementation decision for October 27 to November 4 2026
+The product and the first user
+Build a focused tool that helps a mechanical design engineer change a supported bracket so a selected service component can be replaced through a checked geometric path. The engineer is reviewing a small electromechanical module before design freeze and can supply the assembly's intended connections and protected interfaces.
+The pitch is that replacing a five dollar part should not require destroying a five hundred dollar product. These amounts illustrate the problem; they are not measured customer savings.
+The defensible contribution
+Existing CAD and research already cover access analysis, extraction planning and selected component redesign. UNLOCK's product hypothesis is a clear review workflow joining the repair target, actual editable geometry change, preserved constraints, original and revised paths, and reproducible evidence. Avoid a first of its kind claim or a patent freedom conclusion. The full PRD's Sections 5 and 6 document the closest alternatives and prior art.
+The smallest complete build
+Import, Select, Analyze, Explain, Redesign, Verify, Compare, Export. Accept a self contained STEP assembly plus a required manifest. Support 5 to 12 rigid occurrences, annotated reusable screws, straight tool approach volumes and axis aligned translations. Keep the original design immutable. Reject missing semantics and unsupported connections explicitly.
+Implement one known bridge bracket family with fixed feet and hole regions. Start with T01 rectangular web relief; add T02 bounded web offset within the same family for meaningful intervention choice. The server constructs the actual solid from validated parameters. No unrestricted generated CAD code, arbitrary bracket reconstruction or fastener deletion from the final design.
+P0 requirements. Separate component import and target selection; deterministic baseline search; inspectable obstruction evidence; real Muse Spark Open tool calls; a supported solid geometry edit; independent constraint checks and revised removal plus insertion paths; defined metrics; evidence based playback; checked CAD and report export. These are the features that cannot be cut without losing the central promise.
+Technical architecture
+Use React and TypeScript with React Three Fiber for the interface; FastAPI for revision and job coordination; CadQuery through OCP and OCCT for solids, STEP processing and trusted template construction; a small deterministic search planner; hosted Muse Spark Open for bounded tool orchestration; SQLite and content addressed files for evidence. Run native geometry in isolated CPU processes in a pinned Linux container. Public anonymous mode uses bundled fixtures; private uploads require access control or local execution.
+Muse interprets component roles and evidence, chooses supported interventions and parameters, requests checks, and responds to failures. It cannot declare a design valid. The separate verifier reconstructs the edit, checks every mandatory constraint and derives eligibility. Show tool actions and evidence, not private model reasoning.
+
+Verification and measurable success
+Use conservative volumes covering the actual solids to check the complete straight motion. A proxy overlap alone is not a proven CAD obstruction; unresolved geometry is unknown. A confirmed collision witness can reject a move. Declared planar start contacts require narrowly scoped separating contact checks. Hidden parts still participate in analysis.
+A result succeeds only when every mandatory check passes, a supported path exists, and the change improves the frozen objective without violating protected limits. Compare unrelated parts removed, fasteners, tool changes and operations. For an infeasible original route, show infeasible to feasible without inventing a baseline count or percentage. Export STEP solid geometry, parameters, manifests, paths and reports; do not promise native feature history.
+Strength, fatigue, torque, electrical safety, manufacturing feasibility and restored product function remain unverified. Geometric checks do not authorize manufacturing release.
+Highest risks and the evidence needed
+Risk
+Build or validation decision
+Continuous checks are too conservative or wrong
+Test thin obstacles and start contacts first; any false verified route blocks release
+Templates only work on the authored example
+Hold out geometry and constraint variants; obtain an authorized real module review
+The model adds little over rules
+Compare matched three candidate budgets; disclose the result even if rules match it
+Demand is assumed
+Observe a recent engineering review; require a buyer supplied second assembly and paid pilot commitment before commercial investment
+Provider access or event eligibility fails
+Confirm account access through November 4 and exact participant requirements separately
+
+Development order and ownership
+October 27 to 28. B proves import, units, continuous motion checks, model access and baseline search. A wires target selection and real progress, while seeking an authorized workflow observation. Gate: inspectable baseline evidence, no false pass on thin obstacles.
+October 29 to 30. B constructs the template and independent recheck; A integrates candidate review, comparison and export. Gate: one actual improving edit, one rejected invalid edit and round trip CAD export. Cut breadth if this fails; preserve the full edit and verify loop.
+October 31 to November 1. Both freeze and run the 18 case evaluation, rule comparator, held out variants, failure tests and reproducible deployment. No benchmark results exist yet.
+November 2 to 4. Refine the evidence story, record the actual workflow, verify repository and demo access, and submit early. The supplied guide states November 4 at 8 p.m. Central; use 6 p.m. as the internal target and confirm the signed rules and portal. Both contributors' eligibility remains a participation gate.
+The defining demonstration
+Select the small trapped component, expose the actual obstruction, show Muse choosing a bounded edit, and reveal the changed solid beside the original. Display the unchanged constraints and measured result. End with the target following its checked path as other parts fade visually. Label synthetic fixtures and previously computed runs. Record a success only after the engineering system produces one.
+Decision: proceed with the gated prototype. Defer universal import, extra models, rotations, flexible parts, enterprise collaboration and broader optimization. Use the full PRD for contracts, requirements, evidence sources and stop conditions.

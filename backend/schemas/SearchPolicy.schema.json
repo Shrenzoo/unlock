@@ -1,0 +1,54 @@
+{
+  "$id": "urn:unlock:SearchPolicy:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "clearance_mm": {
+      "default": 0.5,
+      "minimum": 0.5,
+      "title": "Clearance Mm",
+      "type": "number"
+    },
+    "endpoint_rule": {
+      "const": "explicit_path_else_nearest_stage_interior_v1",
+      "default": "explicit_path_else_nearest_stage_interior_v1",
+      "title": "Endpoint Rule",
+      "type": "string"
+    },
+    "max_expanded_states": {
+      "default": 4096,
+      "maximum": 4096,
+      "minimum": 1,
+      "title": "Max Expanded States",
+      "type": "integer"
+    },
+    "max_seconds": {
+      "default": 30,
+      "exclusiveMinimum": 0,
+      "maximum": 30,
+      "title": "Max Seconds",
+      "type": "number"
+    },
+    "objective": {
+      "default": [
+        "unrelated_parts",
+        "fasteners",
+        "tool_changes",
+        "operations"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Objective",
+      "type": "array"
+    },
+    "version": {
+      "const": "planner_v1",
+      "default": "planner_v1",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "title": "SearchPolicy",
+  "type": "object"
+}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react'
 import { api, ServiceNotConnected, validatePackage } from '@/api'
-import type { ProjectSummary } from '@/domain/types'
+import type { ProjectSummary, StageEvent } from '@/domain/types'
 import { Link, navigate } from '@/router'
 import { Logo } from '@/ui/Logo'
 import { Glyph } from '@/ui/Evidence'
@@ -19,9 +19,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     let live = true
-    api.listProjects().then((p) => live && setProjects(p))
+    const refresh = () => api.listProjects().then((p) => { if (live) setProjects(p) }).catch((e: Error) => { if (live) setUpload({ kind: 'invalid', errors: [{ field: 'backend', message: e.message + '. Start the local UNLOCK backend on port 8000.' }] }) })
+    void refresh()
+    const timer = window.setInterval(() => { if (api.mode === 'http') void refresh() }, 2000)
     return () => {
       live = false
+      window.clearInterval(timer)
     }
   }, [])
 
@@ -29,7 +32,12 @@ export default function Dashboard() {
     const errors = validatePackage(files)
     if (errors.length) return setUpload({ kind: 'invalid', errors })
     try {
-      await api.importPackage(files)
+      const result = await api.importPackage(files)
+      const controller = new AbortController()
+      let projectId: string | undefined
+      await api.streamEvents(result.job_id, (event) => { projectId = (event as StageEvent & { project_id?: string }).project_id ?? projectId }, controller.signal)
+      setProjects(await api.listProjects())
+      if (projectId) navigate(`/projects/${encodeURIComponent(projectId)}`)
     } catch (e) {
       if (e instanceof ServiceNotConnected) setUpload({ kind: 'unavailable', files: files.map((f) => f.name) })
       else setUpload({ kind: 'invalid', errors: [{ field: 'import', message: (e as Error).message }] })
@@ -83,18 +91,18 @@ export default function Dashboard() {
               {projects?.map((p) => {
                 const ready = p.status === 'ready'
                 return (
-                  <tr key={p.id} className={ready ? 'is-ready' : 'is-disabled'} onClick={ready ? () => navigate(`/projects/${p.id}`) : undefined}>
+                  <tr key={p.id} className={ready ? 'is-ready' : 'is-disabled'} onClick={ready ? () => navigate(`/projects/${encodeURIComponent(p.id)}`) : undefined}>
                     <td className="mono">{p.fixture_code}</td>
                     <td>
                       <span className="ptable__name">{p.name}</span>
                       <span className="ptable__desc">{p.description}</span>
                     </td>
                     <td className="num mono">{p.occurrences ?? '—'}</td>
-                    <td className="mono">{p.revision ?? '—'}</td>
-                    <td>{ready ? <span className="tag tag--hatched">Illustrative</span> : <span className="tag">Not authored yet</span>}</td>
+                    <td className="mono">{p.revision?.slice(0, 12) ?? '—'}</td>
+                    <td>{ready ? <span className="tag tag--hatched">{p.provenance === 'illustrative' ? 'Illustrative' : 'Computed CAD'}</span> : <span className="tag">{api.mode === 'http' ? 'Not ready yet' : 'Not authored yet'}</span>}</td>
                     <td className="ptable__action">
                       {ready ? (
-                        <Link to={`/projects/${p.id}`} className="btn btn--primary btn--sm" onClick={(e) => e.stopPropagation()}>
+                        <Link to={`/projects/${encodeURIComponent(p.id)}`} className="btn btn--primary btn--sm" onClick={(e) => e.stopPropagation()}>
                           Open
                         </Link>
                       ) : (
@@ -106,7 +114,7 @@ export default function Dashboard() {
               })}
             </tbody>
           </table>
-          <p className="dash__foot">B01 and B03 are specified in the PRD evaluation plan and will appear here once the team authors their geometry.</p>
+          <p className="dash__foot">{api.mode === 'http' ? 'B01, B02 and B03 use generated synthetic STEP assemblies. Loading and analysis execute on the local backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
         </section>
 
         <aside className="dash__side" aria-label="Import a package">

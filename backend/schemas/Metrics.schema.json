@@ -1,0 +1,79 @@
+{
+  "$id": "urn:unlock:Metrics:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cost": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "Cost",
+      "type": "array"
+    },
+    "fasteners_removed": {
+      "minimum": 0,
+      "title": "Fasteners Removed",
+      "type": "integer"
+    },
+    "has_contact_exemptions": {
+      "title": "Has Contact Exemptions",
+      "type": "boolean"
+    },
+    "noncontact_clearance_lower_bound_mm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Noncontact Clearance Lower Bound Mm"
+    },
+    "operations": {
+      "minimum": 0,
+      "title": "Operations",
+      "type": "integer"
+    },
+    "tool_changes": {
+      "minimum": 0,
+      "title": "Tool Changes",
+      "type": "integer"
+    },
+    "unique_tools": {
+      "minimum": 0,
+      "title": "Unique Tools",
+      "type": "integer"
+    },
+    "unrelated_parts_removed": {
+      "minimum": 0,
+      "title": "Unrelated Parts Removed",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "unrelated_parts_removed",
+    "fasteners_removed",
+    "tool_changes",
+    "operations",
+    "unique_tools",
+    "cost",
+    "noncontact_clearance_lower_bound_mm",
+    "has_contact_exemptions"
+  ],
+  "title": "Metrics",
+  "type": "object"
+}

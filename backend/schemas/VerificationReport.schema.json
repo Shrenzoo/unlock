@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "component_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "constraint_id": {
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "limit": {
+          "default": "",
+          "title": "Limit",
+          "type": "string"
+        },
+        "mandatory": {
+          "default": true,
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "measured_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measured Value"
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "result",
+        "explanation"
+      ],
+      "title": "Check",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:VerificationReport:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_revision_id": {
+      "title": "Candidate Revision Id",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/Check"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "constraint_hash": {
+      "title": "Constraint Hash",
+      "type": "string"
+    },
+    "engine_versions": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Engine Versions",
+      "type": "object"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "original_revision_id": {
+      "title": "Original Revision Id",
+      "type": "string"
+    },
+    "path_certificates": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Path Certificates",
+      "type": "array"
+    },
+    "scope": {
+      "default": "Independent geometry constraints and explicitly requested direct segments; no complete repair-route verdict",
+      "title": "Scope",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "unverified_properties": {
+      "default": [
+        "Structural strength and fatigue",
+        "Electrical safety",
+        "Manufacturing feasibility",
+        "Restored product function",
+        "Complete replacement requires separate state-aware plan replay and inverse sequence certificates"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Unverified Properties",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "candidate_id",
+    "original_revision_id",
+    "candidate_revision_id",
+    "input_hash",
+    "constraint_hash",
+    "engine_versions",
+    "generated_at",
+    "status",
+    "checks",
+    "path_certificates"
+  ],
+  "title": "VerificationReport",
+  "type": "object"
+}

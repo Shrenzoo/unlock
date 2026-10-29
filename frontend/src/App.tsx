@@ -24,7 +24,7 @@ export function App() {
     <Suspense fallback={<div className="route-loading" aria-busy="true" />}>
       {route.name === 'landing' && <Landing />}
       {route.name === 'projects' && <Dashboard />}
-      {route.name === 'workspace' && <Workspace projectId={route.projectId} />}
+      {route.name === 'workspace' && <Workspace key={route.projectId} projectId={route.projectId} />}
       {route.name === 'not_found' && (
         <main className="not-found">
           <p className="mono">404</p>

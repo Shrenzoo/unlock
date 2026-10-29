@@ -36,7 +36,7 @@ export function Viewport({ state, dispatch, run }: ViewportProps) {
   const [playhead, setPlayhead] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
 
-  const segsOriginal = useMemo(() => (state.baseline.status === 'done' && run ? segmentsFor(run.baseline) : []), [run, state.baseline.status])
+  const segsOriginal = useMemo(() => (state.baseline.status === 'done' && run?.baseline ? segmentsFor(run.baseline) : []), [run, state.baseline.status])
   const segsRevised = useMemo(() => (candidate?.revised_plan ? segmentsFor(candidate.revised_plan) : []), [candidate])
   const primarySegs = state.mode === 'analyze' ? segsOriginal : state.mode === 'compare' || state.mode === 'export' ? segsRevised : []
   const maxSegs = compare ? Math.max(segsOriginal.length, segsRevised.length) : primarySegs.length
@@ -76,7 +76,7 @@ export function Viewport({ state, dispatch, run }: ViewportProps) {
   }, [playing, maxSegs])
 
   const witnessPose = useMemo<Pose | null>(() => {
-    if (!state.witness || !run) return null
+    if (!state.witness || !run?.baseline) return null
     const r = run.baseline.rejections.find((x) => x.id === state.witness)
     if (!r) return null
     const pose: Pose = { offsets: {}, done: new Set(), active: null, obstruction: null, tool: null, probe: null }
@@ -91,7 +91,7 @@ export function Viewport({ state, dispatch, run }: ViewportProps) {
   const primaryPose = playhead !== null ? poseAt(primarySegs, playhead) : state.mode === 'analyze' ? witnessPose : null
 
   const fit = useCallback(
-    (which?: PartId | null) => {
+    (which?: string | null) => {
       const comp = which ? b02Manifest.components.find((c) => c.id === which) : null
       const box = comp ? worldBox(comp.bounds_mm.min, comp.bounds_mm.max) : worldBox(b02Manifest.envelope_mm.min, b02Manifest.envelope_mm.max)
       const sphere = box.getBoundingSphere(new THREE.Sphere())

@@ -1,0 +1,985 @@
+UNLOCK Product Requirements Document
+Repairability redesign and geometric verification
+Version 1.0 | Research cutoff October 27 2026 | Build window October 27 to November 4 2026
+Prepared for a two developer implementation team. Product, engineering, and validation specification.
+Build a narrow prototype that changes an actual bracket design and independently checks whether a selected component can be replaced under explicit geometric rules. Treat customer demand, model advantage, and generalization to real products as hypotheses requiring evidence.
+
+Contents
+1 Document Information and Executive Summary
+2 Product Vision and Positioning
+3 Problem Statement and Supporting Research
+4 Target Users and Jobs to Be Done
+5 Existing Alternatives and Competitive Landscape
+6 Prior Art Novelty and Differentiation
+7 Product Goals and Success Metrics
+8 Complete User Journey
+9 MVP Scope and Non Goals
+10 Detailed Feature Specifications
+11 Functional Requirements
+12 Non Functional Requirements
+13 CAD Input and Data Requirements
+14 Disassembly Planning Specification
+15 AI Redesign and Tool Orchestration Specification
+16 Geometry and Constraint Verification
+17 System Architecture
+18 Technical Stack and Engineering Trade Offs
+19 UI and UX Requirements
+20 Data Models and API Contracts
+21 Evaluation and Testing Framework
+22 Three Minute Hackathon Demo
+23 Development Milestones and Task Ownership
+24 Risks Assumptions and Mitigations
+25 Long Term Product Roadmap
+26 Business and Commercialization Hypotheses
+27 Outstanding Research Questions
+28 Go and No Go Decision Criteria
+29 Sources and References
+30 Final Product Recommendation
+
+1 Document Information and Executive Summary
+Decision. Proceed with a gated hackathon prototype of an AI assisted repairability redesign and verification engine. Support a small STEP assembly plus a required engineering manifest. Implement one parametric bracket family with two bounded interventions. Preserve the complete workflow: Import, Select, Analyze, Explain, Redesign, Verify, Compare, Export.
+Core promise. An engineer selects a difficult to replace component. UNLOCK proposes a constrained design edit, constructs the changed geometry, and independently checks the resulting removal and reverse insertion paths within its supported model.
+The central engineering deliverable is a versioned evidence package linking the input assembly, declared constraints, baseline plan, candidate parameters, revised solid geometry, and verification results. A proposal is never a verified result. A visible animation is never a collision certificate. Geometric feasibility is never product safety or release approval.
+Recommended MVP. One appliance inspired service module, 5 to 12 rigid component occurrences including simplified fasteners, axis aligned translation only, explicit screwdriver approach volumes, and server owned parametric bracket edits. The bracket must already be independently fastened; the MVP does not split arbitrary welded or integral structures. The target, base, mounting interfaces, fixed parts, and declared keep out regions remain protected.
+Research conclusion. General disassembly planning, tool access analysis, and redesign for selected part access have substantial prior art. The defensible product thesis is a usable, auditable workflow for early service design reviews, with a tightly defined compatibility contract and editable changes. Neither research novelty nor patent freedom is established. See Sections 5 and 6. [S07-S16]
+Event status. The organizer page confirms the event dates, Indie and Startup tracks, themes, and use of Meta models. The supplied October 26 team guide reports a public repository, accessible working demo, three minute video, 1 to 4 members, and scoring weights of 30/25/20/25. Those details retain their supplied source status; the signed rules and every participant's eligibility require confirmation. The waiver was inaccessible through the research browser. Plan to submit November 4 at 8:00 p.m. America/Chicago, matching 9:00 p.m. Eastern; verify the portal because the landing page uses the label EST across a daylight saving transition. [S01-S03]
+Evidence vocabulary. FACT means directly documented by an identified primary source. RESEARCH means an author's reported result, not reproduced here. INFERENCE means an engineering interpretation. HYPOTHESIS means an untested product or commercial assumption. REQUIREMENT means a proposed implementation contract. EXAMPLE means illustrative behavior, never measured performance. All numeric implementation thresholds in this document are provisional requirements unless explicitly attributed. No UNLOCK software benchmarks, user interviews, or successful CAD edits were performed for this PRD.
+Change control. Developer A owns workflow and integration; Developer B owns geometry, planning, and the model adapter. Both sign off changes to units, tolerance policy, supported operations, templates, metrics, and evidence wording. Such changes increment the policy version and invalidate affected results.
+2 Product Vision and Positioning
+One sentence. UNLOCK helps product engineers redesign supported assemblies so a selected service component can be replaced through a checked geometric path.
+Elevator pitch. Replacing a $5 part should not require destroying a $500 product. UNLOCK exposes the design choices that obstruct replacement, applies a small supported design change, and shows the resulting access path alongside the checks that support it. The dollar amounts are a rhetorical example, not a measured customer case.
+Mission. Make access to service components an explicit design decision before tooling and manufacturing commitments.
+Value proposition. For a mechanical engineer reviewing a small electromechanical module, UNLOCK brings the selected repair target, candidate bracket edit, preserved constraints, and comparable access evidence into one review. The hoped for advantage is less manual coordination between inspection, geometry editing, motion checks, and reporting; this advantage needs direct comparison with existing CAD workflows.
+Three sentence technical pitch. UNLOCK combines structured assembly metadata with bounded graph search and CAD based geometry checks. Muse Spark Open selects and parameterizes interventions from an approved library using roles, constraints, and tool feedback. A separate verifier evaluates the revised solids and repair sequence and produces a reproducible report.
+Position A, an AI powered CAD repairability analyzer, emphasizes an already populated inspection category. Position B, an AI assisted repairability redesign and verification engine, names the edit and recheck loop and is the recommended position. Use the qualifier supported assemblies wherever broad compatibility might otherwise be inferred. Avoid claims of first, autonomous engineering, optimal repair, or universally repairable products.
+The longer term vision is a design review layer integrated with native CAD and engineering change control. Broader repairability assessment, cables, tolerances, forces, and manufacturing analysis are separate research and product programs.
+3 Problem Statement and Supporting Research
+The first problem is deciding whether a high priority component is accessible for replacement without unnecessary disturbance of surrounding parts. Geometry alone is insufficient: connectors, fastener engagement, adhesives, service information, spare parts, and product operating constraints can determine practical repairability.
+iFixit's methodology traces paths to critical components and includes tools, actions, and reassembly, alongside parts availability and documentation. This supports target selection and explicit operation counts, while showing why a geometry only result cannot be a complete repairability score. [S04]
+The JRC repair scoring framework identifies priority parts and product specific assessment criteria and calls for transparent background information. EN 45554:2020 supplies general assessment methods for repair, reuse, and upgrade of energy related products; the public BSI summary does not provide the full standard. UNLOCK should borrow the discipline of explicit scope and evidence, and must not claim certification or a standardized score. [S05-S06]
+Engineering distinctions. Design for Assembly favors repeatable, economical construction. Design for Disassembly addresses separation for purposes including service and recovery. Design for Repair adds the target failure, replacement part, reconnection, and restoration of function. A design that is easy to assemble may bury a fastener behind later installed parts; a destructive recycling route may be unsuitable for repair.
+Supported barriers are a released component obstructed by another solid, an inadequate extraction corridor, or a declared fastener whose approach volume is obstructed. Adhesives, clips requiring deformation, cable routing, corrosion, press fits, and electrical isolation can be decisive but are excluded from the MVP. A service opening or reduced bracket web may weaken a load path, ingress protection, or electromagnetic shielding. Preserving hole centers does not preserve those properties.
+The European Commission describes repair policy and product specific ecodesign measures as incentives for product life extension. Its repair of goods directive page gives July 31 2026 as the date for national transposition and application. This is a policy signal, not a universal repair obligation for every small appliance or proof of compliance by UNLOCK. Product category and national applicability need specialist review. [S17]
+Commercial evidence boundary. Public assessment methods and engineering tools establish that access and serviceability are real engineering concerns. They do not establish how frequently a particular design team encounters the problem or whether that team will pay for this workflow. No waste reduction, warranty saving, repair time reduction, or market size is claimed.
+4 Target Users and Jobs to Be Done
+Primary user hypothesis. A mechanical design engineer at a small appliance or electromechanical product company, reviewing a new low complexity service module before design freeze. The engineer can supply STEP data, identify an intended replaceable component, and declare mounting and keep out requirements. This user controls the design and can act on a proposed edit; a repair shop usually cannot change products already manufactured.
+Existing workflow. Open the native CAD assembly, isolate the service component, inspect attachments, move or suppress surrounding parts, try extraction, modify geometry, rerun clearance checks, and document a design review. Existing CAD inspection and extraction tools support important pieces of this process. UNLOCK's adoption question is whether it reduces the manual effort to carry a selected service target through a candidate edit and an evidence backed comparison. [S07-S10]
+The decision is whether to revise a supported bracket before release, leave the original design, or request further engineering analysis. The expected occasion is a serviceability review or engineering change, not continuous daily use. Frequency, cost of current work, and the ability to share geometry remain unvalidated.
+Hypothetical persona
+Situation and decision
+Evidence needed
+Maya mechanical design engineer
+Uses Fusion or SOLIDWORKS; needs to review access to a fan module before freeze
+Observe a recent review and obtain an authorized assembly
+Luis service engineering specialist
+Knows frequent component failures; challenges the modeled sequence and omitted actions
+Compare the manifest and proposed route with an actual teardown
+Priya engineering manager
+Owns review effort and release risk; buys a tool only if it improves a real review
+Authorize a paid pilot and measure review effort with existing CAD
+
+Primary job. When reviewing a module containing a service component, I want to identify and change the supported geometry that complicates its replacement so I can make a documented design decision before release.
+Supporting jobs. Inspect why the first route fails; determine whether a candidate preserves declared interfaces; hand another engineer an editable change and the exact scope of the checks. Failure diagnosis, replacement part sourcing, consumer repair instructions, and safety approval are outside the first job.
+Validation protocol. Seek three relevant engineers and one repair practitioner; ask about their most recent access problem, artifacts, actions, effort, and disposition. Observe at least one authorized assembly review and have the practitioner challenge the manifest. Ask a buyer to supply a second assembly and commit to a paid pilot before claiming willingness to pay. These activities are planned; none has occurred. One practitioner observation improves domain fidelity but cannot establish broad demand.
+5 Existing Alternatives and Competitive Landscape
+The competitive decision is whether a specialized target to redesign workflow justifies a prototype and later purchase despite capable incumbent tools. The context includes repair policy, existing CAD installed bases, computational planning research, and AI CAD entrants. A numerical market estimate would be unsupported. The practical substitute is an engineer using tools already licensed, sometimes supplemented by a physical prototype or a serviceability consultant.
+Read the matrix as evidence about reviewed materials. DOC means documented functionality; MAN means engineer performed using CAD; RES means author reported research; DISC means patent disclosure; ND means not demonstrated in the reviewed source, without implying absence. Independent reproduction of these systems was not performed.
+Alternative and tier
+Inputs and documented analysis
+Target and constraints
+Editable redesign and recheck
+Fusion primary commercial substitute [S07]
+Native design bodies; directional accessibility highlights undercuts and difficult access
+Selected bodies and direction DOC
+Geometry editing MAN; target repair sequence redesign ND
+Inventor secondary substitute [S08]
+Assembly occurrences; interference results
+Selected components DOC
+Native editing MAN; automated repair redesign ND
+SOLIDWORKS primary substitute [S09]
+Assemblies; clearance, collision, interference, hole alignment
+User thresholds and selected parts DOC
+Native editing MAN; closed target repair edit loop ND
+Siemens NX primary substitute [S10]
+CAD assembly; documented extraction path planning
+Component and motion limits DOC
+Native editing MAN; automatic repair geometry edit ND
+HCL DFMPro primary adjacent product [S11]
+CAD integrated rules; fastener access and clearance, holes, interference
+Fastener database and user limits DOC
+Findings and recommendations DOC; repair sequence edit and recheck ND
+FreeCAD and OCCT secondary enabling alternatives [S18-S21]
+Native or STEP geometry, assembly and modeling APIs
+Explicit application logic or engineer input
+Editable CAD DOC; bespoke repair planner required
+AssembleX closest planning research [S12-S13]
+Part OBJ meshes; sequence planning, physical feasibility, tools, manuals
+Planning settings DOC; annotations not required in paper
+Feedback DOC; editable parametric repair redesign ND
+State Based Disassembly Planning research [S14]
+Part geometries in simulation; state based sequence and path search RES
+Motion states and blocking graphs RES
+Geometry redesign and editable output ND
+Fastener reduction research [S15]
+CAD and CCC graph; influence, fastener removal analysis RES
+Robot objectives and geometric stability indicators RES
+Simulated design simplification RES; general geometry generation ND
+US20250390643A1 closest conceptual overlap [S16]
+CAD derived networks and selected target DISC
+Network optimization and design feedback DISC
+Revised CAD and iteration DISC; commercial implementation ND
+Leo AI potential broad entrant [S22]
+Vendor describes native CAD, retrieval, assembly inspection and generation
+Design intent and enterprise data per vendor
+Editable CAD claimed; target repair verification workflow ND
+Engineer and physical prototype primary substitute
+Native CAD, experience, teardown and review
+Full domain context where available
+Engineer edits and physical assessment; costly effort is a hypothesis
+
+Sequence and measurable outcomes. AssembleX and SBDP explicitly search sequences; NX documents extraction path planning, which is not proof of a global disassembly sequence search. The fastener study reports analytic changes to planning objectives after removing candidate fasteners. Its metrics and AssembleX's simulated time proxy are not measured human repair times. The patent describes optimization goals without establishing achieved commercial performance. Commercial inspection documentation establishes capabilities, not independent performance benchmarks. [S10-S16]
+Strategic implication. Match basic selection, hierarchy, clearance display, and explainable findings. Differentiate on the evidence package joining one repair target, a constrained editable patch, original and revised sequence checks, protected constraints, and rejection of invalid edits. Do not position an exploded view, accessibility heatmap, or AI explanation alone as the breakthrough.
+Public vendor pages do not settle real workflow quality, pricing, or all available modules. No systematic customer review study or independent tool trial supports a claim that engineers dislike the incumbents. Test the exact workflow against an experienced user's installed CAD before committing to a standalone commercial product. Integration may be a stronger distribution model than CAD replacement.
+6 Prior Art Novelty and Differentiation
+AssembleX. The repository accepts part meshes and produces disassembly paths, rendered steps, manuals, tool decisions, and feedback. Its active backend considers physical and tool constraints. The associated October 7 2026 paper reports evaluation on 136 assemblies and a robot time proxy. This establishes a strong adjacent end to end planning baseline; its reviewed materials do not demonstrate the proposed editable bracket repair workflow. Source availability and author evaluation are not independent replication. Its MIT wrapper does not override upstream backend licenses. [S12-S13]
+Fastener reduction. The May 20 2026 paper computes influence on a CAD derived Contact Connection Constraint graph, ranks fasteners, and analytically evaluates removal candidates. Its seven appliance study is stronger prior art than a mere obstruction visualizer. The discussion explicitly excludes material strength and robot dynamics and describes generative geometry changes as future work. Treat its geometric stability indicators as proxies, not structural certification. [S15]
+Patent review. Wayne State University's US20250390643A1 was published December 25 2025 with priority June 20 2024; the inspected record labels it pending. Claim 17 covers a target part and MDDN, accessibility optimized network generation, CAD conversion and presentation. Claims 18 to 20 add feedback and training provisions; claims 1 and 9 concern model training. Description embodiments also address collisions and degradation. [S16]
+The selected component redesign concept has direct overlap. UNLOCK's narrower implementation is not an established legal distinction. Pending claims, description embodiments and demonstrated software are different evidence. Obtain a current file history and professional claim analysis before commercialization; no infringement, validity, patentability or freedom conclusion is made. [S16]
+Other planning and design optimization. SBDP uses stored motion states, physics simulation, and directional blocking information to improve disassembly search; reimplementing general simulation is unnecessary for this prototype. IDfRA reports iterative planning, execution assessment, and replanning, so the general propose and verify loop is also established. Neither provides a basis to label this broad architecture new. [S14, S23]
+Credible contribution to demonstrate. A selected component service objective drives a supported geometry patch; the same protected constraints and verification policy apply before and after; a separate checker produces an inspectable path and evidence; a user can alter a supported constraint or target and see the candidate change or fail. Test this integration on meaningful fixtures. Research publication novelty requires additional work beyond the hackathon product claim.
+7 Product Goals and Success Metrics
+Primary goal. Complete one authentic edit and revalidation loop on the public supported assembly, then reproduce it on an independent geometry variant. Preserve an honest failure path. The goal is a working, limited capability, not a fabricated improvement target.
+Metric
+Definition
+Reporting rule
+Feasible removal
+Target reaches declared staging region through permitted checked moves
+Report yes, no within supported search, or unknown
+Operations
+Number of accepted primitive actions through target extraction
+A remove fastener action includes tool approach and fastener extraction; one released part translation is one action
+Unrelated parts removed
+Unique removed nonfastener occurrences excluding the selected target
+Covers and brackets count; no time interpretation
+Fasteners removed
+Unique fastener occurrences removed before target reaches staging
+Captive or unsupported fasteners cannot silently disappear
+Tool changes
+Transitions between different tools in the ordered tool action subsequence
+Initial tool pickup and hand translation excluded; report unique tools separately
+Clearance lower bound
+Minimum certified gap to noncontact obstacles over accepted paths
+Distinguish conservative lower bound from sampled distance
+Modified parts
+Unique occurrence IDs whose solid geometry differs
+Parameter edits also counted; no credit for hidden geometry deletion
+Constraint outcomes
+Passed, failed, unknown and not applicable counts
+Mandatory unknown or fail prevents verified status
+Candidate validity
+Candidates with all mandatory checks passing divided by constructed candidates
+Report construction failures separately and in end to end denominator
+AI proposal validity
+Schema valid supported proposals divided by total model proposals
+First attempt and repaired attempt reported separately
+End to end success
+Frozen cases with accepted improving candidate divided by all assigned in scope cases
+Include timeouts, exhausted budgets and no candidate cases
+Runtime and usage
+Wall time by stage, tokens, provider cost, geometry calls
+Report hardware, concurrency and sample count
+
+A successful improvement changes no protected constraints, passes all mandatory checks, and either changes a conclusively infeasible baseline to feasible or improves the feasible baseline's primary objective. For feasible baselines use the lexicographic tuple: unrelated parts, fasteners, tool changes, operations. The first differing value must decrease; no other listed count may increase. Clearance must meet the original threshold, and at most one bracket occurrence may be modified. This restrictive rule prevents arbitrary tradeoffs from looking like improvements.
+Do not compute percentage reductions from missing or infeasible baseline counts. Show infeasible to feasible as a status transition. Compare plans under identical units, actions, constraints, staging region, tolerance policy, hardware budget and target. If either search is incomplete, label plan comparisons best found; never claim a globally optimal repair route.
+8 Complete User Journey
+Stage
+Engineer action
+System behavior and evidence
+Import
+Upload package or open bundled example
+Validate STEP and manifest; list occurrences, warnings and unsupported semantics
+Select
+Choose target from canvas or tree
+Show declared role, attachments, movement directions and protected geometry
+Analyze
+Start baseline search
+Run deterministic planner; stream actual stage events and budget usage
+Explain
+Inspect blocked action or route
+Highlight collision witness or tool obstruction; qualify unknown proxy cases
+Redesign
+Request improvement with fixed constraints
+Model inspects roles and evidence, selects a template and bounded parameters; server constructs candidate
+Verify
+Inspect candidate checks
+Independent worker recomputes geometry, connections, paths and constraints; reject invalid or unknown cases
+Compare
+Choose a passing candidate
+Synchronized original and revised views, action counts, changed geometry and evidence
+Export
+Accept candidate as a review artifact
+Package actual geometry, patch parameters, manifest and reports with limitations
+
+The engineer approves a candidate for export, not for manufacture. The original assembly is immutable. Changing a target or constraint creates a new run; it cannot reuse a stale pass badge. A known case may be replayed, but the interface must say computed earlier with its input hash and timestamp.
+9 MVP Scope and Non Goals
+Priority
+Included behavior
+Reason
+P0
+Supported STEP and manifest import, occurrence identity and target selection
+Establishes real inputs and repair objective
+P0
+Released part and annotated fastener operations, bounded search and obstruction evidence
+Establishes the original problem
+P0
+One bracket family with web relief and bounded web offset interventions
+Creates real geometry within implementable scope
+P0
+Independent checks, replan, measured comparison, export
+Establishes the defining edit and verify loop
+P0
+Basic 3D inspection, exact path replay, limitations and failure states
+Makes evidence understandable
+P1
+Second candidate in parallel, richer parameter UI, second template family
+Expands useful coverage after one loop works
+P1
+Better clearances, report formatting, saved history and annotation conveniences
+Reduces review effort without changing the core
+P2
+Native CAD plug ins, general rotations, cables, clips, force and stability analysis
+Requires broader semantics and validation
+P2
+Multi objective optimization, whole product scoring, team review and PLM
+Depends on real customer workflows and trust
+
+MVP non goals. Arbitrary assembly understanding, automatic fastener recognition from shape, neural CAD reconstruction, unrestricted code generation, moving protected mounting locations, removing fasteners from the final design, integrated brackets converted to removable parts, optimization of all components, repair time prediction, manufacturing release, structural or electrical safety, regulatory compliance, and consumer guided repair.
+Dashboard, analysis, redesign, comparison and export are views of one application, not six independently built products. The dashboard can be a recent local project list with bundled fixtures. No accounts, billing, collaboration, mobile interface, full report designer or native CAD integration is required.
+10 Detailed Feature Specifications
+10.1 Import and semantic completion
+Accept a ZIP containing assembly.step, manifest.json, and optional attribution.txt. A one STEP plus manifest two file upload is equivalent. Reject meshes as analysis input. Limit to 25 MB compressed, 100 MB expanded, 5 to 12 leaf occurrences, 30,000 faces total, and 200,000 rendered triangles. These starting limits protect a two developer CPU prototype and must be calibrated on fixture imports. Refuse external STEP references, encrypted ZIPs, executables, symlinks and path traversal.
+Import hierarchy and occurrences through XDE; preserve source transforms and separate repeated occurrences. Display import status independently from semantic readiness. Missing connections, axis, tool, or contact declarations produce a field specific readiness checklist. A JSON editor or form may complete metadata; no inference may silently become an attachment fact. A single fused solid cannot be treated as a complete assembly.
+10.2 Viewer and target
+Provide orbit, zoom, fit, component list, hide, isolate and transparency. Canvas selection and tree selection resolve to the same stable occurrence ID. Show a target chip, direction arrows, fixed part lock labels, and a return to assembled state control. Hiding is a display action and does not remove a part from collision checks. Target selection requires explicit replaceable status, role, rigid replacement equivalence, connections and staging direction.
+10.3 Baseline and explanation
+The baseline returns one feasible checked sequence, a conclusive exhaustion under supported rules, or an incomplete result. Each rejected move records the state, proposed operation, obstacle occurrence, geometry witness if available, and policy version. A blocked target does not prove redesign is required: search first considers removable obstructions. Explain the shortest found route and its cost, or why the current search has no supported solution. Do not label a bracket unnecessary based solely on collision geometry.
+10.4 Bracket family and interventions
+The first supported bracket is a server reconstructed rectangular bridge bracket: two protected feet with unchanged hole axes and mounting pads, and an editable web region. Its construction parameters and expected solid must match the uploaded bracket within tolerance before editing. A positive volume difference, protected face mismatch, or ambiguous orientation makes it analysis only. The model never receives permission to execute arbitrary CAD code.
+Constructor v1 geometry. The manifest binds the occurrence to a server owned family version and a local frame. Local Z is the mounting normal; foot bottoms lie at Z zero and foot centers at X plus or minus half the declared span. Required original parameters are span, foot width, foot depth, foot thickness, hole diameter, post width, post depth, web depth, web thickness and web underside height, all in millimeters. Each foot has a centered Z axis through hole. Rectangular posts join the feet to the web. For T01, center x and y, width and depth define a rectangular opening in the web's local XY plane, cut through the full web thickness along Z; reject any intersection with protected foot, hole or post regions. For T02, translate only the web along local Y and regenerate rectangular top transition links between the original posts and the offset web. Every accepted construction must remain one connected valid solid. All original dimensions, allowed deltas and protected signatures are part of the binding hash. This explicit primitive family enables editable output without inferring a feature tree from arbitrary STEP geometry.
+Template
+Preconditions and parameters
+Protected conditions and checks
+Unsupported cases
+T01 web relief
+Editable web is prismatic; rectangular relief entirely inside allowed region. Parameters center x and y, width, depth, with a finite grid supplied by server
+Keep feet and hole regions intact; maximum cut volume and minimum remaining web dimensions declared by engineer; valid connected solid; envelope, collision and full repair recheck
+Curved arbitrary surfaces, load bearing inference, integral enclosure walls, inferred wall thickness acceptance
+T02 web offset
+Same bracket family; web can move along its local y axis while feet stay fixed. Parameter offset from enumerated permitted values
+Regenerate transitions from fixed feet; retain pad and hole geometry; remain in allowed envelope and outside keep outs; check all connections and paths
+New fastener holes, rerouting cables, multiple moving webs, unbounded freeform generation
+
+Both interventions are branches of one family and are implemented from trusted constructors. T01 is the first to build. T02 is part of the intended model selection test; if time forces its removal, retain T01, disclose the narrower candidate choice, and avoid claiming broad intervention reasoning. Neither template establishes strength or manufacturing feasibility. The engineer supplies allowed design regions and dimensional minima; those minima are geometric inputs, not a safety model.
+10.5 Verification and comparison
+Verify the revised assembled geometry, protected interfaces, staging corridor, tool access, disassembly and reverse insertion. Store a report per constraint and action. A candidate with an unresolved mandatory condition is ineligible for a verified label. Compare the same selected target and policy; show unchanged declared limits, changed geometry, a metrics table and outstanding physical questions. Display separate labels for geometry checks passed, engineer accepted for export, and engineering release not assessed.
+10.6 Export
+Export a ZIP with original STEP, revised STEP, changed bracket STEP, revised manifest, template parameters JSON, metrics JSON, action paths JSON, verification JSON, and human readable summary. Include the trusted bracket constructor version or source reference and a parameter file so the supported change can be regenerated. STEP provides editable solid geometry; it does not preserve the originating CAD feature history or native mates. GLB is a preview only. Reimport the exported assembly and rerun identity, transform, volume, and path checks before releasing it. If assembly export fails, report failure and offer a clearly labeled changed part STEP plus manifest and report; do not mark full assembly export complete.
+11 Functional Requirements
+All FR records are proposed P0 requirements. The user story is the intended user need; the following input, output, acceptance and failure statements define implementation. Backlog IDs map to these records.
+FR001 Supported package import
+Story. As an engineer I can load a supported module without losing individual parts. Depends on package validator and XDE adapter. Input ZIP or STEP plus manifest. Output immutable assembly revision and component inventory. Acceptance Given a valid fixture with repeated occurrences, when imported, then names, hierarchy, placements and separate occurrence IDs match the fixture oracle. Errors invalid solids, size limit, external reference or missing file produce an import error and no analysis ready revision.
+FR002 Semantic readiness
+Story. I can see what engineering information is missing. Depends on FR001 and manifest schema. Input imported inventory and metadata. Output per field readiness report. Acceptance Given a missing fastener axis or unresolved component ID, when validation runs, then analysis is blocked with the exact field and expected type. Errors cycles, unsupported connections, units mismatch and ambiguous occurrence mapping require correction; the model cannot auto approve them.
+FR003 Assembly inspection
+Story. I can understand and select the assembly. Depends on FR001 and mesh mapping. Input GLB plus occurrence metadata. Output interactive viewer and tree. Acceptance Given a hidden bracket, when I analyze, then it still participates in all checks. Selecting a canvas occurrence selects the same tree entry. Errors WebGL or asset failure offers the component list, evidence and retry; analysis readiness is independent of rendering success.
+FR004 Repair target selection
+Story. I can define which component must be replaceable. Depends on FR002 and FR003. Input occurrence ID and replacement contract. Output target scoped run specification. Acceptance Given a protected base selected as target, when analysis is requested, then selection is refused with a reason. Valid targets show connections, directions and replacement equivalence. Errors unknown or ambiguous ID cannot start a run.
+FR005 Fastener operation validation
+Story. The plan respects how the parts are retained. Depends on FR002 and geometry engine. Input screw metadata, tool volume and current state. Output removable action or rejection evidence. Acceptance Given an approach blocked by a cover, when the screw is evaluated, then no remove action is admitted until the cover is absent or an independently checked access edit succeeds. Errors unknown engagement or tool geometry yields unknown, never pass.
+FR006 Translation operation validation
+Story. The plan checks the whole movement. Depends on FR002 and geometry engine. Input released occurrence, permitted direction and travel. Output path certificate or collision or unknown. Acceptance Given a thin obstruction between clear endpoints, when the move is tested, then a verified route is refused. Errors conservative proxy overlap without a CAD witness is unknown; numerical failure cannot mean no collision.
+FR007 Baseline sequence search
+Story. I can find access without assuming a redesign is necessary. Depends on FR005 and FR006. Input assembly revision, target and policy. Output sequence or scoped failure with budgets. Acceptance Given two ways to remove a blocker, when bounded deterministic search completes, then its returned sequence reaches the target goal and replays through the validator. Errors timeout, state limit or unresolved edges yields incomplete status, not impossibility.
+FR008 Obstruction evidence
+Story. I can inspect why access failed. Depends on FR007. Input rejected transitions. Output blocker records with state, action and witness. Acceptance Given a collision rejection, when I select it, then the responsible occurrence and failed movement pose are displayed from stored evidence. Errors an approximate proxy warning has a different label from a confirmed CAD intersection.
+FR009 Model tool loop
+Story. AI can investigate a supported repair redesign. Depends on FR008 and model adapter. Input roles, constraints, baseline evidence and tool catalog. Output validated tool events and proposals. Acceptance Given two supported constraint variants, when the model is run, then the logged request, result and proposal cite matching revision and evidence IDs. Errors malformed arguments, invented tools or unavailable model are rejected; deterministic analysis remains viewable.
+FR010 Candidate schema and bounds
+Story. A proposal stays within the declared edit scope. Depends on FR009 and template registry. Input template ID, bracket ID, parameters and evidence IDs. Output admitted candidate or typed rejection. Acceptance Given an out of range relief width, when proposed, then construction never starts and the violation returns to the model. Errors extra properties, changed protected IDs or unsupported template never become executable instructions.
+FR011 Real geometry modification
+Story. I can inspect the actual proposed design. Depends on FR010 and trusted constructors. Input admitted parameters and original revision. Output revised BRep, STEP and patch manifest. Acceptance Given T01, when constructed, then the bracket's geometric difference is nonempty, inside the allowed region, and all other occurrence solids and transforms remain unchanged. Errors failed Boolean or invalid result aborts that candidate without touching the original.
+FR012 Independent constraint checks
+Story. AI cannot approve its own design. Depends on FR011 and verifier. Input candidate revision and original constraints. Output per constraint pass, fail or unknown records. Acceptance Given a modified mounting pad, when checked, then the candidate is rejected even if its extraction path is clear. Errors missing mandatory check, tolerance ambiguity or stale constraint hash prevents a verified status.
+FR013 Revised plan and reinsertion
+Story. The change improves a checked replacement route. Depends on FR012 and FR007. Input candidate and original planning policy. Output revised route and reverse path checks. Acceptance Given a candidate with valid assembled clearance but obstructed screw reinsertion, when checked, then it is ineligible. Errors unresolved reverse operations appear in the report rather than being inferred from animation.
+FR014 Comparable metrics
+Story. I can assess the actual difference. Depends on FR007 and FR013. Input matching original and revised reports. Output defined metrics and improvement decision. Acceptance Given an infeasible baseline, when compared with a feasible candidate, then the display shows a status transition and no invented percentage or baseline operation count. Errors different targets, constraints or policies prevent comparison.
+FR015 Evidence based path playback
+Story. The visual route corresponds to the check. Depends on FR003 and FR013. Input stored path segments and transforms. Output play, pause, step and scrub controls. Acceptance Given reduced motion preference, when a path is shown, then no movement autoplays and each pose remains inspectable. Errors missing certificate or hash mismatch disables verified playback and explains why.
+FR016 Review and acceptance
+Story. I can accept or reject an inspected proposal. Depends on FR012-FR015. Input candidate ID and user decision. Output append only review event. Acceptance Given a passing candidate, when accepted, then it becomes the chosen export revision without changing geometry or implying manufacturing release. Errors failed or stale candidates cannot be accepted as verified; rejection preserves the evidence.
+FR017 Geometry and report export
+Story. Another engineer can reproduce the supported change. Depends on FR016 and export worker. Input accepted revision. Output package specified in Section 10.6 and round trip report. Acceptance Given a successful export, when reimported, then component mapping and protected geometry remain within policy tolerances and the selected path rechecks. Errors full assembly export failure is explicit; mesh export cannot fulfill the CAD output requirement.
+FR018 Run identity and invalidation
+Story. Results belong to the design I am viewing. Depends on revision store. Input geometry, manifest, target, policy and engine versions. Output content hashes and linked run ID. Acceptance Given a changed clearance constraint, when saved, then earlier results show stale and require a new run. Errors partial artifacts never acquire a completed status.
+FR019 Progress cancellation and recovery
+Story. I can stop or retry expensive work. Depends on job coordinator and workers. Input start, cancel or retry action. Output ordered progress events and terminal job state. Acceptance Given cancellation during a Boolean operation, when the worker exits or is terminated at its limit, then the job is cancelled and no partial candidate becomes accepted. Errors worker crash reports interrupted and offers a new run against the same immutable revision.
+FR020 Honest no solution behavior
+Story. I can distinguish failure from missing evidence. Depends on planner, model controller and verifier. Input exhausted candidates or unknown conditions. Output no verified improvement, with tested edits and reasons. Acceptance Given all candidates fail, when the workflow ends, then no success animation, pass badge or invented recommendation appears. Errors model outage is shown as unavailable rather than an engineering conclusion.
+FR021 Provenance and disclosure
+Story. I can tell live analysis from replay and know the asset source. Depends on run store and package provenance. Input fixture license, author, generation or source data and timestamps. Output visible live or replay label and export attribution. Acceptance Given a cached run, when opened, then computed earlier, revision hash and timestamp are visible. Errors unknown redistribution rights prevent inclusion in public demo assets.
+12 Non Functional Requirements
+All targets below are provisional on a documented 8 core CPU, 16 GB RAM engineering worker, one concurrent geometry job and a desktop browser. Measure ten runs per canonical fixture; report cold and warm behavior and p50/p95 with sample size, rather than presenting these targets as results.
+ID and area
+Proposed target
+Validation and failure response
+NFR01 import
+Supported fixture import and meshing p95 under 20 seconds
+Instrument stages; cap parser at 60 seconds and report timeout
+NFR02 search
+Baseline budget 30 seconds or 4096 states, whichever first
+Deterministic counters; incomplete status on limit
+NFR03 candidate
+3 candidates maximum, 120 seconds total run budget
+Stop controller at budget; each geometry process has 30 second limit
+NFR04 interface
+Selection response under 100 ms; interaction at least 30 fps for supported meshes
+Browser profiling on named hardware; simplify preview without changing solids
+NFR05 precision
+Normalize mm; geometry tolerance 0.01 mm; default noncontact path gap 0.5 mm
+Fixtures just inside and outside thresholds; reject tolerance ambiguous checks
+NFR06 integrity
+No mutation of originals; atomic artifact commit; hashes on all reports
+Crash and partial write tests; failed commits cannot be complete
+NFR07 reproducibility
+Same solids, metadata and policy yield identical deterministic status and count metrics
+Repeat geometry checks; store all engine versions; tie break by stable IDs
+NFR08 AI robustness
+Schema validation on every call; one repair retry, bounded tool loop
+Adversarial tool tests; failures never bypass verifier
+NFR09 security
+Server only credentials, authenticated private uploads, no user code execution
+Secret scan, upload abuse and project isolation checks
+NFR10 accessibility
+Keyboard equivalent controls, text findings and labels; 4.5 to 1 text contrast
+Manual keyboard and screen reader check; WCAG aligned target, not certification
+NFR11 reliability
+10 of 10 canonical end to end replay checks pass before recording
+Gate only for frozen fixtures; report broader suite outcomes separately
+NFR12 operations
+Stage events within 1 second of stage start, cancellation acknowledged within 1 second
+Worker may finish or be killed at budget; never promise instant kernel cancellation
+
+Finite precision CAD checks are numerical evidence under a stated tolerance policy, not formal mathematical proofs. Preserve a conservative guard band and return unknown near ambiguous thresholds. No false verified route is acceptable in the adversarial regression suite; zero observed failures does not establish a zero real world error rate.
+13 CAD Input and Data Requirements
+Compatibility contract v1. Self contained STEP AP214 or AP242 with separate closed manifold solids and a JSON manifest. Accept 5 to 12 leaf occurrences, including fasteners, within a 500 mm axis aligned envelope. Each moving occurrence is rigid. Template editable brackets must match the known family. Others are immutable. Native CAD files, STL, OBJ, single fused bodies, unsupported contact types and flexible parts are analysis unsupported.
+XDE carries useful assembly and attribute information; it does not authorize assumptions about operational fasteners or service actions. Some STEP data can carry richer product information, but the MVP does not consume arbitrary mate, thread, cable or joint semantics. The manifest remains the explicit contract. [S19-S21]
+Frames. Millimeters, right handed world frame, Z up, homogeneous 4 by 4 transforms expressed as row major arrays applied to column vectors. STEP placement is authoritative; manifest references source occurrence paths and may repeat placement only for validation. Do not apply a transform twice. Reject scale, shear, reflection or duplicate ambiguous occurrence IDs. Geometry may be rotated at import, but supported extraction directions must align with world positive or negative X, Y or Z.
+Identity. Derive source occurrence path and per import stable ID; never rely only on display names. Repeated part definitions get distinct occurrence IDs and shared geometry definition hashes. Bracket edits are occurrence local. Rebuilding cannot modify every instance of a shared definition accidentally. Face IDs from imported STEP are not stable after arbitrary edits; protected interfaces use constructor named features and geometric signatures, not only topology indices.
+Required semantic records. Component role and replaceable flag; fixed or removable status; connections and retaining screws; permitted directions; exact travel endpoint or staging region; tool type and approach envelope; planar start contact regions; protected pads, hole axes and envelope; editable region and parameter bounds; keep out solids; unsupported assumptions; asset source, author and license. Manifest changes are versioned and engineer confirmed.
+Import checks. Schema, unique IDs, finite numbers, transforms, unit consistency, solid validity, nonempty geometry, volume, closure, face budget, all referenced components and tools, supported connection types, permitted axes, reachable staging exterior, editable bracket match, and static assembled intersections. Reject undeclared positive volume interpenetration. Threads are simplified cylindrical geometries and explicit engagements, never accepted as hidden material penetration exceptions.
+Missing metadata fallback. Load for visual inspection with analysis unavailable, identify missing fields, and allow the engineer to provide the manifest. For the hackathon use team authored examples with complete manifests. Do not promise a general annotation assistant or perfect geometry recognition.
+14 Disassembly Planning Specification
+State. A set of removed occurrence IDs, remaining connection states derived from that set, and the last tool ID used for tool operations. All remaining occurrences stay at original placements. No partially displaced state, subassembly carrying, gravity simulation, or tool left inside an assembly is supported. The base is grounded by declaration; the assumed workholding is displayed.
+Primitive actions. REMOVE_FASTENER requires an annotated reusable screw, reachable tool approach and removal volume, and a released connection transition. Tool rotation and thread engagement are abstracted into one declared action; force and torque are not simulated. TRANSLATE_PART requires all retainers removed, a permitted axis, and a continuously checked route to an external staging region. The action removes the whole occurrence from future obstacle sets. The target goal is reached only after target translation to staging.
+Connections. A retained_by relation prevents moving the host until every listed fastener is removed. A planar_seat relation specifies start contact that can separate only in an allowed outward normal direction. No welded, adhesive, snap, press fit, wire or hose relation is executable. If one is present in the target dependency closure, readiness fails. Do not simply delete the unsupported connection.
+Search choice. Deterministic lexicographic uniform cost search with memoization, using counts from Section 7. The state includes last tool because it affects future tool change costs. Enumerate candidate actions by occurrence ID then axis; test semantic preconditions before geometry. The nonnegative additive cost tuple is unrelated nonfastener removals, fastener removals, tool changes, operations. Cache geometry outcomes by revision, removed set, action, geometry policy and tool hash. A static dependency graph is a pruning aid, not a substitute for state dependent access checks.
+For 12 occurrences there are at most 4096 removed sets before tool states and action alternatives; the explicit state cap therefore remains necessary. Thirty seconds or 4096 expanded states ends a search. Feasible results include their checked route even if the budget is reached later; report whether cost optimality was established within the finite supported graph. No path under supported rules requires exhaustive traversal with no unresolved eligible transitions. Any relevant unknown edge or early stop means search incomplete.
+Obstruction diagnostics. Check each blocked translation against every remaining occurrence. A positive BRep intersection at a witness pose confirms that action is blocked; a conservative bounding volume overlap alone does not. A driver envelope intersecting a nonengagement obstacle confirms inaccessible modeled tool access. Insufficient clearance is a gap below the declared threshold, not necessarily a collision. A fixed bracket is an obstruction only within permitted operations; avoid saying the product is physically impossible to disassemble.
+Reverse replacement. The replacement has identical declared external geometry and interfaces. Reverse the path with the same obstacles restored in reverse order and validate tool approach for reinstallation. Report geometric insertion and tool access separately. This does not verify tightening torque, electrical reconnection, calibration, consumables or restored function. If replacement shape differs, create a separate revision and reanalyze.
+Algorithm considered
+Purpose and input to output
+MVP decision and validation
+Uniform cost state search
+States and legal primitives to least cost supported plan
+Include; compare with exhaustive enumeration on tiny fixtures
+Directional blocker graph
+Remaining solids and axes to blocker edges
+Include as lazy cache; verify each admitted transition geometrically
+Greedy blocker removal
+Target obstacles to a quick route attempt
+Baseline only; cannot claim optimality or impossibility
+A star with heuristic
+Estimated remaining actions to directed search
+Defer until a provably admissible bound helps measured runtime
+RRT or full 6D path planner
+Continuous poses and geometry to motion route
+Defer; rotation, sampling and completeness burden exceed MVP
+Physics based planning
+Dynamics, contacts and gravity to feasible sequence
+Defer; study SBDP and AssembleX rather than imply equal realism [S12-S14]
+
+The model does not decide which transitions are collision free. It may request targeted inspections and select interventions using semantic context. Planner correctness and template completeness are separate evaluation questions.
+15 AI Redesign and Tool Orchestration Specification
+Model decision. Use Muse Spark Open through a hosted provider; do not self host this large model for a two developer event. Meta documents the open weight model, a 1,048,576 token context, and hosted providers. Keep application context below 16,000 tokens initially. The full context is an upper capability, not a need or a provider access guarantee. [S24]
+Fireworks is the initial adapter target because Meta documents its model string and an OpenAI compatible endpoint. Use base URL https://api.fireworks.ai/inference/v1 and model accounts/fireworks/models/muse-spark-open, with keys server side. Meta's deployment guide documents tool calls and JSON mode for that provider; application schema validation is still mandatory. Together is the same model fallback only after its account and schema smoke tests pass. Do not silently change models. [S25]
+Fireworks' public model listing advertises input, cached input and output at $1.25, $0.15 and $4.25 per million tokens, and about 1040k context. A linked variant of the listing additionally describes a US only serverless preview through October 29; the generic listing omits that caveat. Confirm access through November 4 before relying on it. Cloudflare also documents a gateway route, but it is unnecessary for the MVP. Rates and provider limits must be checked in the account. [S26-S27]
+Meta's prompting guide documents native tools, tool response correlation and reasoning effort values low, medium, high and xhigh. Start with medium, then evaluate latency and proposal quality; do not assume deterministic model output from a fixed seed. Do not display private reasoning as proof of engineering correctness. Show the requested actions, concise rationale, tool results and evidence instead. [S28]
+Licensing and event use. The published Muse license identifies a usage policy and a Built with Muse Spark Open attribution condition. Keep the model name and attribution in the application and documentation and review the complete current license and provider terms before release. Event materials allow meaningful Meta open weight use, but model license compliance and participant or bonus eligibility are separate checks. No extra model is necessary. [S02, S29]
+Bounded control loop. The backend starts with deterministic baseline evidence. The model can inspect assembly roles and constraints, request blocker and tool details, choose a valid template with parameters, inspect construction or verification failures, revise within bounds, and compare certified candidates. Limit to 3 candidate constructions, 12 tool calls, 6 inference turns, 16,000 cumulative billed output tokens, and 120 seconds per run. One schema repair retry counts toward these limits. Retrying infrastructure failures also consumes the wall time budget.
+Tool catalog. Every request requires project_id, revision_id and request_id; target dependent requests also require target_id. Every output contains evidence_id, input_hash, policy_version, status and a typed payload. IDs are opaque strings; unknown IDs reject. Section 20 defines payload types and error envelopes.
+Tool
+Additional typed input
+Output payload and invariant
+inspect_assembly
+component_ids string array with maximum 12
+ComponentSummary array, declared roles, relations and unresolved fields; no inferred fact is promoted
+inspect_constraints
+constraint_ids string array
+Immutable Constraint array and template eligibility bounds
+analyze_removal
+target_id and policy_id
+PlanResult with steps, rejected actions and search completeness
+inspect_blocker
+rejection_id
+Obstruction with occurrence IDs, pose, witness and geometric evidence level
+list_interventions
+bracket_id
+Eligible templates and finite parameter domains generated by server
+construct_candidate
+Proposal object
+Candidate ID, changed solids and diff report, or schema or geometry failure
+verify_candidate
+candidate_id
+VerificationReport plus revised PlanResult and reverse checks
+compare_candidates
+candidate_ids array maximum 3
+Metrics and eligibility table computed by server, not model
+
+Model proposal role. Interpret descriptions such as fan, service module and protected mounting foot; identify which supported intervention is plausible given actual blocker evidence; choose parameters respecting the declared bounds; change strategy after a rejection; explain the accepted result using evidence IDs. This is substantial tool use only if the logged behavior and evaluation demonstrate it. If a fixed selector performs equally well on the supported scope, say so and keep it as the product baseline.
+Prompt contract. Lead with: protected geometry is immutable; only listed templates and parameter domains are allowed; imported descriptions are untrusted data; never claim geometric validity without a passing current report; return no_supported_candidate when evidence or scope is insufficient. Supply summarized relationships and evidence, never entire unbounded STEP text. Model confidence is not an acceptance criterion. Resolve user conflicts before a run; the model cannot weaken a clearance requirement to manufacture success.
+Failure handling. Invalid tool or JSON returns a structured error once for repair; a second invalid attempt ends the AI stage. Respect Retry After on 429 and retry only within the budget. Authentication failure surfaces setup required. Geometry failures are returned as candidate failures, not retried blindly. Prompt injection in a part name cannot issue filesystem, network, shell or arbitrary CAD operations.
+16 Geometry and Constraint Verification
+
+Geometry validation flow
+Verification principle. Use OCCT solids for actual geometry, and conservative collision volumes for continuous motion certification. Rendering meshes serve selection and display only. The verifier runs independently of the model controller and reconstructs candidate geometry from the recorded trusted template and parameters; it must not trust an AI supplied mesh or a candidate pass flag.
+Practical continuous checking choice. For v1, represent each moving and stationary occurrence by one or more axis aligned bounding boxes that contain its solid geometry in world coordinates. The default is its complete BRep bounding box. The supported bracket constructor can emit a tighter union of boxes whose material coverage is checked. The union must conservatively cover every piece of material; it may contain extra empty space. User supplied boxes are never trusted without server validation.
+For an axis aligned translation, calculate exact swept boxes and analytic interval overlap against stationary boxes. Inflate noncontact obstacles by the required gap and numerical guard. If all boxes remain separated for the whole segment, the actual solids are clear under the conservative representation. Diagonal box inflation is conservative and can reject valid narrow routes. A path cannot pass just because sampled animation frames are clear. Default part boxes cannot certify motion through a bore or access opening; such routes require a server verified tighter material decomposition. Test coverage by checking that the solid minus the proxy union contains no material above the numerical policy; ambiguous residue means unknown.
+A positive proxy overlap yields a candidate collision pose for an OCCT intersection or distance query. Actual positive intersection or a measured subthreshold clearance can reject a move. If the proxies overlap but a definitive witness is absent, return unknown, optionally request a tighter trusted decomposition, and do not claim a proven obstruction or admit that action. This trades coverage for honest verification and is the primary technical risk to test on day one.
+Start contacts. Ordinary gap inflation would reject every mounted part. Permit only declared, geometrically checked planar start contacts on named regions, with translation along an outward separating normal. Isolate their material volumes and verify that the two contact volumes lie in opposite closed half spaces of the named plane with no initial penetration; outward translation then maintains separation. All remaining material pairs must satisfy the ordinary swept checks. The exemption applies only to the mating region and does not establish a positive gap at time zero. If contact regions cannot be isolated without masking other material, mark the action unsupported. Model threads and drive engagement as simplified declared interaction regions, not arbitrary collision exclusions.
+Geometry pipeline. Check the import solids, confirm template match, construct the revised bracket in an isolated process, validate a nonempty connected solid, compare changed and protected regions, check assembled intersections, test all hard constraints, recompute the plan from the complete original state, validate reverse insertion, and round trip export. Any failed or unknown mandatory stage prevents success. Use distance utilities to report gaps and Boolean common operations to inspect interference; check kernel completion and shape validity before interpreting their outputs. OCCT documents minimum distance and STEP assembly processing, not a universal repair validator. [S20-S21]
+Constraint
+Checkable v1 condition
+Evidence and boundary
+Fixed components
+Geometry hashes and placements unchanged
+Numerical geometric comparison on regenerated data; no functional claim
+Mounting pads
+Named pad regions unchanged within 0.01 mm
+Region diff report; contact pressure unverified
+Hole alignment
+Axis displacement at most 0.01 mm and angle at most 0.1 degree
+Constructor and geometry check; thread strength unverified
+Design envelope
+Every revised solid inside the declared envelope within guard
+BRep or conservative bounds; assembly packaging only
+Keep outs
+Revised geometry and designated path volumes avoid keep out solids
+Includes modeled cable reserve volume only; cables themselves unsupported
+Assembled collision
+No undeclared positive volume overlap, valid start contacts
+Tangency and ambiguous tolerance cases report unknown
+Tool access
+Declared straight driver volume reaches the engagement region
+Hand ergonomics, torque and slip unverified
+Extraction and insertion
+Full supported segments certified and correct staged goal
+No rotations, flex, gravity, forces or real repair guarantee
+Template geometry limits
+Relief, remaining dimensions and cut volume within engineer supplied bounds
+Geometric requirements only; not manufacturing or strength approval
+
+Report wording. Preferred: Geometry checks passed for this target under policy v1, listed operations, declared contacts and clearances. Required adjacent text: Strength, electrical safety, manufacturing feasibility and restored product function were not assessed. No green aggregate badge may hide mandatory unknown conditions.
+Alternative if proxy coverage fails. Add adaptive BRep distance checks with a conservative translation distance bound only after proving the bound implementation against adversarial thin obstacles and contacts. This is P1. Endpoint sampling, a mesh only animation, or returning pass when a Boolean errors is never an acceptable fallback.
+17 System Architecture
+
+System architecture
+Component
+Responsibility
+Trust boundary
+React workspace
+Selection, constraints, candidate review, comparison and playback
+Cannot set verification status
+FastAPI coordinator
+Validate requests, revisions, budgets, jobs and tool permissions
+Owns state transitions and identifiers
+Import and geometry worker
+STEP/XDE, BRep checks, trusted constructors and exports
+Isolated native code process with bounded resources
+Planner
+Enumerate valid actions and search states
+Uses geometry results, never a model validity judgment
+Verifier
+Reconstruct patch and independently check all required evidence
+Separate execution from proposer; shared kernel is not independent physics
+Model adapter
+Provider calls, schema parsing and tool event correlation
+Cannot execute shell, arbitrary code or external data requests
+Revision store
+SQLite metadata and content addressed artifact files
+Immutable original, atomic report and artifact commits
+
+Lifecycle. Upload commits a quarantined package. Import creates an immutable revision and readiness report. Target selection freezes a run specification. The job executes baseline search, AI tool loop, candidate reconstruction and verification. Comparison is computed from committed reports. Acceptance writes a review event. Export reimports and checks the result before offering a download. Events reference the same run ID throughout.
+Deployment. One Linux container image for the coordinator and geometry worker runtime, one persistent volume for SQLite and artifacts, and a built frontend served behind the same HTTPS origin. Use a single geometry worker process at a time and subprocess isolation per job; do not call OCCT from unbounded web request threads. Local execution on the same pinned image is the development and reproducibility path. A generic static demo host without persistent CPU execution is insufficient.
+Public demo mode. Allow only bundled fixtures for anonymous visitors. Private upload mode requires authentication and project ownership; an operator may instead run it locally during the hackathon. This avoids building enterprise tenant administration while preventing an unrestricted public native CAD parser. Retain demo assets deliberately; private project retention defaults to 24 hours with explicit deletion and no geometry in telemetry. Confirm model provider data handling before sending proprietary metadata.
+Failure and retry. Queue one job, return 202 and stream SSE stage events. Cancel changes the job state, stops new tool calls, and terminates the isolated worker at its resource boundary. Pure reads may retry; mutations use idempotency keys. Restarted workers mark unfinished jobs interrupted. Artifact writes use temporary paths and atomic rename followed by database commit; orphan cleanup never deletes the original revision.
+18 Technical Stack and Engineering Trade Offs
+Layer
+Recommendation
+Reason and explicit limit
+Frontend
+React 19, TypeScript, React Three Fiber 9, Three.js and Drei, Vite
+R3F documents the React major pairing; choose stable versions and lock them [S30]
+API and contracts
+Python 3.12, FastAPI, Pydantic and JSON Schema
+Typed validation and simple integration; schema versions required
+CAD modeling
+CadQuery stable release through its OCP bindings to OCCT
+Headless parametric construction and STEP or GLB export [S18-S19]
+Assembly import
+Explicit OCP STEPCAFControl and XCAF traversal
+Preserve occurrence paths and placements; prove adapter behavior on fixtures [S21]
+Geometry
+OCP BRep checks plus analytic swept conservative boxes
+One kernel binding; bounded exact geometry operations and conservative paths
+Planning
+Small pure Python deterministic state search
+Simple replay and exhaustive tiny case oracle; no general robotics claim
+AI
+Hosted Muse Spark Open with a narrow provider adapter
+Avoid deployment of very large weights; exact account access is gated
+Storage
+SQLite and content addressed files on one persistent disk
+Adequate single team MVP; no distributed worker coordination claims
+Packaging
+Reproducible Linux container and lockfiles
+Record image digest, dependencies and model identifier with results
+
+CadQuery documents a parametric, GUI independent library based on OCP, plus assembly STEP and mesh based glTF export. Use one consistent OCP stack; do not pass shapes between OCP and pythonOCC wrappers in process. pythonOCC exposes much of OCCT and remains a viable alternative, but adds no necessary capability here. FreeCAD provides Python and native parametric workflows and is useful for human inspection, but embedding its desktop and document runtime adds integration work for this service. [S18-S19, S31-S32]
+Do not rely on latest development documentation for an untested method. Freeze one stable CadQuery/OCP combination after importing repeated instances, regenerating the bracket, and round tripping STEP. The stable documentation retrieved describes release 2.7.0 while some current pages expose newer APIs; exact installable versions are a day one spike output, not a claim of a tested environment in this PRD.
+Three.js and GLB handle display efficiently; tessellation is approximate and cannot certify solid clearance. Export millimeter world geometry into meter based GLB with one explicit 0.001 scale conversion, then convert path transforms to the same render units. Keep analysis geometry in millimeters. Test known dimensions and repeated transforms to prevent a visually plausible thousandfold error.
+Licenses. CadQuery identifies Apache 2.0; OCCT and binding licenses and notices need version specific review, including redistribution obligations. pythonOCC identifies LGPLv3. Preserve required notices in the public repository and container. Do not assume a research repository's code license covers every upstream dataset or mesh. The MVP uses team authored fixtures to control provenance. [S12, S31, S33]
+19 UI and UX Requirements
+Use a restrained engineering workspace: neutral off white surface, dark text, one blue target accent, amber obstruction and green only for passed checks, each paired with text and shape. Use a 48 px top bar, a 240 px collapsible component tree, a flexible canvas, and a 320 px evidence panel on a desktop at least 1280 by 800. These are starting design values, not measured usability outcomes. Keep the target and geometry revision visible in every mode.
+Shared accessibility and interaction. Provide a keyboard reachable tree and action list equivalent to selecting and inspecting geometry. Use visible focus, labeled buttons, text status, unit labels and screen reader stage announcements. Never rely on color alone. Support reduced motion, pause, step and scrub; camera movement is user initiated, with an optional brief focus transition. A text path list gives occurrence, direction, distance and prerequisites. Provide a reset view and undo for display state. Numerical inputs state units and bounds before submission.
+Screen and goal
+Hierarchy and main interactions
+State behavior and dependencies
+Project dashboard open a module
+Title, supported package explanation, bundled example, upload and recent local revisions. Primary open or upload; secondary read compatibility
+Empty offers examples; parsing shows stage, never fake percentage; errors list exact package or schema problem. Depends on import and project store
+Assembly workspace define repair target
+Tree left, large assembly center, role and attachment detail right. Primary analyze selected target; hide, isolate, transparency and fit are secondary
+No target shows selection guidance; incomplete metadata shows missing fields; unsupported target explains exclusion. Depends on stable mesh mapping and readiness
+Repairability analysis understand current route
+Baseline status first, ordered actions second, blocker evidence third. Select a rejected action to show its witness; primary explore redesign
+Running exposes states and elapsed budget; no route versus incomplete have separate text; empty results never show zero operations. Depends on planner and evidence store
+AI redesign inspect proposed edits
+Candidate template, concise grounded rationale, highlighted changed region and protected limits. Primary check candidate; secondary reject or inspect parameters
+Proposed, constructing, checking, failed and no supported candidate are distinct. Disable action on stale constraints. Depends on model loop, registry and constructor
+Verification and comparison decide on change
+Synchronized cameras, original and revised labels, metrics, per constraint results. Primary accept for export; secondary replay, overlay or reject
+Unknown checks prevent verified acceptance; no improvement preserves original; loading keeps existing baseline visible. Depends on reports with matching hashes
+Export and engineering summary hand off evidence
+Exact available file types, review status, included limitations and attribution. Primary download checked package; secondary inspect report or return
+Round trip pending, full export failed and part only fallback have explicit states. Never imply native feature history. Depends on export validation and ownership checks
+
+Path visualization. Replay stored axis aligned segments with exact endpoints; time easing may change speed, never spatial interpolation. No smoothing across corners or after removal can cut through geometry. Stop failed moves at their evidence witness and show a blocked indicator. Ghosting and fading are presentation only. Original and revised playback can have different action counts, so synchronize by selected target milestone or step manually, not by pretending equal time means equal effort.
+Verification presentation. The first line is the scoped outcome, followed by the checks and limitations. Clicking a pass opens its input hash, numerical policy, action and evidence. The engineer should be able to answer what changed, which constraint was checked, and what remains unverified without opening raw logs. Raw JSON remains available under technical details.
+20 Data Models and API Contracts
+All examples below are illustrative schemas or records. Use JSON Schema draft 2020 12, disallow additional properties, require finite numbers, and validate every referenced ID. UUID like identifiers are opaque strings. All revisions and evidence objects are immutable. Object paths are internal IDs, never arbitrary filesystem paths supplied by the model.
+AssemblyManifest v1 required fields. schema_version string fixed 1.0; project_id and assembly_id strings; units enum mm; frame object with handedness right and up Z; components array length 5 to 12; connections array; tools array; constraints array; template_bindings array; provenance object. Every component requires id, source_occurrence_path, role, fixed boolean, replaceable boolean, removal_axes array from X+, X-, Y+, Y-, Z+, Z-, and staging_region_id or null. Placement is read from STEP and emitted in the normalized assembly record.
+{
+  "id": "retainer_fan_1",
+  "kind": "screw_retainer",
+  "fastener_id": "screw_1",
+  "retained_component_ids": ["fan_module"],
+  "host_component_id": "bridge",
+  "tool_id": "driver_ph2",
+  "axis_world": [0, 0, 1],
+  "head_origin_mm": [30, 20, 44],
+  "extraction_distance_mm": 20,
+  "engagement_region_id": "engage_1"
+}
+
+Connection union. screw_retainer has the fields above; planar_seat has component_a_id, component_b_id, region_a_id, region_b_id and outward_normal_world. Unknown connection kinds fail readiness. A screw can retain multiple components; releasing it changes only its declared relations. Screw removal also needs a verified tool approach and a continuously checked screw extraction segment.
+Tool record. id string, type enum screwdriver, tip_type string, shaft_radius_mm positive number, shaft_length_mm positive number, handle_radius_mm positive number, handle_length_mm positive number, approach_distance_mm positive number and permitted_axis string. The server constructs the tool volume. A single cylinder for a full screwdriver is insufficient unless it conservatively contains the shaft and handle. Engagement exceptions are named geometric regions.
+Constraint union. id string, mandatory boolean, kind enum fixed_geometry, protected_region, hole_axis, envelope, keep_out, clearance or template_bound, component_ids string array, and a kind specific payload with units. fixed_geometry references original shape and placement hashes; clearance requires threshold_mm and pair or path scope; template_bound supplies a finite parameter grid. The user cannot mark an essential invariant optional after a failed run without creating a new revision and a visibly different comparison.
+Proposal v1. candidate_request_id, bracket_id, template_id enum T01 or T02, parameters object, evidence_ids nonempty string array, and rationale string at most 800 characters. T01 parameters are center_x_mm, center_y_mm, width_mm and depth_mm; T02 has offset_y_mm. Parameter domains are enumerated by list_interventions. All are expressed in the bracket constructor's local frame. The registry maps to world coordinates and rejects mismatches.
+{
+  "candidate_request_id": "proposal_1",
+  "bracket_id": "bridge",
+  "template_id": "T01",
+  "parameters": {
+    "center_x_mm": 0,
+    "center_y_mm": 0,
+    "width_mm": 24,
+    "depth_mm": 8
+  },
+  "evidence_ids": ["blocked_move_12", "constraints_4"],
+  "rationale": "Relieve only the editable web beside the extraction corridor."
+}
+
+The numbers above are examples, valid only if the server supplied those exact parameter values. The record is a proposal, not a verified successful edit.
+PlanResult. status enum feasible, no_path_supported, incomplete, invalid_input or cancelled; revision_id; target_id; input_hash; policy_version; complete boolean; optimal_within_scope boolean; expanded_states integer; elapsed_ms integer; limits object; unresolved_transition_count integer; steps array and rejections array. A feasible result can have complete false when a checked best found route exists. A no_path_supported result requires complete true and zero unresolved transitions.
+Step. action_id; kind enum REMOVE_FASTENER or TRANSLATE_PART; component_id; prerequisite_ids; tool_id nullable; start_transform; end_transform; axis; distance_mm; certificate_ids array; before_state_hash; after_state_hash. Matrices have exactly 16 finite values. A certificate stores representation type, proxy coverage evidence, clearance lower bound, contact exemptions, kernel result, and numerical policy.
+VerificationReport. id; candidate_id; original_revision_id; candidate_revision_id; input_hash; constraint_hash; engine_versions; generated_at; status enum passed, failed or unknown; checks array of constraint_id, result, measured_value or null, limit, units, evidence_ids and explanation; disassembly_plan_id; insertion_plan_id; unverified_properties array. The coordinator derives the aggregate status; model supplied status fields are ignored and rejected by proposal schemas.
+Common error envelope. error_code enum INVALID_PACKAGE, INVALID_MANIFEST, UNSUPPORTED_SEMANTICS, INVALID_SOLID, LIMIT_EXCEEDED, STALE_REVISION, UNSUPPORTED_TEMPLATE, CONSTRAINT_VIOLATION, GEOMETRY_FAILED, VERIFICATION_UNKNOWN, MODEL_UNAVAILABLE, MODEL_SCHEMA_ERROR, NOT_FOUND, FORBIDDEN or CANCELLED; message string; retryable boolean; field_errors array; evidence_ids array; run_id nullable. No success shaped response on a failed geometry operation.
+HTTP API
+Request
+Successful response
+Main errors
+POST /v1/projects
+name
+201 project_id and revision list
+400 invalid name
+POST /v1/projects/{id}/imports
+Multipart package, idempotency key
+202 job_id and revision pending
+413 size, 422 manifest, 403 ownership
+GET /v1/revisions/{id}
+No body
+200 inventory, readiness, preview refs
+404 or 403
+POST /v1/revisions/{id}/runs
+target_id, policy_id, constraint_hash
+202 run_id and job_id
+409 stale, 422 unsupported
+GET /v1/runs/{id}
+No body
+200 state, reports and metrics refs
+404 or 403
+GET /v1/jobs/{id}/events
+Last Event ID optional
+SSE ordered stage events
+404; reconnect resumes sequence
+POST /v1/jobs/{id}/cancel
+Idempotency key
+202 cancellation requested
+409 already terminal
+POST /v1/candidates/{id}/decision
+accept or reject and input_hash
+200 review_event_id
+409 stale or ineligible
+POST /v1/candidates/{id}/exports
+Idempotency key
+202 export job
+409 unaccepted or incomplete
+GET /v1/artifacts/{id}
+No body
+200 scoped artifact download
+403 unauthorized; no path traversal
+
+REST starts or reads jobs; internal model tools invoke the same domain functions through an allowlisted dispatcher, not arbitrary REST URLs. The model cannot call acceptance or download operations. Persist jobs, revisions, components, runs, candidates, checks, reviews and artifacts with foreign keys. Event payloads contain sequence, timestamp, stage, state and evidence reference; omit private CAD descriptions from public logs.
+21 Evaluation and Testing Framework
+Benchmark provenance. Build three original parametric fixtures with source constructors, a generation seed, dimensions, intended relations and independent expected action outcomes. Release the team's fixture code under a chosen permissive code license and geometry under an explicit license such as CC BY 4.0 once the authors agree. Do not describe that proposed license as already granted. No third party appliance model has been rights cleared here. A later real module must record owner permission and public redistribution permission separately.
+Fixture
+Intended case and ground truth procedure
+What it can establish
+B01 enclosure service cartridge
+5 to 6 occurrences; cover and target, directly reachable screws; manually enumerate all supported plans
+Correct import, accessible baseline and no unnecessary edit
+B02 trapped fan bridge
+8 to 10 occurrences; target needs unrelated cover removal or is blocked under allowed rules; bracket matches T01
+Actual obstruction, real geometry patch, recheck and measured access change
+B03 tool access conflict
+10 to 12 occurrences; one driver route blocked, allowed web offset competes with relief and keep out
+Constraint sensitive choice, invalid proposal rejection and honest no solution variant
+
+These are intended fixture specifications, not completed tests or promised successes. Use an independent reviewer to check geometric and relation oracles. If only synthetic fixtures exist, claim performance only on those fixtures. Obtain one deenergized, authorized real module and repair practitioner review before claiming real appliance validation; do not choose mains or hazardous equipment simply for visual drama.
+Frozen cases. Before tuning, create 18 cases: six variants per fixture. Predeclare 12 supported positive or already accessible cases and six negative or out of scope cases: fixed blocker, clearance violation, inaccessible driver, missing relation, boundary contact and all templates disallowed. Hold out at least one geometry and one semantic constraint variant per fixture. Report results for every assigned case. Variants from a shared constructor are correlated and cannot establish broad industrial generalization.
+Comparators. C0 original design with deterministic search; C1 engineer authored legal template and parameters with the same verifier; C2 rule selector that enumerates eligible template parameter grids in stable order under the same candidate and time budgets; C3 Muse proposal and feedback loop. Use a small exhaustive legal candidate search offline where feasible to establish whether any supported improvement exists. C1 is an upper reference for selection, not proof of production desirability.
+For AI comparison, run each condition on all frozen cases and repeat C3 three times with recorded model version and settings. Compare successful verified improvements, mandatory violations caught, candidate calls, total latency, tool calls, and explanation evidence accuracy. A model cannot outperform complete deterministic enumeration on attainable correctness; its plausible value is fewer evaluations, better choice under a constrained budget, better handling of semantically different constraints, or clearer grounded explanation. If all cases have one obvious intervention, the benchmark cannot establish meaningful model advantage.
+Model benefit gate. Predeclare a practical target of at least two additional successful held out cases under the same three candidate budget, or at least 25 percent fewer candidate checks with no loss of success. These are decision thresholds, not measured outcomes or statistically established superiority. If unmet, remove the efficiency claim, retain the rule based baseline, and reassess the AI thesis. Small sample results support a prototype decision only.
+Test layer
+Required tests and independent oracle
+Unit
+Manifest schema, units, state hashing, costs, tool changes, target exclusion and deterministic tie breaks
+Geometry
+Analytic boxes clear, intersecting, touching, thin intermediate obstacle, near gap threshold, repeated placement and scale mismatch
+Contact
+Separating planar start contact passes only intended region; inward motion and extra hidden contact fail
+Templates
+Protected feet and holes unchanged, allowed diff region, invalid Boolean, offset envelope and nonempty connected bracket
+Planning
+Exhaustive tiny assembly oracle; cover before screw; multiple retainers; unknown edge never yields conclusive no path
+AI contracts
+Malformed JSON, extra fields, invented template, out of range values, stale IDs, prompt injection and tool budget
+Integration
+Import through export and reimport; worker crash; cancellation; invalidation on constraint edit
+Regression
+Every previous false pass, actual collision and failed constraint remains fixed under pinned engine
+End to end
+Tree target selection, real run, candidate review, evidence, playback and export; keyboard equivalent
+
+Measurement sheet. Each row records case_id, source_revision, target, policy, condition, model settings, repetition, status, baseline and revised metrics, failed and unknown checks, candidate count, geometry calls, stage runtime, tokens, cost, artifact hashes and reviewer disposition. Publish raw run records plus aggregation code and exclude private information. Start with no populated results; never prefill expected wins as measurements.
+Assumption rigor audit. Major risk: useful template coverage could be tested only on a fixture designed to fit it; mitigate with the held out variant and authorized real review before commercial claims. Major risk: AI advantage could be asserted from a successful demo; mitigate with C2 and matched budgets before narrative claims. Major risk: stated willingness to use could be treated as demand; require a buyer's actual second assembly and paid pilot commitment. The top priorities are continuous collision correctness, meaningful template coverage, and evidence of model benefit; interface preference testing comes afterward.
+22 Three Minute Hackathon Demo
+Record only after a real run yields an accepted improving candidate. The sequence below covers every second through contiguous intervals; narration is a production script with conditional result wording. Replace no placeholder with an invented metric. If the run fails, show the failure and explain it, or use a clearly labeled previously computed successful run with identical inspectable evidence.
+Time
+Visual and interaction
+Spoken narrative
+Evidence visible
+0 to 12 s
+Transparent service module; select small fan target
+Replacing a five dollar part should not require destroying a five hundred dollar product. This small component is the one we want to replace.
+Synthetic example label if applicable; selected occurrence ID
+12 to 25 s
+Orbit target; show retainers and path arrow
+UNLOCK checks access to a selected component while keeping the declared mounting and clearance requirements fixed.
+Required manifest and target summary
+25 to 43 s
+Start baseline or open labeled computed baseline; step to actual failed move
+The current design blocks this supported movement. Here is the bracket and the pose where the check found the obstruction.
+Collision witness or accurate insufficient clearance label; no fabricated counts
+43 to 58 s
+Display original route or conclusive scoped failure
+The baseline either requires these removals or has no path within the operations we support. It does not claim every physical route was searched.
+Exact baseline status and measured actions
+58 to 80 s
+Request redesign; expand model actions
+Muse Spark Open inspects the component roles, the obstruction and the protected regions. It chooses a supported bracket edit and asks the geometry tools to evaluate it.
+Actual model ID, tool names, arguments and evidence IDs
+80 to 100 s
+Highlight constructed bracket difference and fixed pads
+This is a change to the solid geometry. The feet and mounting holes are protected; only this permitted web region can change.
+CAD difference and template parameters
+100 to 121 s
+Show verified checks and one rejected candidate if actually produced
+A separate checker rebuilds the candidate, checks the declared constraints, and reruns access. A suggestion with failed or unknown checks cannot pass.
+Constraint report, path certificate and rejection only if real
+121 to 142 s
+Side by side original and revised; click metric rows
+Here is the result from this run: read the measured status and action counts shown on screen. Both designs use the same declared limits.
+Matching constraint hash and actual measured values
+142 to 157 s
+Open export contents and one model independent comparator
+The edit and evidence can be exported. We compare the model with a rule based selector; show only the difference our tests actually measured.
+STEP output, parameters, raw evaluation subset and condition labels
+157 to 170 s
+Limitation line; optional inspect reverse insertion
+These checks cover supported geometry, movement and tool access. Strength, electrical safety, manufacturing and restored function still need engineering assessment.
+Persistent limitations text
+170 to 180 s
+User plays final target route; other parts fade visually
+UNLOCK makes one service design decision visible, editable and checkable.
+Actual accepted path; completed pass report and live or replay label
+
+Main reveal. In a genuine passing run, the revised target follows its certified path while the original obstruction remains visible in the comparison view. The final fade is presentation only; the collision checker still used all relevant obstacles. No generated video or model imagined route substitutes for stored path transforms.
+Live versus recorded. Live means model and geometry jobs execute during the demonstrated interaction. Computed earlier means a committed run is replayed. Show stage durations from the run, and label edited waiting time if video pacing removes it. Never present a replay as live reasoning. Keep the public repository commit, fixture hash and result package connected to the video.
+Fallback. Provider outage: replay a labeled prior run and show its model calls. Export failure: show the real analysis and clearly identify the missing export function. No verified improving candidate: do not film a false success; narrow the supported template, fix the verifier or submit a research prototype with its actual failure. Such a submission has not achieved the full product promise.
+Rubric proof. Impact 30 percent: an observed authorized user case or an explicit synthetic limitation. Meta tooling 25 percent: real bounded decisions and a simpler comparator. Execution 20 percent: real solids, rejected edits, reproducibility and export. Demo 25 percent: one coherent end to end result and an understandable reveal. Weights remain source supplied, not independently confirmed signed rules. [S02]
+23 Development Milestones and Task Ownership
+Dates use America/Chicago and assume two capable developers who are eligible to contribute. Available hours are unknown; reduce optional work before weakening correctness. A owns product and integration, B owns engineering core; both review every pass claim and own submission readiness.
+Date
+Developer A
+Developer B
+Milestone and stop or go gate
+Oct 27
+Readiness UI skeleton; seek real workflow observation; record eligibility questions
+Pin CAD runtime; import B01; test full segment obstruction; model tool call smoke test
+M1: real separated occurrences, valid units, geometry checker and actual model response. Resolve provider continuity and participant rules independently
+Oct 28
+Tree and canvas target selection; metrics and status components wired to job API
+Implement primitives, search and baseline B02 evidence
+M2: unmodified assembly route or scoped no path reproduced; no false pass in thin obstacle test
+Oct 29
+Candidate view and constraint evidence interactions
+T01 constructor, independent reconstruction and protected region checks; T02 if core stable
+M3: model proposal changes actual geometry; preview access through submission date reconfirmed
+Oct 30
+Comparison and path playback integrated
+Replan, reverse checks, rejection cases and round trip export
+M4: at least one real verified improvement, one rejected edit and unchanged hard constraints; otherwise cut breadth and fix core
+Oct 31
+Frozen suite runner view; keyboard and missing data errors
+C0 to C3 evaluation, held out variants and runtime profiling
+M5: integrated Import to Export; publish all case outcomes, not only wins
+Nov 1
+Private upload or fixture only hosted mode; access testing
+Resource limits, crash recovery, versions and logs
+Hosted demo and clean setup reproduce the same evidence; real practitioner review if available
+Nov 2
+Narrative, meaningful UI polish, captions and rehearsal
+Correctness review and model ablation interpretation
+Freeze claim scope and supported examples; no unearned novelty or safety claims
+Nov 3
+Record three minute film; README and attribution
+Freeze image, run packages, tests, public license and secret checks
+M6 ready: code, actual demo, video and evidence accessible to judges; signed rules checked
+Nov 4
+Representative submits early and checks receipt
+Verify links, preserve reproducibility bundle; fix only submission blockers
+Internal target 6 p.m. Central; stated supplied deadline 8 p.m. Central; portal confirmation required
+
+Critical path. CAD import and continuous verification precede sequence search; search and template construction precede model claims; verified geometry and export precede polished comparison and recording. Model access runs as an early parallel spike because missing access can invalidate the event thesis.
+Cut first. Account system, history dashboard, second template family, parallel candidate UI, rich reports, camera polish, automatic annotation, native CAD plug in, universal import, extra models and market sized slides. T02 can be cut with a narrower model reasoning claim. Never cut actual geometry editing, independent mandatory checks, a baseline, honest failure status, real model tool interaction, or measured before and after evidence.
+24 Risks Assumptions and Mitigations
+Risk levels below are judgment estimates, not measured probabilities. H means likely or materially uncertain; M means plausible; L means less likely under current scope. Reassess after the specified experiment rather than leaving a static register.
+ID and estimated likelihood
+Impact and evidence
+Mitigation and validation
+Decision trigger
+R01 H prior art overlap
+High differentiation risk; patent and planning research overlap [S12-S16]
+Restrict claims; inspect exact workflow with engineers; obtain legal review for commercialization
+No broad novelty or freedom claim; no commercial IP conclusion without review
+R02 H arbitrary import failure
+High scope risk; STEP content varies
+Required manifest, XDE tests and occurrence fixture
+Unsupported input remains inspection only
+R03 H missing semantics
+High false plan risk; geometry does not encode every service action
+Engineer confirmed manifest and readiness gate
+Unknown connection in closure blocks analysis
+R04 H proxy conservatism
+High loss of coverage; bounding boxes can mask valid corridors
+Trusted decomposition and BRep witness tests
+No passing B02 route by Oct 28 triggers geometry scope reduction
+R05 M geometry versus physical behavior
+High overclaim risk; contacts, flexibility and forces omitted
+Explicit assumptions and practitioner review
+Cannot claim real repair validity from geometry alone
+R06 H invalid AI proposals
+Medium reliability and cost risk
+Bounds, schemas, budgets and independent checker
+Invalid proposals never construct or pass; repeat schema failure ends AI stage
+R07 H templates too restrictive
+High utility risk; one family may fit only synthetic fixtures
+Held out geometry and real module review
+No meaningful second variant stops generalization claims
+R08 H omitted physical constraints
+High unsafe interpretation risk
+Persistent unverified properties and engineering review handoff
+No manufacturing release language or unattended physical action
+R09 H no model advantage
+High competition thesis risk; deterministic enumeration is strong
+C2 versus C3 under matched budgets
+Miss Section 21 benefit gate means remove advantage claim and reassess AI scope
+R10 M predetermined appearance
+High demo credibility risk
+Actual calls, changed constraint variant and signed input hashes
+Cannot inspect a live or labeled prior run means do not present autonomous reasoning
+R11 H customer demand weak
+High business risk; no interviews or buying evidence
+Recent case observation and buyer supplied second assembly
+No paid pilot commitment means no commercial scale investment
+R12 M code or asset license conflict
+High public submission risk
+Team authored fixtures, version notices, asset ledger
+Unknown redistribution rights exclude the asset
+R13 H event eligibility unresolved
+High entry risk; supplied guide defers to signed rules [S02-S03]
+Organizer or signed rules confirmation for every contributor
+Do not assume team eligibility or submit misleading attribution
+R14 H provider continuity or quota
+High live model risk; preview caveat [S26]
+Reconfirm Oct 29 onward access; smoke test same model fallback
+No supported account access by Oct 29 requires provider change or disclosed failure
+R15 M tolerance error
+High false pass risk near contact
+Guard bands, adversarial fixtures and unknown status
+Any false pass blocks release until fixed and regressed
+R16 M native parser failure or abuse
+Medium availability and data risk
+Isolated jobs, quotas, fixture only public mode and authentication
+Parser crash cannot expose files or corrupt project
+R17 M export loses hierarchy
+High handoff risk
+Round trip import and path recheck
+Full assembly export disabled until mapping and solids pass
+
+25 Long Term Product Roadmap
+After the event. Validate an authorized real design review; improve metadata authoring and capture real omitted operations. Prioritize a native CAD integration only after determining whether export and reimport friction blocks adoption. Extend template coverage from actual customer access failures, with an independent regression case for every new operation.
+Next technical stage. Add rotations and improved motion validation, full screwdriver geometry and additional contact families, then cables and connector handling if a customer need justifies the complexity. Structural, thermal, sealing, manufacturing and regulatory checks require qualified tools, boundary conditions and domain review. They cannot be inferred from adding a more capable language model.
+Potential platform. Support design for repairability reviews across multiple priority components, versions, and repair scenarios; integrate with PDM or PLM change records and service information. Whole product scoring needs an explicit validated methodology incorporating parts, documentation, reassembly and software dependencies. It is not the sum of the prototype's action counts.
+26 Business and Commercialization Hypotheses
+Initial buyer. An engineering manager or head of product development with authority over design review tooling. End user. The mechanical engineer. A service specialist supplies failure priorities and challenges assumptions. Design consultancies could be early partners because they see multiple projects, but their willingness to share client CAD is uncertain.
+Value hypothesis. Reduce the manual coordination needed to find a service access issue, inspect a supported change, and document the evidence before design freeze. Establish this by observing comparable reviews with and without UNLOCK, measuring active engineer time, missing constraints, edit usefulness and rework. Do not equate fewer modeled operations with reduced warranty cost or environmental impact.
+Pricing experiments. Offer a tightly scoped paid design review pilot at a hypothetical $500 to $2,000 per module, or test a hypothetical $100 to $300 per active engineer monthly plan after repeated use is demonstrated. These are willingness to pay experiment anchors, not competitor prices or revenue projections. Avoid usage based pricing until runtime predictability and repeat review frequency are understood.
+Acquisition. Recruit a small design consultancy, appliance service engineering team and repair focused manufacturer through authorized introductions; publish a rights cleared case study once a real review exists. No outreach is part of this PRD task. A CAD plug in may reduce workflow friction but creates version, API and procurement dependencies. Enterprise deployment may require on premise geometry processing, provider data controls, SSO, audit retention and contract review beyond the MVP.
+Defensibility hypothesis. A growing corpus of permissioned failure cases, validated templates, accurate constraint provenance, integration into review decisions and transparent evidence could create durable value. Access to a general model, a STEP viewer or an isolated planner is unlikely to be sufficient. Patent review remains necessary; the public research weakens a broad algorithm moat. No market size or revenue forecast is supported.
+27 Outstanding Research Questions
+Question
+Owner and next evidence
+Decision affected
+Does the exact signed event rule set permit every contributor and this submission format
+Both; read signed rules or obtain organizer response
+Participation and attribution
+Does selected provider access continue through Nov 4 with usable quotas
+B; account level call and provider confirmation
+Provider and live demonstration
+Can conservative paths pass real useful geometry without false validity
+B; B02 and thin obstacle oracles, then a real module
+Core feasibility and supported motion scope
+Can one family yield useful changes beyond its own authored fixture
+Both; held out variant and engineer reviewed assembly
+Template investment and claims
+Does the model add value under a realistic finite candidate budget
+B; C2 and C3 evaluation
+AI positioning and orchestration design
+Will users provide reliable semantics without excessive effort
+A; observe manifest completion in one review
+Onboarding and integration
+Does export satisfy the receiving engineer's workflow
+A; open changed STEP and parameter reconstruction in their CAD
+Handoff and feature history expectations
+Which native CAD or adjacent product already performs the closest workflow
+A; experienced user demonstration and exact module comparison
+Commercial differentiation
+What do current patent prosecution records and claims imply
+Specialist before commercialization
+IP strategy, without inference in this PRD
+Is there a buyer with a recurring funded problem
+A; paid pilot commitment and a second review
+Commercial go decision
+
+28 Go and No Go Decision Criteria
+Prototype go. By October 28, import a genuine separate part assembly, prove the continuous checker on thin obstacle and contact fixtures, produce baseline evidence and complete a real Muse tool call. If not, reduce import and geometry scope and stop presentation polish. A manually moved mesh does not meet this gate.
+Core product go. By October 30, one target driven template must alter actual solid geometry, preserve every mandatory declared constraint, yield a checked improving route, and export an inspectable edit. A deliberately invalid edit must be rejected. If this gate fails, UNLOCK has not demonstrated its core promise; a planning only fallback must be described as an incomplete research prototype.
+Demo go. Before recording, replay ten canonical runs with no false verified result, inspect held out outcomes, disclose current model comparator results, verify CAD round trip and confirm all judge facing links. Clear labeling is required for synthetic fixtures and earlier computations. Eligibility and actual submission requirements are an independent participation gate.
+Commercial go. Require an observed design review, one authorized real assembly, a useful edit confirmed by a qualified engineer, repeat demand on another module, a buyer paid pilot commitment, and review of patent, license and proprietary data obligations. A successful hackathon film alone does not meet this gate.
+29 Sources and References
+Sources were accessed for this document on October 27 2026 in the client's America/Chicago time context. Undated documentation is mutable and should be snapshotted with the implementation. Publication dates are provided where identified; no material published after the research cutoff is relied on. Sources establish their documented claims, not independent UNLOCK validation. The supplied PDF is a team reference that cites organizer materials; it is not the signed rules itself.
+Organizer and repairability evidence
+[S01] Cerebral Valley. Meta Global AI Developer Hackathon. Event page, October to November 2026, undated page. Supports dates, tracks, themes and Meta ecosystem. Official event page
+[S02] Supplied Meta hackathon resources team guide. Updated October 26 2026, 11 pages. Pages 2 to 5 and 8 to 10 support the guide attributed submission details, weights and eligibility caveats. Source file supplied by the user; no public URL was supplied for the complete guide.
+[S03] Cerebral Valley. Event waiver and submission portal. Access to the waiver was unavailable in the research browser; signed terms were not verified. Waiver and submission portal
+[S04] iFixit. How Is the iFixit Repairability Score Calculated. Published 2023, page mutable. Source for critical components, paths, tools, reassembly and nongeometric dimensions. Methodology
+[S05] Cordella, Alfieri and Sanfelix, JRC. Analysis and development of a scoring system for repair and upgrade of products. 2019, EUR 29711 EN, doi 10.2760/725068. JRC report record
+[S06] BSI. BS EN 45554 2020 public standard summary. April 30 2020. Only the public scope was reviewed, not the paywalled full standard. Standard summary
+Commercial alternatives and prior art
+[S07] Autodesk Fusion Help. Evaluate the accessibility. Undated. Directional bodies analysis and undercut or inaccessible area display. Fusion documentation
+[S08] Autodesk Inventor API Help. Interference Analysis sample. 2024 documentation. Inventor documentation
+[S09] SOLIDWORKS Help. Detecting Problems and Checking Static Clearances Between Components. Versioned 2016 and 2021 documentation. Assembly checks and clearance workflow
+[S10] Siemens. NX Assembly Path Planning fact sheet and NX Mach Series add on modules. Undated vendor publications. Path planning fact sheet and module description
+[S11] HCL DFMPro. Design For Assembly Software and CAD Systems. Undated vendor documentation. Assembly rules and CAD integration
+[S12] IDEAL Lab. AssembleX source repository and README, accessed October 27 2026. Author implementation evidence; not reproduced here. Repository
+[S13] von Arx, Schlafly and Fuge. End to End Autonomous Generation of Human Assembly Plans. arXiv 2610.09781v1, October 7 2026. Author evaluated planning and instruction system. Paper
+[S14] Lei, Lipovetzky and Ehinger. State Based Disassembly Planning. AAAI 39 14, 14602 to 14609, April 11 2025, doi 10.1609/aaai.v39i14.33600. Publisher
+[S15] Kiyokawa and colleagues. Component Influence Driven Fastener Reduction for Robotic Disassemblability Aware Design Simplification. arXiv 2605.21026v1, May 20 2026. Abstract and full text
+[S16] Wayne State University. US20250390643A1, System and method for product design enhancement for CAD based disassemblability. Published December 25 2025. Primary disclosure and claims viewed through Google Patents; status label is not a legal opinion. Publication and claims
+[S17] European Commission. Directive on repair of goods. Undated living summary of Directive EU 2024 1799. Commission page
+[S22] Leo AI. AI for CAD. Undated vendor claims, not independently evaluated; some separate product pages describe mesh concept outputs, so validate the exact workflow. Vendor page
+[S23] Khendry, Margadji and Pattinson. IDfRA Self Verification for Iterative Design in Robotic Assembly. arXiv 2509.16998v2, revised October 14 2026; ICRA 2026. Paper
+Implementation and model documentation
+[S18] CadQuery. Introduction. Stable documentation, undated. Parametric headless modeling and OCP relationship. Introduction
+[S19] CadQuery. Importing and Exporting Files and Assemblies. Stable and latest documentation, undated. Validate APIs against the chosen pinned release. Import and export and stable assemblies
+[S20] OCCT. BRepExtrema DistShapeShape reference. Current documentation returned OCCT 8.0.1; use matching pinned runtime documentation. Distance API
+[S21] OCCT. STEP processor guide and STEPCAFControl Reader reference. The older guide documents XDE assembly translation; current API documentation is version sensitive. STEP guide and current reader
+[S24] Meta. Muse Spark Open documentation. Undated, accessed October 27 2026. Model overview
+[S25] Meta. Run inference for Muse Spark Open. Undated. Hosted provider strings, tool calling and provider interfaces. Deployment guide
+[S26] Fireworks. Muse Spark Open model listing, created October 14 2026 per page metadata. Model page and linked listing with preview caveat
+[S27] Cloudflare AI. Muse Spark Open model page. Undated. Gateway option and pricing metadata. Provider documentation
+[S28] Meta. Muse Spark Open prompting guide. Undated. Native tool format, response loop and reasoning settings. Prompting guide
+[S29] Meta. Muse Model License for Muse Spark Open. October 15 2026. Reviewed rendered license text, including attribution and usage policy references. Published license
+[S30] React Three Fiber. Introduction. Undated, current stable React and renderer pairing. Documentation
+[S31] pythonOCC core. Repository and releases. Undated README and versioned releases. Repository and releases
+[S32] FreeCAD. Features. Undated. Python automation and format support. Project documentation
+[S33] CadQuery. Project citation and license metadata. Undated repository record. License metadata
+30 Final Product Recommendation
+Build UNLOCK as a supported repairability redesign review tool. Start with a fan or service cartridge behind a known parametric bracket, using a complete STEP plus manifest package. Demonstrate a real edit, independent geometric revalidation, an inspectable measured comparison, and editable output. The most important early decision is whether the conservative checker can certify a useful path while correctly rejecting thin obstacles and contact errors.
+Judge review. The model contribution is testable through tool logs, constraint changes and a matched rule baseline. Broad novelty is not supported. A successful film must show an actual working edit and checks, with synthetic and replay labels where applicable. The unresolved weakness is that a small template domain may give the model little advantage.
+Mechanical engineering review. Explicit connections, units, contact handling, protected regions and full motion checking make the claims inspectable. Conservative proxies may reject valid paths, and collision freedom does not prove strength, electrical safety, manufacturing feasibility or restored function. The export must carry these boundaries with the design.
+Product review. The engineer and decision are specific, but review frequency, semantic authoring effort and willingness to pay remain unknown. Validate one real review and a buyer action before expanding into a platform. Treat a strong prototype result as permission to learn from customers, not evidence that the commercial opportunity is established.
+Proceed while the core gates hold. Preserve the central promise: select a difficult service component, change a constrained design feature, and independently verify the supported geometric improvement.

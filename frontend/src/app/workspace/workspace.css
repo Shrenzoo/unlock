@@ -1134,3 +1134,8 @@ button.chip {
     overflow: visible;
   }
 }
+
+/* Evidence identifiers retain their full value in tooltips and raw reports. */
+.panel .mono, .panel .prov { overflow-wrap: anywhere; }
+.vp__label { position: absolute; z-index: 2; top: 12px; left: 14px; display: grid; gap: 3px; font-size: 12px; pointer-events: none; }
+.vp__label span { color: var(--ink-3, #6b6f72); font-size: 10px; }

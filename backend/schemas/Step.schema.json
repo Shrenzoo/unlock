@@ -1,0 +1,130 @@
+{
+  "$defs": {
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "default": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "items": {
+            "type": "number"
+          },
+          "title": "Matrix",
+          "type": "array"
+        }
+      },
+      "title": "Transform",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:Step:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {
+      "title": "Action Id",
+      "type": "string"
+    },
+    "after_state_hash": {
+      "title": "After State Hash",
+      "type": "string"
+    },
+    "axis": {
+      "enum": [
+        "X+",
+        "X-",
+        "Y+",
+        "Y-",
+        "Z+",
+        "Z-"
+      ],
+      "title": "Axis",
+      "type": "string"
+    },
+    "before_state_hash": {
+      "title": "Before State Hash",
+      "type": "string"
+    },
+    "certificate_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Certificate Ids",
+      "type": "array"
+    },
+    "component_id": {
+      "title": "Component Id",
+      "type": "string"
+    },
+    "distance_mm": {
+      "exclusiveMinimum": 0,
+      "title": "Distance Mm",
+      "type": "number"
+    },
+    "end_transform": {
+      "$ref": "#/$defs/Transform"
+    },
+    "kind": {
+      "enum": [
+        "REMOVE_FASTENER",
+        "TRANSLATE_PART"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "prerequisite_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prerequisite Ids",
+      "type": "array"
+    },
+    "start_transform": {
+      "$ref": "#/$defs/Transform"
+    },
+    "tool_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Tool Id"
+    }
+  },
+  "required": [
+    "action_id",
+    "kind",
+    "component_id",
+    "prerequisite_ids",
+    "tool_id",
+    "start_transform",
+    "end_transform",
+    "axis",
+    "distance_mm",
+    "certificate_ids",
+    "before_state_hash",
+    "after_state_hash"
+  ],
+  "title": "Step",
+  "type": "object"
+}

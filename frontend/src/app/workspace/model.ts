@@ -6,15 +6,15 @@ import { PART_IDS, isPartId, type AssemblyView, type PartId, type Relief } from 
 export const MODES = ['inspect', 'analyze', 'redesign', 'compare', 'export'] as const
 export type Mode = (typeof MODES)[number]
 
-export type JobStatus = 'idle' | 'running' | 'done'
+export type JobStatus = 'idle' | 'running' | 'done' | 'failed'
 
 export interface WorkspaceState {
   mode: Mode
-  selected: PartId | null
-  hovered: PartId | null
-  target: PartId | null
-  hidden: PartId[]
-  isolated: PartId | null
+  selected: string | null
+  hovered: string | null
+  target: string | null
+  hidden: string[]
+  isolated: string | null
   /** 0 = opaque, 1 = context parts nearly invisible */
   xray: number
   exploded: boolean
@@ -45,12 +45,12 @@ export const initialState: WorkspaceState = {
 
 export type Action =
   | { type: 'mode'; mode: Mode }
-  | { type: 'select'; id: PartId | null }
-  | { type: 'hover'; id: PartId | null }
-  | { type: 'target'; id: PartId | null }
-  | { type: 'toggleHidden'; id: PartId }
+  | { type: 'select'; id: string | null }
+  | { type: 'hover'; id: string | null }
+  | { type: 'target'; id: string | null }
+  | { type: 'toggleHidden'; id: string }
   | { type: 'showAll' }
-  | { type: 'isolate'; id: PartId | null }
+  | { type: 'isolate'; id: string | null }
   | { type: 'xray'; value: number }
   | { type: 'explode'; value: boolean }
   | { type: 'job'; job: 'baseline' | 'redesign'; status: JobStatus }
@@ -67,7 +67,7 @@ export function reducer(s: WorkspaceState, a: Action): WorkspaceState {
     case 'mode': {
       const next: WorkspaceState = { ...s, mode: a.mode, witness: a.mode === 'analyze' ? s.witness : null, notice: null }
       // the edited bracket sits under the cover: hide it once, visibly and reversibly
-      const inside = a.mode === 'redesign' || a.mode === 'compare' || a.mode === 'export'
+      const inside = false // Fixture-specific hiding is controlled explicitly by the viewer.
       const missing = COVER_PARTS.filter((id) => !s.hidden.includes(id))
       if (inside && missing.length === COVER_PARTS.length) {
         next.hidden = [...s.hidden, ...missing]

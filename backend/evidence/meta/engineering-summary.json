@@ -1,0 +1,150 @@
+{
+  "provenance": "explicit offline scripted provider; real CAD, planner, independent verification and export",
+  "model": {
+    "called": true,
+    "live": false,
+    "model_id": "fake-scripted-provider",
+    "origin": "model",
+    "provider": "fake",
+    "reasoning_effort": "medium"
+  },
+  "baseline": "no_path_supported",
+  "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+  "proposals": [
+    {
+      "template": "T01",
+      "parameters": {
+        "center_x_mm": 0.0,
+        "center_y_mm": -20.0,
+        "depth_mm": 8.0,
+        "width_mm": 24.0
+      },
+      "stage": "REJECTED",
+      "feedback": {
+        "candidate_id": "cand_2060bc5eae20",
+        "category": "NO_REPAIR_PATH",
+        "evidence_id": "plan_76edac406f01",
+        "measured": {
+          "category": "INSUFFICIENT_CLEARANCE",
+          "obstacles": [
+            "base",
+            "board",
+            "bridge",
+            "cover"
+          ]
+        },
+        "message": "revised design still has no supported removal route: target Z+ INSUFFICIENT_CLEARANCE",
+        "retry_permitted": true
+      }
+    },
+    {
+      "template": "T01",
+      "parameters": {
+        "center_x_mm": 0.0,
+        "center_y_mm": -20.0,
+        "depth_mm": 12.0,
+        "width_mm": 24.0
+      },
+      "stage": "VERIFIED_IMPROVEMENT",
+      "feedback": null
+    }
+  ],
+  "revised_status": "feasible",
+  "steps": [
+    {
+      "action_id": "74640415568a2f92c479e942ac9e7abf7f2b82baacace4ea475e54be480c49ef",
+      "after_state_hash": "a876ba13a3c3dcd249d940b72e7edd3791025849d7c5a83e846f838257a58cac",
+      "axis": "Z+",
+      "before_state_hash": "104db8a9c670433863ca40d86be6a2c66bcf861d5da77e300051d49e9b7f91c5",
+      "certificate_ids": [
+        "0b291a084359c51a11968fd3ec72a03b9f751fd99e2ad8dc43f9589a9e07b603"
+      ],
+      "component_id": "target",
+      "distance_mm": 80.0,
+      "end_transform": {
+        "matrix": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          80.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "kind": "TRANSLATE_PART",
+      "prerequisite_ids": [],
+      "start_transform": {
+        "matrix": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "tool_id": null
+    }
+  ],
+  "cost": [
+    0,
+    0,
+    0,
+    1
+  ],
+  "replay": "passed",
+  "reverse": "passed",
+  "replacement_verified": true,
+  "export": {
+    "status": "full_assembly",
+    "roundtrip_status": "passed",
+    "candidate_id": "9c6bdb13f04218bc0bb65e6283198705603ed3c8aa9de4a9234a52c87079309a",
+    "artifact_id": "60f371fc08d718fed545e6f4068fe4c22e0baeb12a18db796c290575d4bbeca0",
+    "review_candidate_id": "candidate_bfd07b79f41ea8b0de51c9e8ffaa5852"
+  },
+  "usage": {
+    "cached_input_tokens": 0,
+    "candidates_constructed": 2,
+    "cost": {
+      "estimated_usd": null,
+      "reason": "no price table configured"
+    },
+    "geometry_ms": 18909.33149913326,
+    "input_tokens": 2400,
+    "model_latency_ms": 6.0,
+    "output_budget_used": 720,
+    "output_tokens": 720,
+    "provider_requests": 6,
+    "reasoning_tokens": 0,
+    "rejected_calls": 1,
+    "retries": 0,
+    "schema_errors": 0,
+    "source": "synthetic: offline fake provider, not real usage",
+    "tool_calls": 7,
+    "total_tokens": 3120,
+    "turns": 6,
+    "uncertain_output_tokens": 0,
+    "usage_reported_turns": 6
+  },
+  "live_meta_verified": false
+}

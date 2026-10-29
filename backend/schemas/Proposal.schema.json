@@ -1,0 +1,55 @@
+{
+  "$id": "urn:unlock:Proposal:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bracket_id": {
+      "minLength": 1,
+      "title": "Bracket Id",
+      "type": "string"
+    },
+    "candidate_request_id": {
+      "minLength": 1,
+      "title": "Candidate Request Id",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "parameters": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "rationale": {
+      "maxLength": 800,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "template_id": {
+      "enum": [
+        "T01",
+        "T02"
+      ],
+      "title": "Template Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_request_id",
+    "bracket_id",
+    "template_id",
+    "parameters",
+    "evidence_ids",
+    "rationale"
+  ],
+  "title": "Proposal",
+  "type": "object"
+}

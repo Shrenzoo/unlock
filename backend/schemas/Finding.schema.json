@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "Status": {
+      "enum": [
+        "clear",
+        "blocked",
+        "unknown",
+        "unsupported",
+        "invalid_input"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "$id": "urn:unlock:Finding:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "component_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Component Ids",
+      "type": "array"
+    },
+    "distance_mm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Distance Mm"
+    },
+    "explanation": {
+      "title": "Explanation",
+      "type": "string"
+    },
+    "intersection_volume_mm3": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Intersection Volume Mm3"
+    },
+    "kind": {
+      "title": "Kind",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status"
+    },
+    "witness_mm": {
+      "anyOf": [
+        {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Witness Mm"
+    },
+    "witness_travel_mm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Witness Travel Mm"
+    }
+  },
+  "required": [
+    "status",
+    "kind",
+    "explanation"
+  ],
+  "title": "Finding",
+  "type": "object"
+}

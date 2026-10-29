@@ -1,0 +1,56 @@
+{
+  "$id": "urn:unlock:Action:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "axis": {
+      "enum": [
+        "X+",
+        "X-",
+        "Y+",
+        "Y-",
+        "Z+",
+        "Z-"
+      ],
+      "title": "Axis",
+      "type": "string"
+    },
+    "component_id": {
+      "title": "Component Id",
+      "type": "string"
+    },
+    "distance_mm": {
+      "exclusiveMinimum": 0,
+      "title": "Distance Mm",
+      "type": "number"
+    },
+    "kind": {
+      "enum": [
+        "REMOVE_FASTENER",
+        "TRANSLATE_PART"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "tool_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tool Id"
+    }
+  },
+  "required": [
+    "kind",
+    "component_id",
+    "axis",
+    "distance_mm"
+  ],
+  "title": "Action",
+  "type": "object"
+}

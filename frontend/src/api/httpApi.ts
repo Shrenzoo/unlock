@@ -30,7 +30,9 @@ export function createHttpApi(base: string): UnlockApi {
     listProjects: () => call<ProjectSummary[]>('/v1/projects'),
     latestRevisionId: async (projectId) => {
       const p = await call<{ revisions: Array<{ id: string }> }>(`/v1/projects/${encodeURIComponent(projectId)}`)
-      return p.revisions[p.revisions.length - 1].id
+      const revision = p.revisions[p.revisions.length - 1]
+      if (!revision) throw new Error('The assembly is still importing. Return to Projects and wait for Ready.')
+      return revision.id
     },
     getRevision: (id) => call<Revision>(`/v1/revisions/${encodeURIComponent(id)}`),
     importPackage: (files) => {
@@ -39,27 +41,35 @@ export function createHttpApi(base: string): UnlockApi {
       return call('/v1/projects/default/imports', { method: 'POST', body, headers: { 'Idempotency-Key': idem() } })
     },
     startRun: (revisionId, body) =>
-      call(`/v1/revisions/${encodeURIComponent(revisionId)}/runs`, { method: 'POST', body: JSON.stringify(body) }),
+      call(`/v1/revisions/${encodeURIComponent(revisionId)}/runs`, { method: 'POST', body: JSON.stringify(body), headers: { 'Idempotency-Key': idem() } }),
     requestRedesign: (runId) => call(`/v1/runs/${encodeURIComponent(runId)}/redesign`, { method: 'POST', headers: { 'Idempotency-Key': idem() } }),
     streamEvents: (jobId, onEvent, signal) =>
       new Promise<void>((resolve, reject) => {
+        if (signal.aborted) { resolve(); return }
         const source = new EventSource(url(`/v1/jobs/${encodeURIComponent(jobId)}/events`))
-        const close = () => {
-          source.close()
-          resolve()
-        }
-        signal.addEventListener('abort', close, { once: true })
+        const cleanup = () => { source.close(); signal.removeEventListener('abort', abort) }
+        const abort = () => { cleanup(); resolve() }
+        signal.addEventListener('abort', abort, { once: true })
         source.onmessage = (m) => {
-          const e = JSON.parse(m.data) as StageEvent & { terminal?: boolean }
-          onEvent(e)
-          if (e.terminal) close()
+          try {
+            const e = JSON.parse(m.data) as StageEvent & { terminal?: boolean; job_state?: string; error?: ErrorEnvelope }
+            onEvent(e)
+            if (e.terminal) {
+              cleanup()
+              if (e.job_state === 'failed' || e.job_state === 'interrupted' || e.job_state === 'cancelled') reject(new Error(e.error?.message ?? `Job ${e.job_state}`))
+              else resolve()
+            }
+          } catch (e) { cleanup(); reject(e) }
         }
+        // EventSource reconnects transient interruptions with Last-Event-ID.
+        // A CLOSED stream cannot reconnect; keep all existing engineering evidence.
         source.onerror = () => {
-          source.close()
-          reject(new Error('Event stream interrupted. The run continues on the server; reconnect to resume.'))
+          if (source.readyState === EventSource.CLOSED) { cleanup(); reject(new Error('Event stream closed. Reopen the run to inspect its persisted state.')) }
         }
       }),
     getRun: (id) => call<RunRecord>(`/v1/runs/${encodeURIComponent(id)}`),
+    cancelJob: async (id) => { await call(`/v1/jobs/${encodeURIComponent(id)}/cancel`, { method: 'POST', headers: { 'Idempotency-Key': idem() } }) },
+    artifactUrl: (id) => url(`/v1/artifacts/${encodeURIComponent(id)}`),
     decide: (candidateId, decision, input_hash) =>
       call(`/v1/candidates/${encodeURIComponent(candidateId)}/decision`, { method: 'POST', body: JSON.stringify({ decision, input_hash }) }),
     requestExport: (candidateId) =>

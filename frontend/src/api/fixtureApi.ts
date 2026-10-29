@@ -67,6 +67,9 @@ export const fixtureApi: UnlockApi = {
     return b02Run
   },
 
+  async cancelJob() {},
+  artifactUrl() { throw new ServiceNotConnected('Reading computed artifacts') },
+
   async decide() {
     throw new ServiceNotConnected('Recording a review decision')
   },

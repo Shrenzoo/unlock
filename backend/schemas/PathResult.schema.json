@@ -1,0 +1,211 @@
+{
+  "$defs": {
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "component_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "distance_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mm"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "intersection_volume_mm3": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Intersection Volume Mm3"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "witness_mm": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Witness Mm"
+        },
+        "witness_travel_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Witness Travel Mm"
+        }
+      },
+      "required": [
+        "status",
+        "kind",
+        "explanation"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Status": {
+      "enum": [
+        "clear",
+        "blocked",
+        "unknown",
+        "unsupported",
+        "invalid_input"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "$id": "urn:unlock:PathResult:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "axis": {
+      "enum": [
+        "X+",
+        "X-",
+        "Y+",
+        "Y-",
+        "Z+",
+        "Z-"
+      ],
+      "title": "Axis",
+      "type": "string"
+    },
+    "clearance_lower_bound_mm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clearance Lower Bound Mm"
+    },
+    "clearance_mm": {
+      "title": "Clearance Mm",
+      "type": "number"
+    },
+    "contact_exemptions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Contact Exemptions",
+      "type": "array"
+    },
+    "coverage_established": {
+      "title": "Coverage Established",
+      "type": "boolean"
+    },
+    "distance_mm": {
+      "title": "Distance Mm",
+      "type": "number"
+    },
+    "explanation": {
+      "title": "Explanation",
+      "type": "string"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "geometry_hash": {
+      "title": "Geometry Hash",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "moving_occurrence": {
+      "title": "Moving Occurrence",
+      "type": "string"
+    },
+    "policy_version": {
+      "default": "policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "representation": {
+      "default": "server_validated_world_aabb_union",
+      "title": "Representation",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status"
+    }
+  },
+  "required": [
+    "id",
+    "moving_occurrence",
+    "axis",
+    "distance_mm",
+    "status",
+    "geometry_hash",
+    "input_hash",
+    "clearance_mm",
+    "coverage_established",
+    "findings",
+    "explanation"
+  ],
+  "title": "PathResult",
+  "type": "object"
+}

@@ -1,0 +1,25 @@
+npm notice run unlock-frontend@0.1.0 build
+npm notice run tsc -b && vite build
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 626 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                           1.15 kB │ gzip:   0.58 kB
+dist/assets/b02-CGkiIOGa.css              1.48 kB │ gzip:   0.58 kB
+dist/assets/Dashboard-BD1PsZfX.css        3.67 kB │ gzip:   1.16 kB
+dist/assets/index-DnJ6wKOE.css            3.78 kB │ gzip:   1.63 kB
+dist/assets/Landing-BDwWTwAe.css         12.38 kB │ gzip:   2.97 kB
+dist/assets/Workspace-NMbsbTN8.css       17.31 kB │ gzip:   3.80 kB
+dist/assets/index-Cqkn2Sjy.js             3.37 kB │ gzip:   1.63 kB
+dist/assets/index-BF0wsR_a.js             3.75 kB │ gzip:   1.73 kB
+dist/assets/LiveViewport-CaIqROrn.js      5.94 kB │ gzip:   2.73 kB
+dist/assets/Dashboard-Ds21AoSb.js         5.97 kB │ gzip:   2.33 kB
+dist/assets/ModuleAssembly-Db2XjH4y.js    9.77 kB │ gzip:   4.07 kB
+dist/assets/b02-p1HFSYM2.js              13.52 kB │ gzip:   4.47 kB
+dist/assets/Workspace-uMngorSv.js        35.77 kB │ gzip:  10.69 kB
+dist/assets/Landing-Brlc8r9F.js          68.39 kB │ gzip:  27.11 kB
+dist/assets/motion-TICWunr8.js           88.87 kB │ gzip:  32.61 kB
+dist/assets/r3f-BvA8fMXr.js             505.36 kB │ gzip: 159.20 kB
+dist/assets/three-DnVMuq3C.js           704.24 kB │ gzip: 180.49 kB
+✓ built in 3.17s

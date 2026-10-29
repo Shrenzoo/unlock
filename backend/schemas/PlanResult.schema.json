@@ -1,0 +1,1285 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "axis": {
+          "enum": [
+            "X+",
+            "X-",
+            "Y+",
+            "Y-",
+            "Z+",
+            "Z-"
+          ],
+          "title": "Axis",
+          "type": "string"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "distance_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Distance Mm",
+          "type": "number"
+        },
+        "kind": {
+          "enum": [
+            "REMOVE_FASTENER",
+            "TRANSLATE_PART"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "tool_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Id"
+        }
+      },
+      "required": [
+        "kind",
+        "component_id",
+        "axis",
+        "distance_mm"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "Certificate": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/Action"
+        },
+        "assumptions": {
+          "default": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry",
+          "title": "Assumptions",
+          "type": "string"
+        },
+        "before_state_hash": {
+          "title": "Before State Hash",
+          "type": "string"
+        },
+        "constraint_hash": {
+          "title": "Constraint Hash",
+          "type": "string"
+        },
+        "geometry_hash": {
+          "title": "Geometry Hash",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "input_hash": {
+          "title": "Input Hash",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "removal",
+            "insertion"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "paths": {
+          "items": {
+            "$ref": "#/$defs/PathResult"
+          },
+          "title": "Paths",
+          "type": "array"
+        },
+        "policy_hash": {
+          "title": "Policy Hash",
+          "type": "string"
+        },
+        "revision_id": {
+          "title": "Revision Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "clear",
+            "blocked",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "subchecks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subchecks",
+          "type": "array"
+        },
+        "tool_hash": {
+          "title": "Tool Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision_id",
+        "input_hash",
+        "geometry_hash",
+        "constraint_hash",
+        "tool_hash",
+        "policy_hash",
+        "before_state_hash",
+        "action",
+        "mode",
+        "status",
+        "paths",
+        "subchecks"
+      ],
+      "title": "Certificate",
+      "type": "object"
+    },
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "component_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "constraint_id": {
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "limit": {
+          "default": "",
+          "title": "Limit",
+          "type": "string"
+        },
+        "mandatory": {
+          "default": true,
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "measured_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measured Value"
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "result",
+        "explanation"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "ErrorEnvelope": {
+      "additionalProperties": false,
+      "properties": {
+        "error_code": {
+          "enum": [
+            "INVALID_PACKAGE",
+            "INVALID_MANIFEST",
+            "UNSUPPORTED_SEMANTICS",
+            "INVALID_SOLID",
+            "LIMIT_EXCEEDED",
+            "STALE_REVISION",
+            "UNSUPPORTED_TEMPLATE",
+            "CONSTRAINT_VIOLATION",
+            "GEOMETRY_FAILED",
+            "VERIFICATION_UNKNOWN",
+            "MODEL_UNAVAILABLE",
+            "MODEL_SCHEMA_ERROR",
+            "NOT_FOUND",
+            "FORBIDDEN",
+            "CANCELLED"
+          ],
+          "title": "Error Code",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "field_errors": {
+          "items": {
+            "$ref": "#/$defs/FieldError"
+          },
+          "title": "Field Errors",
+          "type": "array"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Run Id"
+        }
+      },
+      "required": [
+        "error_code",
+        "message",
+        "retryable",
+        "field_errors",
+        "evidence_ids",
+        "run_id"
+      ],
+      "title": "ErrorEnvelope",
+      "type": "object"
+    },
+    "FieldError": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Type"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "message"
+      ],
+      "title": "FieldError",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "component_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "distance_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mm"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "intersection_volume_mm3": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Intersection Volume Mm3"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "witness_mm": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Witness Mm"
+        },
+        "witness_travel_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Witness Travel Mm"
+        }
+      },
+      "required": [
+        "status",
+        "kind",
+        "explanation"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Metrics": {
+      "additionalProperties": false,
+      "properties": {
+        "cost": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Cost",
+          "type": "array"
+        },
+        "fasteners_removed": {
+          "minimum": 0,
+          "title": "Fasteners Removed",
+          "type": "integer"
+        },
+        "has_contact_exemptions": {
+          "title": "Has Contact Exemptions",
+          "type": "boolean"
+        },
+        "noncontact_clearance_lower_bound_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Noncontact Clearance Lower Bound Mm"
+        },
+        "operations": {
+          "minimum": 0,
+          "title": "Operations",
+          "type": "integer"
+        },
+        "tool_changes": {
+          "minimum": 0,
+          "title": "Tool Changes",
+          "type": "integer"
+        },
+        "unique_tools": {
+          "minimum": 0,
+          "title": "Unique Tools",
+          "type": "integer"
+        },
+        "unrelated_parts_removed": {
+          "minimum": 0,
+          "title": "Unrelated Parts Removed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "unrelated_parts_removed",
+        "fasteners_removed",
+        "tool_changes",
+        "operations",
+        "unique_tools",
+        "cost",
+        "noncontact_clearance_lower_bound_mm",
+        "has_contact_exemptions"
+      ],
+      "title": "Metrics",
+      "type": "object"
+    },
+    "PathResult": {
+      "additionalProperties": false,
+      "properties": {
+        "axis": {
+          "enum": [
+            "X+",
+            "X-",
+            "Y+",
+            "Y-",
+            "Z+",
+            "Z-"
+          ],
+          "title": "Axis",
+          "type": "string"
+        },
+        "clearance_lower_bound_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clearance Lower Bound Mm"
+        },
+        "clearance_mm": {
+          "title": "Clearance Mm",
+          "type": "number"
+        },
+        "contact_exemptions": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Contact Exemptions",
+          "type": "array"
+        },
+        "coverage_established": {
+          "title": "Coverage Established",
+          "type": "boolean"
+        },
+        "distance_mm": {
+          "title": "Distance Mm",
+          "type": "number"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "geometry_hash": {
+          "title": "Geometry Hash",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "input_hash": {
+          "title": "Input Hash",
+          "type": "string"
+        },
+        "moving_occurrence": {
+          "title": "Moving Occurrence",
+          "type": "string"
+        },
+        "policy_version": {
+          "default": "policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "representation": {
+          "default": "server_validated_world_aabb_union",
+          "title": "Representation",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        }
+      },
+      "required": [
+        "id",
+        "moving_occurrence",
+        "axis",
+        "distance_mm",
+        "status",
+        "geometry_hash",
+        "input_hash",
+        "clearance_mm",
+        "coverage_established",
+        "findings",
+        "explanation"
+      ],
+      "title": "PathResult",
+      "type": "object"
+    },
+    "Rejection": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/Action"
+        },
+        "category": {
+          "enum": [
+            "SEMANTICALLY_BLOCKED",
+            "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+            "INSUFFICIENT_CLEARANCE",
+            "TOOL_ACCESS_BLOCKED",
+            "UNKNOWN_GEOMETRY",
+            "UNSUPPORTED_OPERATION"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "constraint_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constraint Ids",
+          "type": "array"
+        },
+        "geometry_evidence_level": {
+          "title": "Geometry Evidence Level",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "default": "policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "remaining_obstacle_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Remaining Obstacle Ids",
+          "type": "array"
+        },
+        "removed_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Removed Ids",
+          "type": "array"
+        },
+        "revision_id": {
+          "title": "Revision Id",
+          "type": "string"
+        },
+        "state_hash": {
+          "title": "State Hash",
+          "type": "string"
+        },
+        "witness_certificate_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Witness Certificate Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "revision_id",
+        "state_hash",
+        "removed_ids",
+        "action",
+        "remaining_obstacle_ids",
+        "constraint_ids",
+        "reason",
+        "category",
+        "geometry_evidence_level"
+      ],
+      "title": "Rejection",
+      "type": "object"
+    },
+    "SearchPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "clearance_mm": {
+          "default": 0.5,
+          "minimum": 0.5,
+          "title": "Clearance Mm",
+          "type": "number"
+        },
+        "endpoint_rule": {
+          "const": "explicit_path_else_nearest_stage_interior_v1",
+          "default": "explicit_path_else_nearest_stage_interior_v1",
+          "title": "Endpoint Rule",
+          "type": "string"
+        },
+        "max_expanded_states": {
+          "default": 4096,
+          "maximum": 4096,
+          "minimum": 1,
+          "title": "Max Expanded States",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "maximum": 30,
+          "title": "Max Seconds",
+          "type": "number"
+        },
+        "objective": {
+          "default": [
+            "unrelated_parts",
+            "fasteners",
+            "tool_changes",
+            "operations"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Objective",
+          "type": "array"
+        },
+        "version": {
+          "const": "planner_v1",
+          "default": "planner_v1",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "title": "SearchPolicy",
+      "type": "object"
+    },
+    "SearchStats": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted_transitions": {
+          "default": 0,
+          "title": "Admitted Transitions",
+          "type": "integer"
+        },
+        "cache_hits": {
+          "default": 0,
+          "title": "Cache Hits",
+          "type": "integer"
+        },
+        "cache_misses": {
+          "default": 0,
+          "title": "Cache Misses",
+          "type": "integer"
+        },
+        "frontier_size": {
+          "default": 0,
+          "title": "Frontier Size",
+          "type": "integer"
+        },
+        "frontier_status": {
+          "default": "not_started",
+          "title": "Frontier Status",
+          "type": "string"
+        },
+        "generated_actions": {
+          "default": 0,
+          "title": "Generated Actions",
+          "type": "integer"
+        },
+        "geometry_validation_calls": {
+          "default": 0,
+          "title": "Geometry Validation Calls",
+          "type": "integer"
+        },
+        "peak_frontier": {
+          "default": 0,
+          "title": "Peak Frontier",
+          "type": "integer"
+        },
+        "rejected_transitions": {
+          "default": 0,
+          "title": "Rejected Transitions",
+          "type": "integer"
+        },
+        "termination": {
+          "default": "not_started",
+          "title": "Termination",
+          "type": "string"
+        },
+        "unknown_transitions": {
+          "default": 0,
+          "title": "Unknown Transitions",
+          "type": "integer"
+        }
+      },
+      "title": "SearchStats",
+      "type": "object"
+    },
+    "Status": {
+      "enum": [
+        "clear",
+        "blocked",
+        "unknown",
+        "unsupported",
+        "invalid_input"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "Step": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "title": "Action Id",
+          "type": "string"
+        },
+        "after_state_hash": {
+          "title": "After State Hash",
+          "type": "string"
+        },
+        "axis": {
+          "enum": [
+            "X+",
+            "X-",
+            "Y+",
+            "Y-",
+            "Z+",
+            "Z-"
+          ],
+          "title": "Axis",
+          "type": "string"
+        },
+        "before_state_hash": {
+          "title": "Before State Hash",
+          "type": "string"
+        },
+        "certificate_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Certificate Ids",
+          "type": "array"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "distance_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Distance Mm",
+          "type": "number"
+        },
+        "end_transform": {
+          "$ref": "#/$defs/Transform"
+        },
+        "kind": {
+          "enum": [
+            "REMOVE_FASTENER",
+            "TRANSLATE_PART"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "prerequisite_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prerequisite Ids",
+          "type": "array"
+        },
+        "start_transform": {
+          "$ref": "#/$defs/Transform"
+        },
+        "tool_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tool Id"
+        }
+      },
+      "required": [
+        "action_id",
+        "kind",
+        "component_id",
+        "prerequisite_ids",
+        "tool_id",
+        "start_transform",
+        "end_transform",
+        "axis",
+        "distance_mm",
+        "certificate_ids",
+        "before_state_hash",
+        "after_state_hash"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "default": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "items": {
+            "type": "number"
+          },
+          "title": "Matrix",
+          "type": "array"
+        }
+      },
+      "title": "Transform",
+      "type": "object"
+    },
+    "ValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "certificates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Certificate"
+          },
+          "title": "Certificates",
+          "type": "array"
+        },
+        "checked_steps": {
+          "default": 0,
+          "title": "Checked Steps",
+          "type": "integer"
+        },
+        "connection_restoration": {
+          "default": "not_run",
+          "title": "Connection Restoration",
+          "type": "string"
+        },
+        "elapsed_ms": {
+          "default": 0,
+          "title": "Elapsed Ms",
+          "type": "number"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "fastener_reinsertion": {
+          "default": "not_run",
+          "title": "Fastener Reinsertion",
+          "type": "string"
+        },
+        "final_removed_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Final Removed Ids",
+          "type": "array"
+        },
+        "geometric_insertion": {
+          "default": "not_run",
+          "title": "Geometric Insertion",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "unknown",
+            "not_run"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "tool_access": {
+          "default": "not_run",
+          "title": "Tool Access",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "explanation"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:PlanResult:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "certificates": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Certificate"
+      },
+      "title": "Certificates",
+      "type": "array"
+    },
+    "comparison_hash": {
+      "title": "Comparison Hash",
+      "type": "string"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "constraint_checks": {
+      "default": [],
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Constraint Checks",
+      "type": "array"
+    },
+    "constraint_hash": {
+      "title": "Constraint Hash",
+      "type": "string"
+    },
+    "elapsed_ms": {
+      "default": 0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ErrorEnvelope"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "expanded_states": {
+      "default": 0,
+      "title": "Expanded States",
+      "type": "integer"
+    },
+    "geometry_hash": {
+      "title": "Geometry Hash",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/SearchPolicy"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Metrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "modified_occurrence_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Modified Occurrence Ids",
+      "type": "array"
+    },
+    "optimal_within_scope": {
+      "title": "Optimal Within Scope",
+      "type": "boolean"
+    },
+    "original_revision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Revision Id"
+    },
+    "policy_version": {
+      "default": "policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "provenance": {
+      "default": "computed",
+      "enum": [
+        "computed",
+        "retrieved"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "rejections": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Rejection"
+      },
+      "title": "Rejections",
+      "type": "array"
+    },
+    "replacement_verified": {
+      "default": false,
+      "title": "Replacement Verified",
+      "type": "boolean"
+    },
+    "replay": {
+      "$ref": "#/$defs/ValidationReport",
+      "default": {
+        "certificates": [],
+        "checked_steps": 0,
+        "connection_restoration": "not_run",
+        "elapsed_ms": 0.0,
+        "explanation": "No checked goal route",
+        "fastener_reinsertion": "not_run",
+        "final_removed_ids": [],
+        "geometric_insertion": "not_run",
+        "status": "not_run",
+        "tool_access": "not_run"
+      }
+    },
+    "reverse": {
+      "$ref": "#/$defs/ValidationReport",
+      "default": {
+        "certificates": [],
+        "checked_steps": 0,
+        "connection_restoration": "not_run",
+        "elapsed_ms": 0.0,
+        "explanation": "No checked goal route",
+        "fastener_reinsertion": "not_run",
+        "final_removed_ids": [],
+        "geometric_insertion": "not_run",
+        "status": "not_run",
+        "tool_access": "not_run"
+      }
+    },
+    "revision_id": {
+      "title": "Revision Id",
+      "type": "string"
+    },
+    "scope": {
+      "default": "Finite rigid axis translations and annotated reusable screws; no physical repair or manufacturing certification",
+      "title": "Scope",
+      "type": "string"
+    },
+    "search_policy": {
+      "$ref": "#/$defs/SearchPolicy"
+    },
+    "static_checks": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Check"
+      },
+      "title": "Static Checks",
+      "type": "array"
+    },
+    "static_verification_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Static Verification Id"
+    },
+    "stats": {
+      "$ref": "#/$defs/SearchStats",
+      "default": {
+        "admitted_transitions": 0,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "frontier_size": 0,
+        "frontier_status": "not_started",
+        "generated_actions": 0,
+        "geometry_validation_calls": 0,
+        "peak_frontier": 0,
+        "rejected_transitions": 0,
+        "termination": "not_started",
+        "unknown_transitions": 0
+      }
+    },
+    "status": {
+      "enum": [
+        "feasible",
+        "no_path_supported",
+        "incomplete",
+        "invalid_input",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "steps": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "target_id": {
+      "title": "Target Id",
+      "type": "string"
+    },
+    "unresolved_transition_count": {
+      "default": 0,
+      "title": "Unresolved Transition Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "revision_id",
+    "target_id",
+    "input_hash",
+    "geometry_hash",
+    "constraint_hash",
+    "comparison_hash",
+    "search_policy",
+    "complete",
+    "optimal_within_scope",
+    "limits"
+  ],
+  "title": "PlanResult",
+  "type": "object"
+}

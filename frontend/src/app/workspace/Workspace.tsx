@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { api, ServiceNotConnected } from '@/api'
 import type { Revision, RunRecord } from '@/domain/types'
 import { Link } from '@/router'
@@ -9,6 +9,8 @@ import { EvidencePanel } from './Panels'
 import { Viewport } from './Viewport'
 import { MODES, initialState, modeAvailable, reducer, type Mode } from './model'
 import './workspace.css'
+
+const LiveViewport = lazy(() => import('./LiveViewport').then((m) => ({ default: m.LiveViewport })))
 
 const MODE_LABEL: Record<Mode, string> = {
   inspect: 'Inspect',
@@ -23,54 +25,85 @@ export default function Workspace({ projectId }: { projectId: string }) {
   const [error, setError] = useState<string | null>(null)
   const [run, setRun] = useState<RunRecord | null>(null)
   const [state, dispatch] = useReducer(reducer, initialState)
-  const jobs = useRef<AbortController | null>(null)
+  const jobs = useRef<{ controller: AbortController; id: string | null } | null>(null)
+  const generation = useRef(0)
+
+  const stopActive = useCallback(() => {
+    generation.current += 1
+    const active = jobs.current
+    jobs.current = null
+    active?.controller.abort()
+    if (active?.id) void api.cancelJob(active.id).catch(() => {})
+  }, [])
 
   useEffect(() => {
     let live = true
-    api
-      .latestRevisionId(projectId)
-      .then((id) => api.getRevision(id))
-      .then((r) => live && setRevision(r))
-      .catch((e) => live && setError(e instanceof ServiceNotConnected ? `There is no prepared data for ${projectId} in this build.` : (e as Error).message))
-    return () => {
-      live = false
-      jobs.current?.abort()
-    }
-  }, [projectId])
+    setRevision(null)
+    setError(null)
+    api.latestRevisionId(projectId).then((id) => api.getRevision(id)).then((r) => { if (live) setRevision(r) })
+      .catch((e) => { if (live) setError(e instanceof ServiceNotConnected ? `There is no prepared data for ${projectId} in this build.` : (e as Error).message) })
+    return () => { live = false; stopActive() }
+  }, [projectId, stopActive])
 
-  // a new target abandons any job still streaming for the old one
   useEffect(() => {
-    jobs.current?.abort()
+    stopActive()
     setRun(null)
-  }, [state.target])
+    return stopActive
+  }, [state.target, stopActive])
 
-  const runBaseline = useCallback(async () => {
-    if (!revision || !state.target) return
-    jobs.current?.abort()
+  const execute = useCallback(async (kind: 'baseline' | 'redesign' | 'export') => {
+    if (!revision || !state.target || (kind !== 'baseline' && !run)) return
+    stopActive()
+    const current = generation.current
     const ctrl = new AbortController()
-    jobs.current = ctrl
-    dispatch({ type: 'job', job: 'baseline', status: 'running' })
-    const { run_id, job_id } = await api.startRun(revision.id, { target_id: state.target, policy_id: 'policy_v1' })
-    setRun(await api.getRun(run_id))
-    await api.streamEvents(job_id, (event) => dispatch({ type: 'event', job: 'baseline', event }), ctrl.signal)
-    if (ctrl.signal.aborted) return
-    dispatch({ type: 'job', job: 'baseline', status: 'done' })
-  }, [revision, state.target])
+    const active = { controller: ctrl, id: null as string | null }
+    jobs.current = active
+    const jobKind = kind === 'baseline' ? 'baseline' : 'redesign'
+    dispatch({ type: 'job', job: jobKind, status: 'running' })
+    let runId = run?.id
+    try {
+      const result = kind === 'baseline'
+        ? await api.startRun(revision.id, { target_id: state.target, policy_id: 'planner_v1', constraint_hash: revision.constraint_hash })
+        : kind === 'redesign' ? await api.requestRedesign(run!.id)
+        : await api.requestExport(state.candidateId!)
+      active.id = result.job_id
+      if (current !== generation.current) { void api.cancelJob(result.job_id).catch(() => {}); return }
+      if ('run_id' in result) runId = result.run_id as string
+      if (!runId) throw new Error('The backend did not return a run identity.')
+      await api.streamEvents(result.job_id, (event) => {
+        if (current === generation.current) dispatch({ type: 'event', job: jobKind, event })
+      }, ctrl.signal)
+      if (current !== generation.current || ctrl.signal.aborted) return
+      const fresh = await api.getRun(runId)
+      if (current !== generation.current || fresh.target_id !== state.target || fresh.revision_id !== revision.id) return
+      setRun(fresh)
+      dispatch({ type: 'job', job: jobKind, status: 'done' })
+      if (kind !== 'baseline') dispatch({ type: 'candidate', id: fresh.selected_candidate_id })
+      if (kind === 'export' && fresh.export) window.open(api.artifactUrl(fresh.export.artifact_id), '_blank', 'noopener')
+    } catch (e) {
+      if (current !== generation.current) return
+      if (runId) {
+        const saved = await api.getRun(runId).catch(() => null)
+        if (saved && current === generation.current && saved.target_id === state.target) setRun(saved)
+      }
+      if (current !== generation.current) return
+      dispatch({ type: 'job', job: jobKind, status: 'failed' })
+      dispatch({ type: 'notice', notice: { tone: 'refuse', text: (e as Error).message } })
+    } finally { if (current === generation.current) jobs.current = null }
+  }, [revision, run, state.target, state.candidateId, stopActive])
 
-  const runRedesign = useCallback(async () => {
-    if (!run) return
-    jobs.current?.abort()
-    const ctrl = new AbortController()
-    jobs.current = ctrl
-    dispatch({ type: 'job', job: 'redesign', status: 'running' })
-    const { job_id } = await api.requestRedesign(run.id)
-    await api.streamEvents(job_id, (event) => dispatch({ type: 'event', job: 'redesign', event }), ctrl.signal)
-    if (ctrl.signal.aborted) return
-    const fresh = await api.getRun(run.id)
-    setRun(fresh)
-    dispatch({ type: 'job', job: 'redesign', status: 'done' })
-    dispatch({ type: 'candidate', id: fresh.selected_candidate_id })
-  }, [run])
+  const decide = useCallback(async (decision: 'accept' | 'reject') => {
+    const c = run?.candidates.find((c) => c.id === state.candidateId)
+    if (!run || !c?.input_hash) return
+    const current = generation.current
+    try {
+      await api.decide(c.id, decision, c.input_hash)
+      const fresh = await api.getRun(run.id)
+      if (current !== generation.current || fresh.target_id !== state.target || fresh.revision_id !== revision?.id) return
+      setRun(fresh)
+      dispatch({ type: 'notice', notice: { tone: 'info', text: decision === 'accept' ? 'Accepted for checked export. Engineering release remains unassessed.' : 'Candidate rejected; evidence is preserved.' } })
+    } catch (e) { if (current === generation.current) dispatch({ type: 'notice', notice: { tone: 'refuse', text: (e as Error).message } }) }
+  }, [run, state.candidateId, state.target, revision?.id])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -111,7 +144,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
           <Mark size={18} />
         </Link>
         <div className="topbar__project">
-          <span className="topbar__name">Trapped fan bridge</span>
+          <span className="topbar__name">{revision.manifest.assembly_id}</span>
           <span className="mono topbar__rev">{revision.label}</span>
         </div>
         <span className={`topbar__target ${state.target ? 'is-set' : ''}`}>
@@ -147,7 +180,8 @@ export default function Workspace({ projectId }: { projectId: string }) {
         </nav>
 
         <div className="topbar__end">
-          <ProvenanceTag provenance={run?.provenance ?? { kind: 'illustrative', input_hash: null, computed_at: null, engine_versions: null, note: 'Bundled fixture' }} compact />
+          <ProvenanceTag provenance={run?.provenance ?? revision.provenance ?? { kind: 'illustrative', input_hash: null, computed_at: null, engine_versions: null, note: 'Bundled illustrative fixture' }} compact />
+          {(state.baseline.status === 'running' || state.redesign.status === 'running') && <button type="button" className="btn btn--quiet btn--sm" onClick={() => { stopActive(); dispatch({ type: 'job', job: state.baseline.status === 'running' ? 'baseline' : 'redesign', status: 'failed' }); dispatch({ type: 'notice', notice: { tone: 'info', text: 'Cancellation requested. Completed baseline evidence is preserved.' } }) }}>Cancel job</button>}
           <button type="button" className="btn btn--quiet btn--sm" disabled={!modeAvailable('export', state, run).ok} title={modeAvailable('export', state, run).why} onClick={() => dispatch({ type: 'mode', mode: 'export' })}>
             Export
           </button>
@@ -157,10 +191,10 @@ export default function Workspace({ projectId }: { projectId: string }) {
       <ComponentTree manifest={revision.manifest} selected={state.selected} target={state.target} hidden={state.hidden} isolated={state.isolated} dispatch={dispatch} />
 
       <main className="ws__view" aria-label="Assembly viewport">
-        <Viewport state={state} dispatch={dispatch} run={run} />
+        {api.mode === 'http' ? <Suspense fallback={<p>Loading CAD viewer…</p>}><LiveViewport revision={revision} state={state} dispatch={dispatch} run={run} /></Suspense> : <Viewport state={state} dispatch={dispatch} run={run} />}
       </main>
 
-      <EvidencePanel state={state} dispatch={dispatch} run={run} revision={revision} onRunBaseline={runBaseline} onRunRedesign={runRedesign} />
+      <EvidencePanel state={state} dispatch={dispatch} run={run} revision={revision} onRunBaseline={() => void execute('baseline')} onRunRedesign={() => void execute('redesign')} onDecide={(d) => void decide(d)} onExport={() => void execute('export')} />
 
       <p className="ws__narrow" role="note">
         The workspace is built for screens at least 1280 px wide. Evidence and controls stay available below.
