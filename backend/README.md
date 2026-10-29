@@ -1,6 +1,22 @@
-# UNLOCK geometry engine
+# UNLOCK engineering backend
 
-Python/OCP geometry subsystem for the existing frontend. A passing report covers its listed geometry constraints and requested direct segments. It does not certify a complete repair route or a safe manufactured product.
+Python/OCP CAD engine, deterministic disassembly planner, bounded Meta-powered
+redesign controller and local FastAPI coordinator for the React workspace.
+See [the current integration handoff](docs/META_INTEGRATION_HANDOFF.md) for setup,
+configuration, tests, known scope and the explicit distinction between offline
+engineering validation and pending live Meta validation.
+
+```sh
+# From the repository root; put MODEL_API_KEY in backend/.env for live redesign.
+backend/.venv/bin/python -m unlock_engine.api --port 8000
+# In another terminal:
+cd frontend && npm run dev -- --host 127.0.0.1 --port 5183 --strictPort
+```
+
+Open http://localhost:5183/projects. B01/B02/B03 use actual synthetic STEP inputs.
+The default provider is direct Meta Model API, model `muse-spark-1.3`; explicit
+`AI_PROVIDER=mock` runs the real geometry pipeline with a labeled scripted policy.
+Passing reports cover only their listed geometry and supported motion checks.
 
 The deterministic disassembly planner is now implemented. See [PLANNER.md](docs/PLANNER.md)
 for the bounded native interface, full removal/reverse workflow, contracts and
@@ -32,7 +48,7 @@ python3.12 -m venv .venv
 .venv/bin/unlock-engine benchmark --fixtures .work/fixtures --output .work/benchmark.json --repetitions 10
 ```
 
-Import runs in an isolated native worker. Demo preparation, independent verification and export use separate workers, each with a 30 second wall limit and a 120 second parent budget. Intermediate `.stage.json` files are not completion records; only `summary.json` records a completed demo. A failed gate returns nonzero. The future coordinator must queue one native job at a time; this library is not a multi-user scheduler.
+Import runs in an isolated native worker. Demo preparation, independent verification and export use separate workers, each with a 30 second wall limit and a 120 second parent budget. Intermediate `.stage.json` files are not completion records; only `summary.json` records a completed demo. A failed gate returns nonzero. The local coordinator queues one engineering job at a time; it is not a public multi-user scheduler.
 
 Packages accept only flat `assembly.step` (or `.stp`), `manifest.json`, and optional `attribution.txt`. Inputs are bounded before native parsing. Only AP214/AP242 with explicit uniform millimetre units is supported. Scripts, external references, symlinks, encrypted ZIPs and arbitrary archive paths are rejected.
 
@@ -67,4 +83,4 @@ See [DECISIONS.md](docs/DECISIONS.md) for document hashes, numerical policy, int
 
 Supported limits: 5–12 rigid single-solid leaf occurrences, ≤500 mm actual assembly envelope, 25 MiB compressed / 100 MiB expanded, 30,000 faces and 200,000 preview triangles. Motion supports six world axes, isolated planar contacts and simplified annotated reusable screws. Edits support the known bridge constructor only. Conservative overlap and ambiguous mandatory evidence prevent a verified pass.
 
-State-aware disassembly search and complete supported inverse sequencing are implemented in `planning/`. The bounded Muse Spark Open redesign controller is implemented in `ai/` and tested offline; live model integration is unverified until a credentialed smoke test passes. Still not implemented: FastAPI/jobs/authentication, deployment or live frontend integration. Not assessed: strength, fatigue, torque, threads, flexible parts, arbitrary contacts, free rotation, electrical safety, manufacturing feasibility or restored function. Existing frontend files remain unchanged.
+State-aware disassembly search and complete supported inverse sequencing are implemented in `planning/`. The bounded redesign controller uses direct Meta Model API through `ai/meta.py`, with a local FastAPI coordinator in `api/` and connected React workflow. Live Meta integration remains unverified until the gated credentialed tests pass. Public authentication and deployment are not implemented. Not assessed: strength, fatigue, torque, threads, flexible parts, arbitrary contacts, free rotation, electrical safety, manufacturing feasibility or restored function.

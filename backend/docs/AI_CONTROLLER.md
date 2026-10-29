@@ -1,3 +1,5 @@
+> Historical October 28 implementation record. The current runtime uses direct Meta Model API / Muse Spark 1.3. See [META_INTEGRATION_HANDOFF.md](META_INTEGRATION_HANDOFF.md) for current configuration, HTTP/frontend integration and validation status.
+
 # Muse Spark Open redesign controller — implementation handoff
 
 Implemented and executed locally on October 28, 2026, on branch
