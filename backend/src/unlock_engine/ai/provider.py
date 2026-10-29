@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import socket
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 import time
 import urllib.error
 import urllib.request
@@ -101,16 +103,24 @@ class ModelProvider(Protocol):
         max_output_tokens: int,
         timeout_s: float,
         tool_choice: str | dict = "auto",
+        cancel_event=None,
     ) -> ModelTurn: ...
 
 
 def _int(value):
-    return value if isinstance(value, int) and not isinstance(value, bool) else None
+    return (
+        value
+        if isinstance(value, int) and not isinstance(value, bool) and value >= 0
+        else None
+    )
 
 
 def parse_usage(raw) -> Usage:
     if not isinstance(raw, dict):
         return Usage()
+    for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+        if key in raw and _int(raw[key]) is None:
+            raise ProviderError("BAD_RESPONSE", "invalid provider token usage")
     prompt_details = raw.get("prompt_tokens_details") or {}
     completion_details = raw.get("completion_tokens_details") or {}
     return Usage(
@@ -144,18 +154,31 @@ def parse_completion(
     content = message.get("content")
     if content is not None and not isinstance(content, str):
         raise ProviderError("BAD_RESPONSE", "message content is not text")
+    if message.get("role") != "assistant":
+        raise ProviderError("BAD_RESPONSE", "response role must be assistant")
+    if choice.get("finish_reason") not in ("stop", "tool_calls"):
+        raise ProviderError(
+            "BAD_RESPONSE", "response incomplete or unsupported finish reason"
+        )
+    raw_calls = message.get("tool_calls") or []
+    if not isinstance(raw_calls, list) or len(raw_calls) > 64:
+        raise ProviderError("BAD_RESPONSE", "tool_calls must be a bounded array")
     calls = []
     normalized = []
-    for raw in message.get("tool_calls") or []:
+    seen = set()
+    for raw in raw_calls:
         fn = raw.get("function") if isinstance(raw, dict) else None
         if (
             not isinstance(fn, dict)
+            or raw.get("type") != "function"
             or not isinstance(raw.get("id"), str)
-            or not raw["id"]
+            or not 1 <= len(raw["id"]) <= 64
+            or raw["id"] in seen
             or not isinstance(fn.get("name"), str)
             or not isinstance(fn.get("arguments", ""), str)
         ):
             raise ProviderError("BAD_RESPONSE", "malformed tool call structure")
+        seen.add(raw["id"])
         calls.append(ToolCall(raw["id"], fn["name"], fn.get("arguments") or ""))
         normalized.append(
             dict(
@@ -198,7 +221,11 @@ def _retry_after(headers) -> float | None:
     try:
         return max(0.0, float(value))
     except ValueError:
-        return None
+        try:
+            date = parsedate_to_datetime(value)
+            return max(0.0, (date - datetime.now(timezone.utc)).total_seconds())
+        except (ValueError, TypeError, OverflowError):
+            return None
 
 
 class OpenAICompatibleProvider:
@@ -249,7 +276,7 @@ class OpenAICompatibleProvider:
                     "TIMEOUT", f"no response within {timeout_s:.0f} s", retryable=True
                 ) from None
             raise ProviderError(
-                "NETWORK", f"network failure: {exc.reason}", retryable=True
+                "NETWORK", "model connection interrupted", retryable=True
             ) from None
         latency = (time.monotonic() - started) * 1000
         if len(raw) > MAX_RESPONSE_BYTES:
@@ -269,7 +296,14 @@ class OpenAICompatibleProvider:
         return data, latency, request_id, limits
 
     def complete(
-        self, messages, tools, *, max_output_tokens, timeout_s, tool_choice="auto"
+        self,
+        messages,
+        tools,
+        *,
+        max_output_tokens,
+        timeout_s,
+        tool_choice="auto",
+        cancel_event=None,
     ):
         body = dict(
             model=self.model,
@@ -307,7 +341,6 @@ class OpenAICompatibleProvider:
 
 
 def _http_error(status: int, detail: str, headers) -> ProviderError:
-    text = detail[:300].replace("\n", " ")
     lowered = detail.lower()
     if status in (401, 403):
         return ProviderError(
@@ -320,12 +353,14 @@ def _http_error(status: int, detail: str, headers) -> ProviderError:
         or "credit" in lowered
     ):
         return ProviderError(
-            "USAGE_LIMIT", f"account usage limit ({status}): {text}", http_status=status
+            "USAGE_LIMIT",
+            f"account usage or credit limit ({status})",
+            http_status=status,
         )
     if status == 404 or ("model" in lowered and "not found" in lowered):
         return ProviderError(
             "MODEL_UNAVAILABLE",
-            f"model unavailable ({status}): {text}",
+            f"model unavailable ({status})",
             http_status=status,
         )
     if status == 429:
@@ -345,7 +380,7 @@ def _http_error(status: int, detail: str, headers) -> ProviderError:
             http_status=status,
         )
     return ProviderError(
-        "BAD_REQUEST", f"request rejected ({status}): {text}", http_status=status
+        "BAD_REQUEST", f"request rejected ({status})", http_status=status
     )
 
 
@@ -377,7 +412,14 @@ class FakeProvider:
         self.usage_per_turn = usage_per_turn
 
     def complete(
-        self, messages, tools, *, max_output_tokens, timeout_s, tool_choice="auto"
+        self,
+        messages,
+        tools,
+        *,
+        max_output_tokens,
+        timeout_s,
+        tool_choice="auto",
+        cancel_event=None,
     ):
         self.calls.append(
             dict(
@@ -428,5 +470,13 @@ def tool_call_message(
     )
 
 
-def build_provider(config: ProviderConfig) -> OpenAICompatibleProvider:
+def build_provider(config: ProviderConfig) -> ModelProvider:
+    if config.provider == "meta":
+        from .meta import MetaProvider
+
+        return MetaProvider(config)
+    if config.provider == "mock":
+        from .demo import scripted_agent
+
+        return scripted_agent()
     return OpenAICompatibleProvider(config)

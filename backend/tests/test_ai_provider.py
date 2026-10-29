@@ -86,19 +86,26 @@ def completion(message, finish="stop", model=MODEL):
 
 def provider(url, key="test-key-not-real", **env):
     return OpenAICompatibleProvider(
-        load_config({"FIREWORKS_API_KEY": key, "UNLOCK_AI_BASE_URL": url, **env})
+        load_config(
+            {
+                "AI_PROVIDER": "fireworks",
+                "FIREWORKS_API_KEY": key,
+                "UNLOCK_AI_BASE_URL": url,
+                **env,
+            }
+        )
     )
 
 
 def test_config_defaults_are_documented_model_and_medium_effort():
-    c = load_config({})
+    c = load_config({"AI_PROVIDER": "fireworks"})
     assert c.model == MODEL and c.base_url == "https://api.fireworks.ai/inference/v1"
     assert c.reasoning_effort == "medium" and not c.has_credentials
     assert (
         load_config({"UNLOCK_AI_REASONING_EFFORT": "high"}).reasoning_effort == "high"
     )
     with pytest.raises(ValueError):
-        load_config({"UNLOCK_AI_REASONING_EFFORT": "max"})
+        load_config({"AI_PROVIDER": "fireworks", "UNLOCK_AI_REASONING_EFFORT": "max"})
     with pytest.raises(ValueError):
         load_config(
             {"UNLOCK_AI_PROVIDER": "together"}
@@ -256,7 +263,13 @@ def test_smoke_sequence_against_stub_exercises_tool_correlation():
         )
         s.add(200, completion(dict(role="assistant", content="The sum is 5555.")))
         report = run_smoke(
-            load_config({"FIREWORKS_API_KEY": "k", "UNLOCK_AI_BASE_URL": s.url}),
+            load_config(
+                {
+                    "AI_PROVIDER": "fireworks",
+                    "FIREWORKS_API_KEY": "k",
+                    "UNLOCK_AI_BASE_URL": s.url,
+                }
+            ),
             env={"UNLOCK_AI_LIVE": "1"},
         )
         followup = s.requests[2]["body"]["messages"]
