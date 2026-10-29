@@ -60,7 +60,7 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser(
         "smoke",
-        help="live provider smoke test (needs FIREWORKS_API_KEY and UNLOCK_AI_LIVE=1)",
+        help="live provider smoke test (needs MODEL_API_KEY and RUN_META_LIVE_TESTS=1)",
     ).add_argument("--output", type=Path)
     demo = sub.add_parser("demo", help="end-to-end redesign run on a synthetic fixture")
     demo.add_argument("--fixture", default="B02", choices=["B01", "B02", "B03"])
@@ -87,7 +87,7 @@ def main(argv=None):
     ev.add_argument("--output", type=Path, default=Path(".work/ai-eval"))
     args = parser.parse_args(argv)
 
-    from .config import load_config
+    from .config import load_config, live_tests_enabled
 
     if args.command == "smoke":
         from .smoke import run_smoke
@@ -120,10 +120,16 @@ def main(argv=None):
         if args.offline:
             provider = scripted_agent()
             print(
-                "OFFLINE SCRIPTED PROVIDER: not Muse Spark Open. Engineering results are real.",
+                "OFFLINE SCRIPTED PROVIDER: no live model. Engineering results are real.",
                 file=sys.stderr,
             )
         else:
+            if not live_tests_enabled():
+                print(
+                    "Set RUN_META_LIVE_TESTS=1 to allow a paid engineering demo, or use --offline.",
+                    file=sys.stderr,
+                )
+                return 1
             if not config.has_credentials:
                 print(
                     f"{config.api_key_env} is not set. Use --offline for the labelled scripted demo.",
@@ -139,6 +145,7 @@ def main(argv=None):
             prices=config.prices,
             request_timeout_s=config.request_timeout_s,
             max_retries=config.max_retries,
+            artifact_root=args.output / "artifacts",
         )
         _write(args.output / "run.json", report)
         text = summary_text(report)
@@ -153,6 +160,9 @@ def main(argv=None):
 
     conditions = [c for c in args.conditions.split(",") if c]
     config = load_config()
+    if "muse" in conditions and not live_tests_enabled():
+        print("Live evaluation disabled: set RUN_META_LIVE_TESTS=1.", file=sys.stderr)
+        return 1
     if "muse" in conditions and not config.has_credentials:
         print(
             f"muse condition requested but {config.api_key_env} is not set; it will not run.",

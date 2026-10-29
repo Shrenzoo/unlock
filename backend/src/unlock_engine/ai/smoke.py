@@ -1,17 +1,16 @@
 """Live provider smoke test: three bounded requests, a harmless tool, no CAD work.
 
-Runs only when credentials exist AND UNLOCK_AI_LIVE=1. Results are reported
+Runs only when credentials exist AND RUN_META_LIVE_TESTS=1 for Meta. Results are reported
 check by check; a skipped or failed check is never reported as live success.
 """
 
 from __future__ import annotations
 
 import json
-import os
 from datetime import datetime, timezone
 
-from .config import ProviderConfig
-from .provider import OpenAICompatibleProvider, ProviderError
+from .config import ProviderConfig, live_tests_enabled, load_environment
+from .provider import ProviderError, build_provider
 
 ADD_TOOL = dict(
     type="function",
@@ -28,12 +27,14 @@ ADD_TOOL = dict(
 )
 
 
-def run_smoke(config: ProviderConfig, *, env=None) -> dict:
-    env = os.environ if env is None else env
+def run_smoke(config: ProviderConfig, *, env=None, provider=None) -> dict:
+    env = load_environment() if env is None else env
     report = dict(
         started_at=datetime.now(timezone.utc).isoformat(),
         provider=config.public(),
-        live_enabled=env.get("UNLOCK_AI_LIVE") == "1",
+        live_enabled=live_tests_enabled(env)
+        if config.provider == "meta"
+        else env.get("UNLOCK_AI_LIVE") == "1",
         checks=[],
         requests=[],
         status="not_run",
@@ -53,10 +54,12 @@ def run_smoke(config: ProviderConfig, *, env=None) -> dict:
         return report
     if not report["live_enabled"]:
         report["status"] = "skipped"
-        report["reason"] = "set UNLOCK_AI_LIVE=1 to allow paid requests"
+        report["reason"] = (
+            "set RUN_META_LIVE_TESTS=1 to allow paid Meta tests (UNLOCK_AI_LIVE=1 for an explicitly selected alternate provider)"
+        )
         return report
 
-    provider = OpenAICompatibleProvider(config)
+    provider = provider or build_provider(config)
 
     def call(messages, tools=(), tool_choice="auto"):
         turn = provider.complete(
@@ -100,7 +103,7 @@ def run_smoke(config: ProviderConfig, *, env=None) -> dict:
         turn = call(
             messages,
             [ADD_TOOL],
-            tool_choice=dict(type="function", function=dict(name="add_integers")),
+            tool_choice="auto",
         )
         if not check(
             "native_tool_call",
@@ -119,6 +122,15 @@ def run_smoke(config: ProviderConfig, *, env=None) -> dict:
         messages.append(turn.assistant_message)
         for extra in turn.tool_calls:
             a = json.loads(extra.arguments)
+            if (
+                extra.name != "add_integers"
+                or not isinstance(a, dict)
+                or set(a) != {"a", "b"}
+                or any(type(v) is not int or abs(v) > 10000 for v in a.values())
+            ):
+                raise ProviderError(
+                    "BAD_RESPONSE", "smoke tool name or arguments are unsupported"
+                )
             messages.append(
                 dict(
                     role="tool",
@@ -144,5 +156,31 @@ def run_smoke(config: ProviderConfig, *, env=None) -> dict:
         if report["checks"] and all(c["result"] == "pass" for c in report["checks"])
         else "failed"
     )
+    requests = report["requests"]
+    report["usage"] = dict(
+        input_tokens=sum(r["usage"].get("prompt_tokens", 0) for r in requests),
+        output_tokens=sum(r["usage"].get("completion_tokens", 0) for r in requests),
+        source="provider_reported"
+        if requests and all(r["usage"] for r in requests)
+        else "incomplete",
+    )
+    report["cost"] = dict(
+        estimated_usd=None, reason="no verified account price table configured"
+    )
+    if config.prices and report["usage"]["source"] == "provider_reported":
+        from .controller import estimate_cost
+        from .toolbox import Counters
+
+        c = Counters(
+            provider_requests=len(requests),
+            usage_reported_turns=len(requests),
+            input_tokens=report["usage"]["input_tokens"],
+            output_tokens=report["usage"]["output_tokens"],
+            cached_input_tokens=sum(
+                (r["usage"].get("prompt_tokens_details") or {}).get("cached_tokens", 0)
+                for r in requests
+            ),
+        )
+        report["cost"] = estimate_cost(c, config.prices)
     report["finished_at"] = datetime.now(timezone.utc).isoformat()
     return report

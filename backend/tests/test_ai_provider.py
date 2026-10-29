@@ -102,7 +102,10 @@ def test_config_defaults_are_documented_model_and_medium_effort():
     assert c.model == MODEL and c.base_url == "https://api.fireworks.ai/inference/v1"
     assert c.reasoning_effort == "medium" and not c.has_credentials
     assert (
-        load_config({"UNLOCK_AI_REASONING_EFFORT": "high"}).reasoning_effort == "high"
+        load_config(
+            {"AI_PROVIDER": "fireworks", "UNLOCK_AI_REASONING_EFFORT": "high"}
+        ).reasoning_effort
+        == "high"
     )
     with pytest.raises(ValueError):
         load_config({"AI_PROVIDER": "fireworks", "UNLOCK_AI_REASONING_EFFORT": "max"})
@@ -274,10 +277,7 @@ def test_smoke_sequence_against_stub_exercises_tool_correlation():
         )
         followup = s.requests[2]["body"]["messages"]
     assert report["status"] == "passed", report
-    assert s.requests[1]["body"]["tool_choice"] == {
-        "type": "function",
-        "function": {"name": "add_integers"},
-    }
+    assert s.requests[1]["body"]["tool_choice"] == "auto"
     assert followup[-2]["tool_calls"][0]["id"] == "call_7"
     assert followup[-1] == {
         "role": "tool",

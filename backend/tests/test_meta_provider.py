@@ -196,3 +196,30 @@ def test_deadline_and_cancellation_interrupt_waiting_response():
         )
     timer.join()
     assert e.value.kind == "CANCELLED" and time.monotonic() - started < 1
+
+
+def test_meta_smoke_uses_auto_and_correlates_native_results():
+    from unlock_engine.ai.smoke import run_smoke
+
+    requests = []
+
+    def handler(request):
+        body = json.loads(request.content)
+        requests.append(body)
+        if len(requests) == 1:
+            message = dict(role="assistant", content="ready")
+        elif len(requests) == 2:
+            message = tool_call_message(
+                ("sum-call", "add_integers", {"a": 1234, "b": 4321})
+            )
+        else:
+            assert body["messages"][-1]["tool_call_id"] == "sum-call"
+            assert json.loads(body["messages"][-1]["content"])["sum"] == 5555
+            message = dict(role="assistant", content="5555")
+        return httpx.Response(200, json=payload(message))
+
+    p = provider(handler)
+    report = run_smoke(p.config, env={"RUN_META_LIVE_TESTS": "1"}, provider=p)
+    assert report["status"] == "passed", report
+    assert requests[1]["tool_choice"] == "auto"
+    assert len(requests) == 3 and report["usage"]["output_tokens"] == 24
