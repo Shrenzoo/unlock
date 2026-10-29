@@ -439,9 +439,12 @@ def test_deterministic_selectors_use_the_same_tools_and_report_contract(b02):
 
 def test_retry_reservations_count_unknown_billed_output(b02):
     step, manifest = b02
-    error = lambda m: ProviderError(
-        "TIMEOUT", "uncertain billed response", retryable=True, retry_after_s=0
-    )
+
+    def error(m):
+        return ProviderError(
+            "TIMEOUT", "uncertain billed response", retryable=True, retry_after_s=0
+        )
+
     fake = FakeProvider([error] * 4)
     report = run_with_model(
         step,

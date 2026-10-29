@@ -1,1 +1,1 @@
-"""Bounded Muse Spark Open redesign orchestration over the existing geometry engine and planner."""
+"""Bounded model orchestration over the real CAD engine, planner and verifier."""

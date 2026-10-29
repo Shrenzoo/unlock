@@ -26,6 +26,7 @@ ErrorKind = Literal[
     "BAD_RESPONSE",
     "PROVIDER_UNAVAILABLE",
     "CANCELLED",
+    "OUTPUT_BUDGET",
 ]
 
 MAX_RESPONSE_BYTES = 4 * 1024 * 1024
@@ -123,7 +124,7 @@ def parse_usage(raw) -> Usage:
             raise ProviderError("BAD_RESPONSE", "invalid provider token usage")
     prompt_details = raw.get("prompt_tokens_details") or {}
     completion_details = raw.get("completion_tokens_details") or {}
-    return Usage(
+    usage = Usage(
         input_tokens=_int(raw.get("prompt_tokens")),
         output_tokens=_int(raw.get("completion_tokens")),
         total_tokens=_int(raw.get("total_tokens")),
@@ -135,6 +136,20 @@ def parse_usage(raw) -> Usage:
         else None,
         raw=raw,
     )
+    if (
+        usage.cached_input_tokens is not None
+        and usage.input_tokens is not None
+        and usage.cached_input_tokens > usage.input_tokens
+        or usage.reasoning_tokens is not None
+        and usage.output_tokens is not None
+        and usage.reasoning_tokens > usage.output_tokens
+        or usage.total_tokens is not None
+        and usage.input_tokens is not None
+        and usage.output_tokens is not None
+        and usage.total_tokens != usage.input_tokens + usage.output_tokens
+    ):
+        raise ProviderError("BAD_RESPONSE", "inconsistent provider token usage")
+    return usage
 
 
 def parse_completion(
@@ -160,7 +175,9 @@ def parse_completion(
         raise ProviderError(
             "BAD_RESPONSE", "response incomplete or unsupported finish reason"
         )
-    raw_calls = message.get("tool_calls") or []
+    raw_calls = message.get("tool_calls")
+    if raw_calls is None:
+        raw_calls = []
     if not isinstance(raw_calls, list) or len(raw_calls) > 64:
         raise ProviderError("BAD_RESPONSE", "tool_calls must be a bounded array")
     calls = []

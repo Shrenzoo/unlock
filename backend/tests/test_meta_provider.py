@@ -223,3 +223,47 @@ def test_meta_smoke_uses_auto_and_correlates_native_results():
     assert report["status"] == "passed", report
     assert requests[1]["tool_choice"] == "auto"
     assert len(requests) == 3 and report["usage"]["output_tokens"] == 24
+
+
+@pytest.mark.parametrize(
+    "usage",
+    [
+        {"prompt_tokens": 2, "completion_tokens": 3, "total_tokens": 4},
+        {
+            "prompt_tokens": 2,
+            "completion_tokens": 3,
+            "total_tokens": 5,
+            "prompt_tokens_details": {"cached_tokens": 4},
+        },
+        {
+            "prompt_tokens": 2,
+            "completion_tokens": 3,
+            "total_tokens": 5,
+            "completion_tokens_details": {"reasoning_tokens": 4},
+        },
+    ],
+)
+def test_inconsistent_usage_never_becomes_negative_cost(usage):
+    with pytest.raises(ProviderError):
+        parse_usage(usage)
+
+
+def test_smoke_nonobject_arguments_are_a_failed_report():
+    from unlock_engine.ai.smoke import run_smoke
+
+    count = 0
+
+    def handler(request):
+        nonlocal count
+        count += 1
+        return httpx.Response(
+            200,
+            json=payload()
+            if count == 1
+            else payload(tool_call_message(("bad", "add_integers", "[]"))),
+        )
+
+    p = provider(handler)
+    report = run_smoke(p.config, env={"RUN_META_LIVE_TESTS": "1"}, provider=p)
+    assert report["status"] == "failed" and count == 2
+    assert report["error"]["kind"] == "BAD_RESPONSE"

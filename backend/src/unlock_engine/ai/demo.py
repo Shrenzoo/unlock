@@ -1,4 +1,4 @@
-"""OFFLINE SCRIPTED PROVIDER for demonstrations without Muse access. Not Muse Spark Open.
+"""OFFLINE SCRIPTED PROVIDER for demonstrations without Muse access. Not live model inference.
 
 The script is a fixed policy that reads real tool results: it inspects the
 geometric blocker, reads the server domain, proposes the smallest relief at the

@@ -337,6 +337,14 @@ class RedesignRun:
         if outcome != "VERIFIED_IMPROVEMENT_FOUND":
             selected = None
         evidence = s.full_evidence() if s else {}
+        evidence["handle_index"] = (
+            {
+                handle: dict(kind=kind, id=full_id)
+                for handle, (kind, full_id) in self.toolbox.handles.items()
+            }
+            if self.toolbox
+            else {}
+        )
         evidence["tool_results"] = (
             [r.model_dump(mode="json") for r in self.toolbox.results]
             if self.toolbox

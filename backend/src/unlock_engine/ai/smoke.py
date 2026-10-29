@@ -115,7 +115,9 @@ def run_smoke(config: ProviderConfig, *, env=None, provider=None) -> dict:
         args = json.loads(tc.arguments)
         check(
             "tool_arguments_parse",
-            isinstance(args.get("a"), int) and isinstance(args.get("b"), int),
+            isinstance(args, dict)
+            and type(args.get("a")) is int
+            and type(args.get("b")) is int,
             tc.arguments,
         )
         # 8-9: correlated tool result and continued conversation
