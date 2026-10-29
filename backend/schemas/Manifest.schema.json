@@ -1,0 +1,1032 @@
+{
+  "$defs": {
+    "Binding": {
+      "additionalProperties": false,
+      "properties": {
+        "bracket_id": {
+          "title": "Bracket Id",
+          "type": "string"
+        },
+        "constructor_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Constructor Version",
+          "type": "string"
+        },
+        "editable_region_id": {
+          "title": "Editable Region Id",
+          "type": "string"
+        },
+        "family": {
+          "const": "bridge_bracket_v1",
+          "title": "Family",
+          "type": "string"
+        },
+        "maximum_cut_volume_mm3": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Cut Volume Mm3",
+          "type": "number"
+        },
+        "minimum_web_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Minimum Web Mm",
+          "type": "number"
+        },
+        "parameters": {
+          "$ref": "#/$defs/BracketParameters"
+        },
+        "templates": {
+          "items": {
+            "$ref": "#/$defs/Template"
+          },
+          "title": "Templates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "bracket_id",
+        "family",
+        "parameters",
+        "editable_region_id",
+        "templates",
+        "minimum_web_mm",
+        "maximum_cut_volume_mm3"
+      ],
+      "title": "Binding",
+      "type": "object"
+    },
+    "Box": {
+      "additionalProperties": false,
+      "properties": {
+        "max": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Max",
+          "type": "array"
+        },
+        "min": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Min",
+          "type": "array"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "title": "Box",
+      "type": "object"
+    },
+    "BracketParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "foot_depth_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Foot Depth Mm",
+          "type": "number"
+        },
+        "foot_thickness_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Foot Thickness Mm",
+          "type": "number"
+        },
+        "foot_width_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Foot Width Mm",
+          "type": "number"
+        },
+        "hole_diameter_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Hole Diameter Mm",
+          "type": "number"
+        },
+        "post_depth_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Post Depth Mm",
+          "type": "number"
+        },
+        "post_width_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Post Width Mm",
+          "type": "number"
+        },
+        "span_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Span Mm",
+          "type": "number"
+        },
+        "web_depth_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Web Depth Mm",
+          "type": "number"
+        },
+        "web_length_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Web Length Mm",
+          "type": "number"
+        },
+        "web_thickness_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Web Thickness Mm",
+          "type": "number"
+        },
+        "web_underside_height_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Web Underside Height Mm",
+          "type": "number"
+        }
+      },
+      "required": [
+        "span_mm",
+        "foot_width_mm",
+        "foot_depth_mm",
+        "foot_thickness_mm",
+        "hole_diameter_mm",
+        "post_width_mm",
+        "post_depth_mm",
+        "web_length_mm",
+        "web_depth_mm",
+        "web_thickness_mm",
+        "web_underside_height_mm"
+      ],
+      "title": "BracketParameters",
+      "type": "object"
+    },
+    "Component": {
+      "additionalProperties": false,
+      "properties": {
+        "bounds_mm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Box"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "display_name": {
+          "title": "Display Name",
+          "type": "string"
+        },
+        "fixed": {
+          "title": "Fixed",
+          "type": "boolean"
+        },
+        "fixed_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fixed Reason"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "placement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Transform"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "removal_axes": {
+          "items": {
+            "enum": [
+              "X+",
+              "X-",
+              "Y+",
+              "Y-",
+              "Z+",
+              "Z-"
+            ],
+            "type": "string"
+          },
+          "title": "Removal Axes",
+          "type": "array"
+        },
+        "replaceable": {
+          "title": "Replaceable",
+          "type": "boolean"
+        },
+        "role": {
+          "enum": [
+            "chassis",
+            "cover",
+            "bracket",
+            "service_module",
+            "electronics",
+            "fastener"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "shared_definition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shared Definition"
+        },
+        "source_occurrence_path": {
+          "title": "Source Occurrence Path",
+          "type": "string"
+        },
+        "staging_region_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Staging Region Id"
+        },
+        "template_family": {
+          "anyOf": [
+            {
+              "const": "bridge_bracket_v1",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Family"
+        }
+      },
+      "required": [
+        "id",
+        "source_occurrence_path",
+        "display_name",
+        "role",
+        "fixed",
+        "replaceable",
+        "removal_axes",
+        "staging_region_id"
+      ],
+      "title": "Component",
+      "type": "object"
+    },
+    "Constraint": {
+      "additionalProperties": false,
+      "properties": {
+        "axis": {
+          "anyOf": [
+            {
+              "enum": [
+                "X+",
+                "X-",
+                "Y+",
+                "Y-",
+                "Z+",
+                "Z-"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Axis"
+        },
+        "component_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "distance_mm": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mm"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "fixed_geometry",
+            "protected_region",
+            "hole_axis",
+            "envelope",
+            "keep_out",
+            "clearance",
+            "template_bound"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "limit": {
+          "title": "Limit",
+          "type": "string"
+        },
+        "mandatory": {
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "region_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Region Ids",
+          "type": "array"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "pair",
+                "path"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "threshold_mm": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold Mm"
+        }
+      },
+      "required": [
+        "id",
+        "mandatory",
+        "kind",
+        "label",
+        "component_ids",
+        "limit"
+      ],
+      "title": "Constraint",
+      "type": "object"
+    },
+    "Frame": {
+      "additionalProperties": false,
+      "properties": {
+        "handedness": {
+          "const": "right",
+          "title": "Handedness",
+          "type": "string"
+        },
+        "up": {
+          "const": "Z",
+          "title": "Up",
+          "type": "string"
+        }
+      },
+      "required": [
+        "handedness",
+        "up"
+      ],
+      "title": "Frame",
+      "type": "object"
+    },
+    "KeepOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "max_mm": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Max Mm",
+          "type": "array"
+        },
+        "min_mm": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Min Mm",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "min_mm",
+        "max_mm"
+      ],
+      "title": "KeepOut",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "minLength": 1,
+          "title": "Author",
+          "type": "string"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "author",
+        "license",
+        "source"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Region": {
+      "additionalProperties": false,
+      "properties": {
+        "bounds_mm": {
+          "$ref": "#/$defs/Box"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "contact",
+            "engagement",
+            "protected",
+            "editable"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "plane_axis": {
+          "anyOf": [
+            {
+              "enum": [
+                "X",
+                "Y",
+                "Z"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plane Axis"
+        },
+        "plane_coordinate_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plane Coordinate Mm"
+        }
+      },
+      "required": [
+        "id",
+        "component_id",
+        "kind",
+        "bounds_mm"
+      ],
+      "title": "Region",
+      "type": "object"
+    },
+    "Screw": {
+      "additionalProperties": false,
+      "properties": {
+        "axis_world": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Axis World",
+          "type": "array"
+        },
+        "engagement_region_id": {
+          "title": "Engagement Region Id",
+          "type": "string"
+        },
+        "extraction_distance_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Extraction Distance Mm",
+          "type": "number"
+        },
+        "fastener_id": {
+          "title": "Fastener Id",
+          "type": "string"
+        },
+        "head_origin_mm": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Head Origin Mm",
+          "type": "array"
+        },
+        "host_component_id": {
+          "title": "Host Component Id",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "screw_retainer",
+          "title": "Kind",
+          "type": "string"
+        },
+        "retained_component_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Retained Component Ids",
+          "type": "array"
+        },
+        "tool_id": {
+          "title": "Tool Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "fastener_id",
+        "retained_component_ids",
+        "host_component_id",
+        "tool_id",
+        "axis_world",
+        "head_origin_mm",
+        "extraction_distance_mm",
+        "engagement_region_id"
+      ],
+      "title": "Screw",
+      "type": "object"
+    },
+    "Seat": {
+      "additionalProperties": false,
+      "properties": {
+        "component_a_id": {
+          "title": "Component A Id",
+          "type": "string"
+        },
+        "component_b_id": {
+          "title": "Component B Id",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "planar_seat",
+          "title": "Kind",
+          "type": "string"
+        },
+        "outward_normal_world": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Outward Normal World",
+          "type": "array"
+        },
+        "region_a_id": {
+          "title": "Region A Id",
+          "type": "string"
+        },
+        "region_b_id": {
+          "title": "Region B Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "component_a_id",
+        "component_b_id",
+        "region_a_id",
+        "region_b_id",
+        "outward_normal_world"
+      ],
+      "title": "Seat",
+      "type": "object"
+    },
+    "Stage": {
+      "additionalProperties": false,
+      "properties": {
+        "bounds_mm": {
+          "$ref": "#/$defs/Box"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "bounds_mm"
+      ],
+      "title": "Stage",
+      "type": "object"
+    },
+    "Template": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "additionalProperties": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "title": "Domain",
+          "type": "object"
+        },
+        "id": {
+          "enum": [
+            "T01",
+            "T02"
+          ],
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "domain"
+      ],
+      "title": "Template",
+      "type": "object"
+    },
+    "Tool": {
+      "additionalProperties": false,
+      "properties": {
+        "approach_distance_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Approach Distance Mm",
+          "type": "number"
+        },
+        "handle_length_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Handle Length Mm",
+          "type": "number"
+        },
+        "handle_radius_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Handle Radius Mm",
+          "type": "number"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "permitted_axis": {
+          "enum": [
+            "X+",
+            "X-",
+            "Y+",
+            "Y-",
+            "Z+",
+            "Z-"
+          ],
+          "title": "Permitted Axis",
+          "type": "string"
+        },
+        "shaft_length_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Shaft Length Mm",
+          "type": "number"
+        },
+        "shaft_radius_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Shaft Radius Mm",
+          "type": "number"
+        },
+        "tip_type": {
+          "title": "Tip Type",
+          "type": "string"
+        },
+        "type": {
+          "const": "screwdriver",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "tip_type",
+        "shaft_radius_mm",
+        "shaft_length_mm",
+        "handle_radius_mm",
+        "handle_length_mm",
+        "approach_distance_mm",
+        "permitted_axis"
+      ],
+      "title": "Tool",
+      "type": "object"
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "default": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "items": {
+            "type": "number"
+          },
+          "title": "Matrix",
+          "type": "array"
+        }
+      },
+      "title": "Transform",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:Manifest:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assembly_id": {
+      "title": "Assembly Id",
+      "type": "string"
+    },
+    "components": {
+      "items": {
+        "$ref": "#/$defs/Component"
+      },
+      "maxItems": 12,
+      "minItems": 5,
+      "title": "Components",
+      "type": "array"
+    },
+    "connections": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "planar_seat": "#/$defs/Seat",
+            "screw_retainer": "#/$defs/Screw"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/Screw"
+          },
+          {
+            "$ref": "#/$defs/Seat"
+          }
+        ]
+      },
+      "title": "Connections",
+      "type": "array"
+    },
+    "constraints": {
+      "items": {
+        "$ref": "#/$defs/Constraint"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "envelope_mm": {
+      "$ref": "#/$defs/Box"
+    },
+    "frame": {
+      "$ref": "#/$defs/Frame"
+    },
+    "keep_outs": {
+      "items": {
+        "$ref": "#/$defs/KeepOut"
+      },
+      "title": "Keep Outs",
+      "type": "array"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "regions": {
+      "items": {
+        "$ref": "#/$defs/Region"
+      },
+      "title": "Regions",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "staging_regions": {
+      "items": {
+        "$ref": "#/$defs/Stage"
+      },
+      "title": "Staging Regions",
+      "type": "array"
+    },
+    "template_bindings": {
+      "items": {
+        "$ref": "#/$defs/Binding"
+      },
+      "title": "Template Bindings",
+      "type": "array"
+    },
+    "tools": {
+      "items": {
+        "$ref": "#/$defs/Tool"
+      },
+      "title": "Tools",
+      "type": "array"
+    },
+    "units": {
+      "const": "mm",
+      "title": "Units",
+      "type": "string"
+    },
+    "unsupported_assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unsupported Assumptions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "project_id",
+    "assembly_id",
+    "units",
+    "frame",
+    "envelope_mm",
+    "components",
+    "connections",
+    "tools",
+    "constraints",
+    "keep_outs",
+    "template_bindings",
+    "provenance",
+    "regions",
+    "staging_regions",
+    "unsupported_assumptions"
+  ],
+  "title": "Manifest",
+  "type": "object"
+}

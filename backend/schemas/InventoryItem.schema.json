@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "Box": {
+      "additionalProperties": false,
+      "properties": {
+        "max": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Max",
+          "type": "array"
+        },
+        "min": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Min",
+          "type": "array"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "title": "Box",
+      "type": "object"
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "default": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "items": {
+            "type": "number"
+          },
+          "title": "Matrix",
+          "type": "array"
+        }
+      },
+      "title": "Transform",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:InventoryItem:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bounds_mm": {
+      "$ref": "#/$defs/Box"
+    },
+    "definition_id": {
+      "title": "Definition Id",
+      "type": "string"
+    },
+    "display_name": {
+      "title": "Display Name",
+      "type": "string"
+    },
+    "face_count": {
+      "title": "Face Count",
+      "type": "integer"
+    },
+    "fixed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Fixed"
+    },
+    "geometry_hash": {
+      "title": "Geometry Hash",
+      "type": "string"
+    },
+    "geometry_valid": {
+      "title": "Geometry Valid",
+      "type": "boolean"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "native_occurrence_id": {
+      "title": "Native Occurrence Id",
+      "type": "string"
+    },
+    "placement": {
+      "$ref": "#/$defs/Transform"
+    },
+    "removal_axes": {
+      "items": {
+        "enum": [
+          "X+",
+          "X-",
+          "Y+",
+          "Y-",
+          "Z+",
+          "Z-"
+        ],
+        "type": "string"
+      },
+      "title": "Removal Axes",
+      "type": "array"
+    },
+    "replaceable": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Replaceable"
+    },
+    "role": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Role"
+    },
+    "source_occurrence_path": {
+      "title": "Source Occurrence Path",
+      "type": "string"
+    },
+    "volume_mm3": {
+      "title": "Volume Mm3",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "native_occurrence_id",
+    "source_occurrence_path",
+    "definition_id",
+    "display_name",
+    "role",
+    "fixed",
+    "replaceable",
+    "removal_axes",
+    "placement",
+    "bounds_mm",
+    "geometry_valid",
+    "geometry_hash",
+    "volume_mm3",
+    "face_count"
+  ],
+  "title": "InventoryItem",
+  "type": "object"
+}

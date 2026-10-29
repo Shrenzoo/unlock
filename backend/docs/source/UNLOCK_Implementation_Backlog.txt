@@ -1,0 +1,259 @@
+UNLOCK Prioritized Implementation Backlog
+Development handoff aligned with PRD version 1.0
+Each item has an intended owner, dependency, acceptance criterion and verification method. A owns frontend, workflow and integration. B owns geometry, search and model integration. Both review correctness and evidence. All effort estimates are provisional focused developer hours, not elapsed commitments. Parallel work requires frozen contracts; unresolved geometry takes precedence over presentation.
+Delivery order and capacity
+Start with E0 and E1, then run E2 and frontend E5 against fixed schemas. Build E3 and E4 before polishing comparison. E6 evaluation begins with the first geometry primitive and becomes a final release gate; E7 closes deployment and submission. P0 items total approximately 108 to 159 focused hours across the two developers, before contingency; availability has not been confirmed. Reserve about 20 percent additional time. If capacity is smaller, cut P1 and P2 first, then narrow fixture coverage while keeping a complete verified loop.
+All requirements and error semantics are defined in the full PRD. An item is complete only when its acceptance evidence is linked to the appropriate revision or test artifact. Work that produces only a UI mock or hardcoded result does not close an engineering item.
+E0 Resolve feasibility and external dependencies
+BL001 CAD and continuous checking spike
+Story. As the implementation team we need proof that the selected kernel and conservative motion checks can support one meaningful route.
+Priority and owner. P0, B, October 27, 5 to 7 hours. Maps to FR001, FR006, NFR05 and R04. Dependencies none.
+Acceptance. Pin one working CadQuery/OCP runtime; import separate repeated occurrences, verify mm dimensions, reject a thin intermediate obstacle and handle an explicitly separating planar contact. Produce one clear continuously checked path on simple solids. Record the container and engine versions.
+Verification. Analytic geometry oracle plus inspected import inventory. Any false pass blocks subsequent success claims; conservative unknown results are recorded rather than concealed.
+BL002 Muse access and provider continuity
+Story. The team can use the intended Meta model for a real tool loop through submission.
+Priority and owner. P0, B, October 27, 2 to 3 hours. Maps to FR009, NFR08 and R14. Dependencies account access supplied through normal configuration.
+Acceptance. Execute a real inspect tool request and correlated tool result with Muse Spark Open; record model ID, JSON mode behavior, latency, usage and account rate limits without credentials. Confirm whether the Fireworks preview caveat affects access after October 29. Test the same model at another documented provider only if needed and authorized account access exists.
+Verification. Redacted request and response fixture plus provider access check. No model inference has been run as part of the PRD itself.
+BL003 Event rules and contribution eligibility
+Story. Each intended contributor can be accurately included in a compliant submission.
+Priority and owner. P0 participation gate, both, October 27, 1 to 2 hours. Maps to R13 and PRD Section 28. Dependencies access to signed rules or organizer response.
+Acceptance. Record the actual rules, every contributor's eligibility and approval status, submission fields, deadline timezone and repository or demo or video requirements. Preserve exact source and date. Do not infer eligibility from an accepted teammate account or the supplied advisory guide.
+Verification. Human review of signed rules or written organizer response. Keep this gate separate from engineering readiness.
+E1 Define data and import real geometry
+BL004 Contracts and immutable revision store
+Story. Every result can be traced to the design and policy that produced it.
+Priority and owner. P0, A with B review, October 27 to 28, 4 to 6 hours. Maps to FR018 and Section 20. Dependencies none; finalize with BL001.
+Acceptance. Version manifest, component, connection, constraint, proposal, plan, verification and error schemas. Create revision, run and artifact records with hashes. Reject extra properties, NaN, stale IDs and missing foreign keys. Atomic artifact commits preserve the original.
+Verification. Schema fixtures, repeated hash checks and interrupted commit tests. Frontend and model tools consume the same contracts.
+BL005 Safe package validation
+Story. Engineers receive specific errors when an upload is unsupported.
+Priority and owner. P0, A, October 28, 3 to 4 hours. Maps to FR001-FR002 and NFR09. Dependencies BL004.
+Acceptance. Accept STEP plus manifest or supported ZIP; enforce file and expanded limits, allowed filenames, no symlinks, traversal, executables or external references. Missing semantic fields are listed separately from parser errors. No project becomes analysis ready on partial import.
+Verification. Valid bundle, oversized file, ZIP traversal and incomplete manifest fixtures.
+BL006 XDE assembly adapter and render mapping
+Story. Engineers retain separated parts, hierarchy and placements after import.
+Priority and owner. P0, B, October 28, 5 to 7 hours. Maps to FR001-FR003. Dependencies BL001, BL004-BL005.
+Acceptance. Traverse XDE occurrences, preserve definitions and instances, derive stable IDs, validate solids and units, emit preview mesh mapping, and apply render scale once. A shared part edit must remain occurrence local. Produce geometry and manifest readiness reports.
+Verification. Known dimensions and transformed repeated instance fixture; inspect component count and world bounds against constructor oracle.
+BL007 Author three rights controlled fixtures
+Story. The team can demonstrate and evaluate supported behavior on reproducible inputs.
+Priority and owner. P0, B authors and A independently checks, October 27 to 30, 4 to 6 hours. Maps to FR021 and Section 21. Dependencies BL001 and BL004.
+Acceptance. Construct B01 accessible cartridge, B02 trapped fan bracket and B03 tool conflict. Include source, seeds, dimensions, explicit relationships and intended outcomes. Record author and agreed code and geometry licenses. No undocumented third party model enters the public bundle.
+Verification. Independent inspection of dimensions, attachment semantics and manually enumerable small plans; rights ledger.
+E2 Build baseline analysis and evidence
+BL008 Fastener action and tool volume
+Story. A screw is removable only when its declared access and extraction checks pass.
+Priority and owner. P0, B, October 28, 4 to 6 hours. Maps to FR005 and FR006. Dependencies BL006-BL007.
+Acceptance. Build shaft and handle approach volumes from tool metadata; validate named engagement exception, screw extraction and host release. Reject blocked access, missing engagement and unsupported fasteners. The removed fastener is counted as one declared abstract action with its subchecks visible.
+Verification. Cover blocking a screw, multiple retained components, inward extraction and known engagement region tests.
+BL009 Continuous translation validator
+Story. A released component follows a checked complete segment to staging.
+Priority and owner. P0, B, October 28, 5 to 8 hours. Maps to FR006, FR012 and Section 16. Dependencies BL001 and BL006.
+Acceptance. Construct server validated conservative material coverage, compute analytic swept box intervals, enforce clearance and guard, isolate allowed planar contacts, and return pass, confirmed obstruction or unknown. A proxy overlap without a solid witness cannot prove actual collision. Clear animation samples cannot establish pass.
+Verification. Analytic sweeps, thin obstacles, boundary contact, false proxy overlap, hidden material and gaps on both sides of the threshold. Store representation and certificate evidence.
+BL010 Bounded target sequence search
+Story. Engineers see a valid baseline route or accurately scoped failure.
+Priority and owner. P0, B, October 28 to 29, 4 to 6 hours. Maps to FR007-FR008 and FR020. Dependencies BL008-BL009.
+Acceptance. Implement state including removed occurrences and last tool; enumerate eligible primitives deterministically; use lexicographic uniform cost search and revision keyed cache. Enforce 30 second and 4096 state limits. Distinguish checked feasible, exhaustive no path supported and incomplete with unknown edges.
+Verification. Exhaustive tiny fixture oracle, multiple retainers, cover and screw dependency, timeout and unknown transition cases. Every returned plan must replay through the validator.
+BL011 Obstruction evidence and metrics service
+Story. Engineers can inspect a failure and compare meaningful counts.
+Priority and owner. P0, B with A integration, October 29, 3 to 4 hours. Maps to FR008, FR014 and Section 7. Dependencies BL010.
+Acceptance. Persist failed action, state, occurrence IDs, witness pose and evidence level. Calculate operations, unrelated parts, fasteners, tools, clearances and search scope from reports. Infeasible counts remain null; mismatched constraint hashes cannot compare.
+Verification. Hand calculated sequence counts, same target comparisons, proxy versus real witness and no invented percentage checks.
+E3 Create actual geometry changes
+BL012 Template family matching and registry
+Story. Engineers know whether a bracket can be edited within the supported family.
+Priority and owner. P0, B, October 29, 3 to 4 hours. Maps to FR010-FR011. Dependencies BL006-BL007.
+Acceptance. Reconstruct the known bridge bracket and compare against input geometry. Publish protected named regions, editable bounds and finite parameter domains. Reject a nonmatching shape or changed mounting feature. Protect repeated instances from unintended edits.
+Verification. Exact family match, slightly different solid, incorrect placement and shared definition fixtures.
+BL013 T01 web relief geometry
+Story. Engineers receive an actual editable bracket relief within declared limits.
+Priority and owner. P0, B, October 29, 4 to 6 hours. Maps to FR010-FR011. Dependencies BL012.
+Acceptance. Validated parameters construct a new connected solid and STEP; difference is nonempty and wholly within the allowed region; feet and holes remain unchanged. Reject overlarge cuts, no change, disconnected result and failed Boolean. Original geometry remains immutable.
+Verification. Geometry difference, protected region and invalid construction tests, then independent reimport.
+BL014 T02 bounded web offset
+Story. The model can choose a different supported intervention when relief conflicts with constraints.
+Priority and owner. P0 intended breadth, first cut if core is late, B, October 29 to 30, 3 to 5 hours. Maps to FR010-FR011. Dependencies BL012-BL013.
+Acceptance. Regenerate the offset web and transitions from fixed feet for server enumerated local y values. Preserve protected geometry, envelope and keep outs. If omitted, update the product and evaluation claims to one intervention family branch.
+Verification. Valid offset, envelope failure, pad preservation and constraint sensitive B03 variants. No structural strength claim.
+BL015 Independent verification and reverse path
+Story. Engineers can trust the scope of a pass because a separate worker checks the proposal.
+Priority and owner. P0, B and A review, October 30, 5 to 7 hours. Maps to FR012-FR013 and FR020. Dependencies BL009-BL010, BL013.
+Acceptance. Reconstruct candidate from parameters, check solid validity, protected regions, holes, envelope, keep outs and assembly collisions; rerun complete original state search and reverse insertion including tool access. Derive aggregate status from mandatory checks. Unknown or stale checks cannot pass.
+Verification. Deliberately corrupted pad, missing check, stale constraint hash, collision after edit and screw reinsertion conflict. At least one rejected candidate and one real supported improvement are the core product gate.
+BL016 CAD and evidence export with round trip
+Story. Engineers can inspect and regenerate the accepted change in a CAD workflow.
+Priority and owner. P0, B with A download flow, October 30, 3 to 5 hours. Maps to FR017 and FR021. Dependencies BL015 and BL023.
+Acceptance. Package original and revised STEP, changed part, manifest, parameters, paths, metrics and reports. Reimport and verify occurrences, placements, solids and selected path. Label changed part only fallback accurately. GLB never fulfills the editable solid output requirement.
+Verification. Round trip geometry and path checks; open changed part in a CAD viewer; inspect license and limitations file.
+E4 Integrate bounded Meta tool use
+BL017 Allowlisted domain tools and proposal schemas
+Story. The model can investigate and propose edits without unrestricted execution.
+Priority and owner. P0, B, October 29, 3 to 4 hours. Maps to FR009-FR010. Dependencies BL002, BL004, BL011-BL013.
+Acceptance. Implement all eight internal tool contracts from Section 15 against real domain services. Reject unknown tools, stale IDs, extra fields and out of domain parameters. The model cannot call user acceptance, export download, shell, arbitrary URLs or code execution.
+Verification. Typed contract tests, prompt injection component names, unsupported templates and out of bounds requests.
+BL018 Orchestration failure feedback and budgets
+Story. Muse can respond to real failed checks and stop honestly when no supported edit works.
+Priority and owner. P0, B, October 29 to 30, 4 to 6 hours. Maps to FR009-FR010, FR019-FR020. Dependencies BL015 and BL017.
+Acceptance. Run inspect, propose, construct, verify and compare loop with 3 candidates, 12 calls, 6 inference turns and the 120 second total limit. One schema repair retry counts within limits. Return no verified improvement for failed candidates, and provider unavailable separately from engineering failure. Store model ID, settings and redacted events.
+Verification. Real model run on a known fixture, schema retry, provider 429 or timeout, all invalid candidates and changed constraints. Replays must be visibly labeled.
+E5 Deliver the engineering workspace
+BL019 Project and semantic readiness interface
+Story. Engineers can open a supported project and resolve missing data.
+Priority and owner. P0, A, October 28, 3 to 4 hours. Maps to FR001-FR002 and FR021. Dependencies BL004-BL005; use BL007 examples.
+Acceptance. Show bundled fixtures, compatibility rules, upload status, revision identity and missing field errors. Dashboard is a simple recent local list, not a separate account product. Unsupported uploads remain clearly analysis unavailable.
+Verification. Real valid and invalid import flows, empty state, parser error and missing fastener axis.
+BL020 Component viewer and target controls
+Story. Engineers can identify the service target and inspect its surroundings.
+Priority and owner. P0, A, October 28 to 29, 4 to 6 hours. Maps to FR003-FR004. Dependencies BL006 and BL019.
+Acceptance. Implement orbit, zoom, fit, tree, canvas selection, isolate, hide and transparency. Target ID is consistent across views. Fixed targets reject with a reason. Hiding does not alter geometry analysis. Show roles, connections and permitted axes.
+Verification. Canvas and tree ID checks, hidden blocker run, repeated occurrence selection and mm to meter scale fixture.
+BL021 Analysis and candidate evidence views
+Story. Engineers can see what the tools found and what AI proposed.
+Priority and owner. P0, A, October 29 to 30, 4 to 5 hours. Maps to FR008-FR012 and FR020. Dependencies BL011 and BL018.
+Acceptance. Display actual stage events, baseline route, confirmed witness or unknown warning, bounded template proposal, changed region, protected constraints and every mandatory check. Distinguish proposed, constructing, checked and no improvement states. Model rationale must link to existing evidence IDs.
+Verification. Run all failure status fixtures; inspect corrupted evidence references and unknown checks. No hardcoded success event or timer based fake progress.
+BL022 Synchronized comparison and checked playback
+Story. Engineers can judge the actual improvement visually and numerically.
+Priority and owner. P0, A, October 30, 4 to 6 hours. Maps to FR014-FR015. Dependencies BL011, BL015 and BL020-BL021.
+Acceptance. Original and revised labels, synchronized camera, defined metric rows, changed geometry overlay, play or pause or step or scrub, and reset. Replay exact certified segments without spatial smoothing. Prevent stale or uncertified verified playback. Compare infeasible status accurately.
+Verification. Stored pose versus rendered pose assertion; inspect endpoints and blocked witness; no autoplay under reduced motion.
+BL023 Review acceptance and export interface
+Story. Engineers can accept a candidate for handoff while preserving its limitations.
+Priority and owner. P0, A, October 30, 2 to 3 hours. Maps to FR016-FR017. Dependencies BL015 and BL022.
+Acceptance. Accept or reject creates an append only review event; failed or unknown candidates cannot be accepted as verified. Show available file types, round trip status, limits and exact download contents. Acceptance does not imply manufacturing release.
+Verification. Passing, failed, stale and part only export cases. Review event history must preserve original and rejected candidates.
+BL024 Accessible controls and robust states
+Story. Engineers can inspect the workflow without relying on mouse based 3D interaction or color.
+Priority and owner. P0 basic access, A, October 31, 2 to 3 hours. Maps to FR003, FR015, FR019 and NFR10. Dependencies BL019-BL023.
+Acceptance. Keyboard tree and action list, labeled controls, visible focus, text statuses and units, reduced motion, stage announcements, clear no target, no candidate, cancelled and WebGL failed states. Canvas alternatives retain evidence access.
+Verification. Manual keyboard and screen reader smoke review, contrast check and reduced motion playback. Do not claim accessibility certification.
+E6 Evaluate correctness utility and model value
+BL025 Freeze cases and independent expected results
+Story. Reported improvements can be checked against predeclared cases.
+Priority and owner. P0, both, October 30 to 31, 3 to 4 hours. Maps to all engineering FRs and Section 21. Dependencies BL007, BL010 and BL015.
+Acceptance. Freeze 18 cases, mark the 12 intended supported positives or already accessible cases and six negative or unsupported cases, and hold out geometry and constraint variants. Record source revision, oracle, license and expected status without filling in measured results.
+Verification. Independent A review of B authored geometry and B review of workflow expectations. Record disagreement and resolve before running evaluation.
+BL026 Regression integration and failure suite
+Story. A visually persuasive candidate cannot pass with a hidden engineering failure.
+Priority and owner. P0, both, October 31, 4 to 6 hours. Maps to FR005-FR020 and NFR05-NFR08. Dependencies BL025 and integrated core.
+Acceptance. Run analytic geometry, contact, template, planner, schema, stale evidence, export, cancellation and crash cases. Any false pass is a release blocker. Keep unknown and unsupported results separate from confirmed failures. Reproduce ten canonical workflow runs before recording.
+Verification. Saved raw results and deterministic rerun script with exact runtime versions. Failed expected outcomes cannot be relabeled after the fact to meet the gate.
+BL027 Rule comparator and AI evaluation
+Story. The team can describe what Muse actually adds over a simpler selector.
+Priority and owner. P0 evidence, B implements and A reviews, October 31, 3 to 5 hours. Maps to FR009 and Section 21. Dependencies BL018, BL025-BL026.
+Acceptance. Compare C0 original, C1 engineer supplied edit, C2 rule grid selection and C3 Muse under matched candidate and time budgets. Repeat C3 three times, report all cases, latencies, usage and verification results. Use the predeclared practical benefit gate; if missed, remove the claimed advantage.
+Verification. Raw case table and aggregation with no invented benchmark values. Shared constructor variants are not independent industrial samples.
+BL028 Real workflow and repair practitioner validation
+Story. The team tests whether the modeled problem and metadata match an actual review.
+Priority and owner. P0 impact evidence attempt, A with B, October 27 to November 1, 3 to 5 hours excluding scheduling. Maps to R05, R07, R11 and Sections 4 and 26. Dependencies authorization for any CAD or physical module used.
+Acceptance. Seek recent behavior from three relevant engineers and one repair practitioner; observe one authorized review if available. Record missing steps and practitioner challenges. If no real assembly or interview is obtained, retain the synthetic label and do not fabricate quotes or impact. For later commercial investment, require buyer supplied second assembly and paid pilot action.
+Verification. Permission and observation notes with explicit completed versus planned status. This backlog does not authorize sending messages to others.
+E7 Operate and submit a reproducible product
+BL029 Jobs resource limits and recovery
+Story. Engineers can cancel long work and recover from native geometry failures.
+Priority and owner. P0, A coordinator and B worker, November 1, 3 to 4 hours. Maps to FR018-FR019 and NFR01-NFR03, NFR12. Dependencies BL004 and integrated pipeline.
+Acceptance. Ordered SSE events, one concurrent geometry job, per process and whole run budgets, idempotent writes, cancel acknowledgement and interrupted restart status. Partial artifacts cannot become complete. A killed worker cannot corrupt another revision.
+Verification. Force timeout, cancel during construction, worker crash, reconnect and duplicate mutation tests.
+BL030 Deployment private data and licenses
+Story. Judges can access a working demo without exposing private CAD or credentials.
+Priority and owner. P0, both, November 1 to 3, 3 to 4 hours. Maps to FR021, NFR09 and Sections 17-18. Dependencies BL026 and BL029.
+Acceptance. Pin container digest and dependencies, serve fixture only public mode, restrict private uploads, enforce project ownership, keep keys server side and review provider data handling. Include model attribution and required code and geometry notices. Document clean setup and supported limits.
+Verification. Fresh environment setup, anonymous link checks, ownership denial, public secret scan and asset ledger. Publication or billing actions require the team's normal authority, not inferred from this document.
+BL031 Film and technical evidence package
+Story. A judge can understand and inspect the actual capability in three minutes.
+Priority and owner. P0, A narrative and B evidence, November 2 to 3, 4 to 6 hours. Maps to FR014-FR017, FR021 and Section 22. Dependencies BL026-BL027 and BL030.
+Acceptance. Record the contiguous 180 second storyboard using a real passing run. Include input provenance, actual model calls, solid change, preserved constraints, metrics, export, limitation and final checked path. Label synthetic data, replay and removed waiting time. Show a rejection only if the system actually produced it.
+Verification. Both review the film against the run hash, repository commit and evidence bundle. If there is no improving verified run, do not script a successful result.
+BL032 Submission and receipt
+Story. The complete authorized entry is accessible and received before the confirmed deadline.
+Priority and owner. P0 participation, eligible team representative with both review, November 4, 1 to 2 hours. Maps to BL003 and Section 28. Dependencies BL003, BL030-BL031.
+Acceptance. Enter accurate attribution and new work explanation, actual repository, working demo and video links according to verified fields. Internal target is 6 p.m. Central; supplied guide states 8 p.m. Central. Reopen to verify receipt. Do not invent optional submission fields or bonus eligibility.
+Verification. Private browser link test and saved confirmation. Submission is a future human action; it has not been performed by producing this backlog.
+Deferred work
+ID
+Priority and owner
+Story and dependency
+Acceptance and verification
+BL033
+P1 A
+Edit supported parameter grids in UI after BL023
+Changing any bound creates a revision and invalidates old results; stale run test
+BL034
+P1 B
+Improve conservative corridor coverage after BL009 and measured false unknowns
+Tighter representation maintains solid coverage and adversarial no false pass suite
+BL035
+P1 A
+Add saved project history after BL030
+Reopening preserves exact evidence and clearly labels earlier computation; reload test
+BL036
+P1 both
+Add another template family after real review in BL028
+New preconditions, geometry constructor and independent negative tests; no generic freeform promises
+BL037
+P2 both
+Native CAD integration after repeat customer demand
+Receive edits and evidence in the user's actual CAD version; observed handoff evaluation
+BL038
+P2 B
+Add rotations, flexible parts or advanced physical checks after validated need
+Separate research plans, appropriate solvers and qualification; no extension by prompt alone
+BL039
+P2 A
+Team review and broader repairability assessment after paid pilots
+Method covers documentation, parts and restoration; qualified customer evaluation
+
+Requirement coverage and final release gate
+Requirement
+Backlog items
+Requirement
+Backlog items
+FR001
+BL001, BL005, BL006
+FR012
+BL015
+FR002
+BL004, BL005, BL019
+FR013
+BL015
+FR003
+BL006, BL020, BL024
+FR014
+BL011, BL022
+FR004
+BL020
+FR015
+BL022, BL024
+FR005
+BL008
+FR016
+BL023
+FR006
+BL001, BL009
+FR017
+BL016, BL023
+FR007
+BL010
+FR018
+BL004, BL029
+FR008
+BL011, BL021
+FR019
+BL018, BL029
+FR009
+BL002, BL017, BL018, BL027
+FR020
+BL010, BL015, BL018, BL021
+FR010
+BL012, BL017
+FR021
+BL007, BL019, BL030, BL031
+FR011
+BL013, BL014
+
+
+
+Release requires a real supported solid edit, independent mandatory checks, measured baseline and revised evidence, CAD round trip, truthful model contribution, no known false verified route, and explicit scope. A polished viewer cannot substitute for any of these gates. Participation additionally requires confirmed rules and eligible contributors.

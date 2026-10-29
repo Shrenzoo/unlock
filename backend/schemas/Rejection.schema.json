@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "axis": {
+          "enum": [
+            "X+",
+            "X-",
+            "Y+",
+            "Y-",
+            "Z+",
+            "Z-"
+          ],
+          "title": "Axis",
+          "type": "string"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "distance_mm": {
+          "exclusiveMinimum": 0,
+          "title": "Distance Mm",
+          "type": "number"
+        },
+        "kind": {
+          "enum": [
+            "REMOVE_FASTENER",
+            "TRANSLATE_PART"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "tool_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Id"
+        }
+      },
+      "required": [
+        "kind",
+        "component_id",
+        "axis",
+        "distance_mm"
+      ],
+      "title": "Action",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:Rejection:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "$ref": "#/$defs/Action"
+    },
+    "category": {
+      "enum": [
+        "SEMANTICALLY_BLOCKED",
+        "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+        "INSUFFICIENT_CLEARANCE",
+        "TOOL_ACCESS_BLOCKED",
+        "UNKNOWN_GEOMETRY",
+        "UNSUPPORTED_OPERATION"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "constraint_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Constraint Ids",
+      "type": "array"
+    },
+    "geometry_evidence_level": {
+      "title": "Geometry Evidence Level",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "default": "policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "remaining_obstacle_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Remaining Obstacle Ids",
+      "type": "array"
+    },
+    "removed_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Removed Ids",
+      "type": "array"
+    },
+    "revision_id": {
+      "title": "Revision Id",
+      "type": "string"
+    },
+    "state_hash": {
+      "title": "State Hash",
+      "type": "string"
+    },
+    "witness_certificate_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Witness Certificate Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "revision_id",
+    "state_hash",
+    "removed_ids",
+    "action",
+    "remaining_obstacle_ids",
+    "constraint_ids",
+    "reason",
+    "category",
+    "geometry_evidence_level"
+  ],
+  "title": "Rejection",
+  "type": "object"
+}

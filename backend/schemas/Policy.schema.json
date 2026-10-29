@@ -1,0 +1,70 @@
+{
+  "$id": "urn:unlock:Policy:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "algebraic_tolerance": {
+      "default": 1e-09,
+      "title": "Algebraic Tolerance",
+      "type": "number"
+    },
+    "clearance_mm": {
+      "default": 0.5,
+      "title": "Clearance Mm",
+      "type": "number"
+    },
+    "contact_area_noise_mm2": {
+      "default": 1e-09,
+      "title": "Contact Area Noise Mm2",
+      "type": "number"
+    },
+    "contact_plane_noise_mm": {
+      "default": 1e-09,
+      "title": "Contact Plane Noise Mm",
+      "type": "number"
+    },
+    "max_compressed_bytes": {
+      "default": 26214400,
+      "title": "Max Compressed Bytes",
+      "type": "integer"
+    },
+    "max_envelope_mm": {
+      "default": 500,
+      "title": "Max Envelope Mm",
+      "type": "number"
+    },
+    "max_expanded_bytes": {
+      "default": 104857600,
+      "title": "Max Expanded Bytes",
+      "type": "integer"
+    },
+    "max_faces": {
+      "default": 30000,
+      "title": "Max Faces",
+      "type": "integer"
+    },
+    "max_triangles": {
+      "default": 200000,
+      "title": "Max Triangles",
+      "type": "integer"
+    },
+    "tolerance_mm": {
+      "default": 0.01,
+      "title": "Tolerance Mm",
+      "type": "number"
+    },
+    "version": {
+      "const": "policy_v1",
+      "default": "policy_v1",
+      "title": "Version",
+      "type": "string"
+    },
+    "volume_noise_mm3": {
+      "default": 1e-09,
+      "title": "Volume Noise Mm3",
+      "type": "number"
+    }
+  },
+  "title": "Policy",
+  "type": "object"
+}

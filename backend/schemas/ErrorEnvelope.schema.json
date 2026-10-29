@@ -1,0 +1,104 @@
+{
+  "$defs": {
+    "FieldError": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Type"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "message"
+      ],
+      "title": "FieldError",
+      "type": "object"
+    }
+  },
+  "$id": "urn:unlock:ErrorEnvelope:1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "error_code": {
+      "enum": [
+        "INVALID_PACKAGE",
+        "INVALID_MANIFEST",
+        "UNSUPPORTED_SEMANTICS",
+        "INVALID_SOLID",
+        "LIMIT_EXCEEDED",
+        "STALE_REVISION",
+        "UNSUPPORTED_TEMPLATE",
+        "CONSTRAINT_VIOLATION",
+        "GEOMETRY_FAILED",
+        "VERIFICATION_UNKNOWN",
+        "MODEL_UNAVAILABLE",
+        "MODEL_SCHEMA_ERROR",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "CANCELLED"
+      ],
+      "title": "Error Code",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "field_errors": {
+      "items": {
+        "$ref": "#/$defs/FieldError"
+      },
+      "title": "Field Errors",
+      "type": "array"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "retryable": {
+      "title": "Retryable",
+      "type": "boolean"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Run Id"
+    }
+  },
+  "required": [
+    "error_code",
+    "message",
+    "retryable",
+    "field_errors",
+    "evidence_ids",
+    "run_id"
+  ],
+  "title": "ErrorEnvelope",
+  "type": "object"
+}
