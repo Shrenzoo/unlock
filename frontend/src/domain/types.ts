@@ -174,6 +174,7 @@ export interface Rejection {
   /** distance travelled before the witness pose, mm */
   witness_travel_mm: number | null
   explanation: string
+  removed_ids?: string[]
   diagnostic?: boolean
 }
 
@@ -242,6 +243,11 @@ export interface Candidate {
   diff: GeometryDiff | null
   verification: VerificationReport | null
   revised_plan: PlanResult | null
+  preview_artifact_id?: string | null
+  input_hash?: string
+  verified_improvement?: boolean
+  metrics?: MetricRow[]
+  review_decision?: 'accept' | 'reject'
   failure_summary?: string
 }
 
@@ -284,11 +290,17 @@ export interface RunRecord {
   policy_version: string
   provenance: Provenance
   model: { id: string; provider: string } | null
-  baseline: PlanResult
+  baseline: PlanResult | null
   events: StageEvent[]
   candidates: Candidate[]
   selected_candidate_id: string | null
   metrics: MetricRow[]
+  evidence_refs?: Record<string, string>
+  state?: string
+  outcome?: string | null
+  explanation?: string | null
+  ai_report_artifact_id?: string | null
+  export?: { artifact_id: string; status: string; roundtrip_status: string } | null
 }
 
 /* ── projects ─────────────────────────────────────────────────────────── */
@@ -311,6 +323,9 @@ export interface Revision {
   label: string
   input_hash: string
   manifest: AssemblyManifest
+  constraint_hash?: string
+  preview_artifact_id?: string
+  provenance?: Provenance
   readiness: Array<{ field: string; ok: boolean; message: string }>
 }
 
@@ -340,4 +355,13 @@ export interface ErrorEnvelope {
   field_errors: Array<{ field: string; message: string }>
   evidence_ids: string[]
   run_id: string | null
+}
+
+/** Presentation meshes tessellated from actual BReps by a bounded backend worker. */
+export interface PreviewMesh {
+  authoritative: false
+  units: 'm'
+  scale_already_applied: true
+  triangle_count: number
+  components: Array<{ occurrence_id: string; vertices_m: Vec3[]; triangles: Array<[number, number, number]> }>
 }

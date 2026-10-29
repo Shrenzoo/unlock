@@ -13,12 +13,14 @@ export interface UnlockApi {
   /** Hands a locally validated package to the import service. */
   importPackage(files: File[]): Promise<{ job_id: string }>
   /** Baseline search for a frozen target (PRD §8 Analyze). */
-  startRun(revisionId: string, body: { target_id: string; policy_id: string }): Promise<{ run_id: string; job_id: string }>
+  startRun(revisionId: string, body: { target_id: string; policy_id: string; constraint_hash?: string }): Promise<{ run_id: string; job_id: string }>
   /** Bounded model tool loop + independent verification (PRD §8 Redesign, Verify). Proposed endpoint, agree with backend. */
   requestRedesign(runId: string): Promise<{ job_id: string }>
   /** Ordered stage events. Resolves when the job reaches a terminal state or `signal` aborts. */
   streamEvents(jobId: string, onEvent: (e: StageEvent) => void, signal: AbortSignal): Promise<void>
   getRun(runId: string): Promise<RunRecord>
+  cancelJob(jobId: string): Promise<void>
+  artifactUrl(id: string): string
   decide(candidateId: string, decision: 'accept' | 'reject', inputHash: string): Promise<{ review_event_id: string }>
   requestExport(candidateId: string): Promise<{ job_id: string }>
 }

@@ -211,7 +211,7 @@ function Footer() {
       <div className="footer__meta">
         <Logo tone="paper" />
         <p>
-          A prototype for the Meta Global AI Developer Hackathon, 2026. Redesign proposals are planned to come from Muse Spark Open through bounded tool calls; the model and geometry services are not connected in this build.
+          A prototype for the Meta Global AI Developer Hackathon, 2026. Redesign proposals use Muse Spark 1.3 through bounded tool calls when the backend is configured. Independent geometry checks determine the result.
         </p>
         <p>Fixture B02 is synthetic and authored by the team. Every result shown on this site is illustrative.</p>
       </div>

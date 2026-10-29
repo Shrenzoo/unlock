@@ -87,8 +87,8 @@ export function ProvenanceTag({ provenance, compact = false }: { provenance: Pro
     return (
       <span className="prov prov--earlier" title={provenance.note}>
         <span className="prov__swatch" aria-hidden="true" />
-        Computed earlier, <span className="mono">{provenance.input_hash}</span>
-        {provenance.computed_at && <> at {new Date(provenance.computed_at).toLocaleString()}</>}
+        Computed earlier, <span className="mono">{provenance.input_hash?.slice(0, 12)}</span>
+        {!compact && provenance.computed_at && <> at {new Date(provenance.computed_at).toLocaleString()}</>}
       </span>
     )
   }

@@ -1,6 +1,5 @@
 import { memo, useMemo, useRef, useState, type Dispatch, type KeyboardEvent } from 'react'
 import type { AssemblyManifest, Component } from '@/domain/types'
-import { isPartId, type PartId } from '@/three/ModuleAssembly'
 import type { Action } from './model'
 
 interface Row {
@@ -10,18 +9,11 @@ interface Row {
   hasChildren: boolean
 }
 
-/** Fasteners nest under the part they retain; unconnected fasteners under the part they sit on. */
+/** Only declared retaining relationships determine nesting; geometry does not imply attachment. */
 function buildRows(m: AssemblyManifest, collapsed: Set<string>): Row[] {
   const parentOf = new Map<string, string>()
   for (const conn of m.connections) {
     if (conn.kind === 'screw_retainer') parentOf.set(conn.fastener_id, conn.retained_component_ids[0])
-  }
-  const overlaps = (a: Component, b: Component) =>
-    a.bounds_mm.min[0] < b.bounds_mm.max[0] && a.bounds_mm.max[0] > b.bounds_mm.min[0] && a.bounds_mm.min[1] < b.bounds_mm.max[1] && a.bounds_mm.max[1] > b.bounds_mm.min[1]
-  for (const c of m.components) {
-    if (c.role !== 'fastener' || parentOf.has(c.id)) continue
-    const host = m.components.find((o) => o.role === 'bracket' && overlaps(c, o))
-    if (host) parentOf.set(c.id, host.id)
   }
   const top = m.components.filter((c) => !parentOf.has(c.id))
   const rows: Row[] = []
@@ -44,10 +36,10 @@ const ROLE_GLYPH: Record<Component['role'], string> = {
 
 interface Props {
   manifest: AssemblyManifest
-  selected: PartId | null
-  target: PartId | null
-  hidden: PartId[]
-  isolated: PartId | null
+  selected: string | null
+  target: string | null
+  hidden: string[]
+  isolated: string | null
   dispatch: Dispatch<Action>
 }
 
@@ -60,8 +52,8 @@ export const ComponentTree = memo(function ComponentTree({ manifest, selected, t
   const focusRow = (i: number) => {
     const r = rows[Math.max(0, Math.min(rows.length - 1, i))]
     if (!r) return
-    if (isPartId(r.c.id)) dispatch({ type: 'select', id: r.c.id })
-    requestAnimationFrame(() => listRef.current?.querySelector<HTMLElement>(`[data-id="${r.c.id}"]`)?.focus())
+    dispatch({ type: 'select', id: r.c.id })
+    requestAnimationFrame(() => listRef.current?.querySelector<HTMLElement>(`[data-id="${CSS.escape(r.c.id)}"]`)?.focus())
   }
 
   const toggle = (id: string) =>
@@ -74,7 +66,6 @@ export const ComponentTree = memo(function ComponentTree({ manifest, selected, t
 
   const onKey = (e: KeyboardEvent<HTMLLIElement>, i: number, r: Row) => {
     const id = r.c.id
-    if (!isPartId(id)) return
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
@@ -119,7 +110,7 @@ export const ComponentTree = memo(function ComponentTree({ manifest, selected, t
       </div>
       <ul className="tree__list" role="tree" aria-label="Components" ref={listRef}>
         {rows.map((r, i) => {
-          const id = r.c.id as PartId
+          const id = r.c.id as string
           const isHidden = hidden.includes(id) || (isolated !== null && isolated !== id)
           return (
             <li
@@ -206,7 +197,6 @@ export const ComponentTree = memo(function ComponentTree({ manifest, selected, t
 
 /** Target selection requires an explicitly replaceable occurrence (FR004). */
 export function trySetTarget(c: Component, dispatch: Dispatch<Action>) {
-  if (!isPartId(c.id)) return
   if (!c.replaceable) {
     dispatch({
       type: 'notice',

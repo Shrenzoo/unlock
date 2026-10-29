@@ -36,8 +36,8 @@ export type Route =
 export function matchRoute(pathname: string): Route {
   if (pathname === '/' || pathname === '') return { name: 'landing' }
   if (pathname === '/projects') return { name: 'projects' }
-  const m = pathname.match(/^\/projects\/([\w-]+)$/)
-  if (m) return { name: 'workspace', projectId: m[1] }
+  const m = pathname.match(/^\/projects\/([^/]+)$/)
+  if (m) { try { return { name: 'workspace', projectId: decodeURIComponent(m[1]) } } catch { return { name: 'not_found' } } }
   return { name: 'not_found' }
 }
 
