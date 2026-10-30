@@ -953,3 +953,108 @@ Same workflow with the AI loop, explicitly offline. Produces identical candidate
 ### A note on how this was built
 
 The integration history is preserved as chronological commits with real validation counts at each milestone. No history was backdated or rewritten. Where a defect was found — and one was, during the live run — it is documented with the commit that fixed it and a regression test that fails on the previous code. See [the integration handoff](backend/docs/META_INTEGRATION_HANDOFF.md) for the full record.
+
+---
+
+## Scope, honestly
+
+A project about verified claims should make verified claims about itself. Here is exactly what UNLOCK is and is not.
+
+### What it genuinely does
+
+- **Parses real STEP assemblies** (AP214/AP242) in isolated workers, with bounded, validated packages.
+- **Searches for a supported removal path** using conservative coverage plus complete analytic sweep separation.
+- **Finds obstructions** and pins them to coordinates with BRep witnesses.
+- **Accepts bounded redesign proposals** from a frontier model, refusing any that cite uncitable evidence.
+- **Independently reconstructs and verifies** every candidate against twelve mandatory constraints.
+- **Compares original and revised** under one frozen numerical policy.
+- **Exports a checked STEP bundle** that is reimported and re-verified before it is called a success.
+- **Drives the whole loop from Meta's Muse Spark 1.3**, live, with eight allowlisted tools.
+
+### What it does not do
+
+| Not this | Why not |
+|:--|:--|
+| **Strength, fatigue or thermal analysis** | The word "safe" in a passing report is scoped to geometry and constraints only. It means nothing structural. |
+| **Arbitrary CAD generation** | The model chooses integers from finite grids. General free-form geometry is deliberately out of scope — that is the feature, not a gap. |
+| **Torque, cables, clips, adhesives or wiring** | Disassembly is modelled as rigid-body extraction. Soft and electrical systems are not represented. |
+| **Restored product function** | A relief that frees a fan does not guarantee the repaired machine works. Nothing here claims otherwise. |
+| **Manufacturability** | A verified relief is geometrically valid. Whether it can be cast, machined or moulded is not assessed. |
+| **A hosted, multi-user product** | The coordinator is a local, single-queue engineering tool. Auth, ownership and public hosting are separate deployment work. |
+| **A benchmark** | One fixture, one live run. The two deterministic controls make it a protocol check, not a leaderboard entry. |
+
+### The honest headline
+
+On the fixture it ships with, UNLOCK's model-driven run **matched** — did not beat — a deterministic geometry-ranked selector. Its value is not that a language model out-searched a heuristic. It is that a language model was admitted *at all* into a safety-relevant engineering loop, with zero trust and bounded authority, and produced a physically real, independently verified result — while being caught by its own guardrails mid-run and recovering.
+
+That is the generalisable result. The specific fixture is an example of it.
+
+---
+
+## Built during the hackathon
+
+This was built for the **Meta Global AI Developer Hackathon**, on the **Push the Frontier** track, in the Cerebral Valley batch.
+
+### The timeline, as it actually happened
+
+```text
+day 1–2    geometry kernel          import, revisions, B-rep immutability
+           ├─ real STEP in isolated workers
+           └─ private deep copies at every mutation boundary
+
+day 3–5    the planner              six-axis sweep separation
+           ├─ conservative coverage + analytic sweeps
+           └─ conservative unknown handling (never admit from sampling)
+
+day 6–8    templates + verifier     T01/T02 constructors
+           ├─ twelve mandatory checks
+           └─ independent reconstruction
+
+day 9–11   Meta integration         eight-tool surface, controller budgets
+           ├─ live tool-calling verified 15/15
+           └─ defect found during the live run, fixed, regression-tested
+
+day 12–14  the live redesign run    B02 · 48.1 s · VERIFIED_IMPROVEMENT
+           └─ two deterministic controls frozen and run first
+```
+
+### The defect worth telling you about
+
+During the live run, the model's first proposal was refused by the dispatcher — it cited two weak `ev_` handles where the schema demands a `rej_`, `plan_` or `ver_` ID. That refusal is **in the committed evidence**, timestamped at t = 25.4 s.
+
+It exposed a real gap: the refusal message did not initially tell the model *which* handle to use. That was fixed — the dispatcher now names the citable handles explicitly — and the fix carries a regression test that fails on the previous code. The model resubmitted nine seconds later citing `rej_17a84dbaf811`, and the proposal built and verified.
+
+**A guardrail that never fires is an untested guardrail.** Ours fired, on a live paid run, in front of the model, and the system is better because of it. That story is in [`backend/docs/META_INTEGRATION_HANDOFF.md`](backend/docs/META_INTEGRATION_HANDOFF.md).
+
+### Scale
+
+```text
+backend/src      ~13,600 lines     kernel, planner, verifier, AI controller, API
+backend/tests     ~6,500 lines     327 tests, all passing
+frontend/src      ~7,800 lines     React 19 workspace, Three.js viewport
+backend/evidence    ~360 KB        live run, controls, benchmarks, exports
+```
+
+---
+
+## Roadmap
+
+Where this goes next, in the order we would do it.
+
+**Near — bounded expansion of the decision space.**
+More server-owned templates (relief windows, access hatches, break-away tabs), each with finite grids and geometric preconditions. The trust boundary does not change; only the size of the menu.
+
+**Next — soft and electrical systems.**
+Representing cables, clips and adhesives as first-class obstruction types with their own removal semantics, so "extract the module" accounts for the harness as well as the bracket.
+
+**Next — structural preflight.**
+Not replacing FEA, but adding a cheap conservative pre-screen: a relief that thins a load path below a stated threshold gets flagged as `unknown` for strength rather than silently green.
+
+**Then — richer targets.**
+Multiple simultaneous targets, and targets that are assemblies rather than single components, so the planner solves an ordering problem as well as a path problem.
+
+**Then — a verification certificate.**
+A signed, portable bundle: policy digest, geometry hashes, check results, evidence chain. Something a third party can re-run and compare byte-for-byte, making "verified" transferable between organisations.
+
+**Always — the boundary stays one-way.**
+Every item above widens what the *kernel* can do. None of them widen what the *model* can decide. That asymmetry is the product.
