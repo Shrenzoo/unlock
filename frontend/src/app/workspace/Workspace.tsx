@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { api, ServiceNotConnected, type ServiceHealth } from '@/api'
 import type { Revision, RunRecord } from '@/domain/types'
-import { Link } from '@/router'
+import { Link, navigate } from '@/router'
 import { Mark } from '@/ui/Logo'
 import { ProvenanceTag } from '@/ui/Evidence'
 import { ComponentTree } from './ComponentTree'
@@ -53,9 +53,44 @@ export default function Workspace({ projectId }: { projectId: string }) {
     return () => { live = false; stopActive() }
   }, [projectId, stopActive])
 
+  // Reload recovery: a run in ?run= is restored from the backend when it belongs to
+  // this exact revision. Nothing is re-executed; the persisted record is shown.
+  const restoring = useRef<RunRecord | null>(null)
+  useEffect(() => {
+    if (!revision) return
+    const id = new URLSearchParams(window.location.search).get('run')
+    if (!id) return
+    let live = true
+    api.getRun(id).then((r) => {
+      if (!live || r.revision_id !== revision.id) return
+      restoring.current = r
+      dispatch({ type: 'target', id: r.target_id })
+    }).catch(() => { /* an unknown or foreign run leaves a clean workspace */ })
+    return () => { live = false }
+  }, [revision])
+
   useEffect(() => {
     stopActive()
+    const restored = restoring.current
+    if (restored && restored.target_id === state.target) {
+      restoring.current = null
+      setRun(restored)
+      if (restored.baseline) dispatch({ type: 'job', job: 'baseline', status: 'done' })
+      const redesigned = restored.outcome != null || restored.candidates.length > 0
+      if (redesigned) {
+        dispatch({ type: 'job', job: 'redesign', status: 'done' })
+        const accepted = restored.candidates.find((c) => c.review_decision === 'accept')
+        dispatch({ type: 'candidate', id: accepted?.id ?? restored.selected_candidate_id })
+      }
+      dispatch({ type: 'mode', mode: redesigned ? 'redesign' : 'analyze' })
+      if (restored.state === 'queued' || restored.state === 'running') {
+        dispatch({ type: 'notice', notice: { tone: 'info', text: 'A job for this run was still in progress when the page loaded. Reload again shortly to see its persisted result.' } })
+      }
+      return stopActive
+    }
     setRun(null)
+    // A newly chosen target starts a new analysis; drop the old run from the address.
+    if (state.target && window.location.search.includes('run=')) navigate(window.location.pathname, { replace: true })
     return stopActive
   }, [state.target, stopActive])
 
@@ -78,6 +113,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
       if (current !== generation.current) { void api.cancelJob(result.job_id).catch(() => {}); return }
       if ('run_id' in result) runId = result.run_id as string
       if (!runId) throw new Error('The backend did not return a run identity.')
+      if (kind === 'baseline') navigate(`${window.location.pathname}?run=${encodeURIComponent(runId)}`, { replace: true })
       await api.streamEvents(result.job_id, (event) => {
         if (current === generation.current) dispatch({ type: 'event', job: jobKind, event })
       }, ctrl.signal)
