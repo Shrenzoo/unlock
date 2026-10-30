@@ -553,3 +553,55 @@ What the run *does* establish, unambiguously: **a frontier model drove a real CA
 | Full redesign (B02) | 6 | 28,272 (16,068 cached) | 2,850 (1,596 reasoning) | 31,122 | 20.0 s model / 48.1 s wall |
 
 Estimated **$0.0054** and **$0.0298** respectively at Meta's public Standard list price. Both figures are list-price estimates from [Meta's published pricing](https://dev.meta.ai/docs/pricing-rate-limits), not account-verified charges — the API reports no credit balance. Reported rate limits: 3,000 requests and 4,000,000 tokens per minute.
+
+---
+
+## Verification
+
+Verification is not a checkbox at the end of the pipeline. It is a separate process that does not trust anything the previous process told it.
+
+<p align="center">
+  <img src="assets/readme/verification-twelve-checks.svg" width="100%" alt="Twelve mandatory checks, all passing, with the aggregation rule" />
+</p>
+
+### The twelve mandatory checks
+
+| # | Check | What it actually measures |
+|--:|:--|:--|
+| 1 | `integrity` | The rebuilt solid is structurally intact |
+| 2 | `solid_validity` | OCCT reports a valid B-rep |
+| 3 | `trusted_reconstruction` | Independent rebuild, compared by **two-way B-rep difference** |
+| 4 | `actual_change` | Material really was removed — 2,560 mm³, measured |
+| 5 | `editable_region` | **0 mm³** removed outside the declared editable region |
+| 6 | `protected_interfaces` | Mounting pads and interfaces untouched |
+| 7 | `hole_geometry` | Hole axes within tolerance (≤ 0.01 mm) |
+| 8 | `fixed_components` | Fixed parts are still fixed |
+| 9 | `placements` | No placement drifted |
+| 10 | `design_envelope` | Still inside the declared envelope |
+| 11 | `keep_outs` | No declared keep-out violated |
+| 12 | `assembled_intersections` | Assembled state intersects only at declared contacts |
+
+Plus `tool_access`, deferred to state-aware replay rather than judged statically — because whether a screwdriver can physically reach a screw head is a motion question, not a static one.
+
+### Why `trusted_reconstruction` is the important one
+
+Checks 1, 2 and 4–12 would all pass on a shape the model *described correctly*. Check 3 is the one that closes the loop: the verifier throws away the candidate geometry the model's constructor produced and **rebuilds the bracket from the frozen parameters in its own process**, then compares the two solids with a two-way B-rep difference.
+
+If the constructor and the verifier disagree about what those parameters mean, check 3 fails. There is no shared code path that could make them agree by accident.
+
+### The aggregation rule
+
+```python
+# statuses stay separate — they are never coerced into a single boolean
+clear ────────▶ a translation is admitted
+blocked ──────▶ a translation is refused, with witness evidence
+unknown ──────▶ nothing is admitted AND a mandatory unknown forbids a passing aggregate
+```
+
+This is the rule that separates a checker from a scorecard. A system that folds `unknown` into `pass` — or quietly into `fail` — produces a green dashboard that means nothing. UNLOCK will return `unknown` and refuse to aggregate rather than round up.
+
+**Original B-reps are never mutated.** OCCT booleans, compound assembly, STEP transfer and tessellation can all silently change shared topology flags, so private deep copies are taken at every mutation boundary. It costs memory. It is the only way to keep the original geometry true.
+
+### Export is verified too
+
+A STEP export is not considered successful because a file appeared. Success requires **real reimport** of the exported file, followed by geometry and path checks on the reimported result. Hierarchy and occurrence placements are preserved; where a part-only fallback was used, it is labelled explicitly rather than passed off as a full assembly.
