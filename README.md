@@ -700,3 +700,117 @@ export const api: UnlockApi = base ? createHttpApi(base) : fixtureApi
 ```
 
 **Illustrative mode is explicit and visibly labelled.** Setting `VITE_UNLOCK_MODE=fixture` runs the UI against prepared records with zero engineering computation, and the interface says so in the header. It is a demo mode that cannot be mistaken for a live one.
+
+---
+
+## Getting started
+
+### Prerequisites
+
+| | Version | Why |
+|:--|:--|:--|
+| Python | **3.12.x** | Pinned `>=3.12,<3.13` — OCP wheels are version-specific |
+| Node | 18+ | Vite 7 |
+| Disk | ~1.5 GB | CadQuery + OCP + VTK wheels are large |
+
+### 1 — Backend
+
+```sh
+cd backend
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.lock
+.venv/bin/python -m pip install --no-deps --no-build-isolation -e .
+cp -n .env.example .env          # then add your key, see below
+
+# start the coordinator
+.venv/bin/python -m unlock_engine.api --port 8000
+```
+
+B01/B02/B03 import once, on first startup — real synthetic STEP assemblies, generated and parsed through the isolated worker. Expect the first start to take a little longer.
+
+### 2 — Frontend
+
+```sh
+cd frontend
+npm ci
+npm run dev -- --host 127.0.0.1 --port 5183 --strictPort
+```
+
+Open **http://localhost:5183/projects**.
+
+### 3 — Configure Meta
+
+`backend/.env` is backend-only. **Never put a credential in `frontend/`** — environment files are ignored at every depth, and only `.env.example` templates are committed.
+
+```dotenv
+AI_PROVIDER=meta
+MODEL_API_KEY=YOUR_REAL_META_KEY
+META_MODEL=muse-spark-1.3
+META_BASE_URL=https://api.meta.ai/v1
+META_REASONING_EFFORT=medium
+RUN_META_LIVE_TESTS=0
+```
+
+Restart the backend after changing it. `high` effort is available via `META_REASONING_EFFORT`; nothing higher is ever chosen automatically.
+
+### 4 — Run the full workflow
+
+Open **B02**, select `target`, set it as the repair target, then:
+
+```text
+Analyze → Run baseline analysis → Explore a redesign → Request redesign
+```
+
+With a key configured, that last click performs **real inference** against Meta's Model API. Without one, the baseline remains fully viewable and redesign returns `Model unavailable` — it does not silently fall back to mock.
+
+### Offline demonstration
+
+For a complete, explicitly-labelled offline run — real CAD, real planner, real verifier, scripted AI policy — start the backend with:
+
+```sh
+AI_PROVIDER=mock .venv/bin/python -m unlock_engine.api --port 8000
+```
+
+The browser reports the scripted provider while performing genuine engineering computation. This is never reported as live Meta.
+
+To inspect the illustrative UI alone, with no engineering computation at all:
+
+```sh
+VITE_UNLOCK_MODE=fixture npm run dev
+```
+
+### Tests
+
+```sh
+cd backend
+.venv/bin/python -m pytest -q          # 327 passed, 17 deselected
+.venv/bin/ruff check src tests scripts
+.venv/bin/python -m pip check
+```
+
+Paid `meta_live` tests are **excluded by default** and skip even when a key is present, unless `RUN_META_LIVE_TESTS=1` is also set. Ordinary `pytest` never spends your credits.
+
+### Browser acceptance
+
+With the backend running under `AI_PROVIDER=mock` and the frontend up:
+
+```sh
+cd backend
+.venv/bin/python scripts/browser_qa.py
+```
+
+Drives real headless Chrome through the actual HTTP service: selection → analysis → rejection → revised improvement → comparison → acceptance → checked export. Screenshots and a request/error report are written to `.work/meta-validation/browser/`.
+
+### On a Mac without Python 3.12
+
+If `python3.12` is not on your machine, [`uv`](https://docs.astral.sh/uv/) gets you a pinned interpreter in seconds without touching system packages:
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv python install 3.12
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements.lock
+uv pip install --python .venv/bin/python --no-deps --no-build-isolation -e .
+```
+
+Verified working on macOS ARM64 with Python 3.12.16, CadQuery 2.6.1, cadquery-ocp 7.8.1.1.post1, Pydantic 2.12.3, pytest 8.4.2.
