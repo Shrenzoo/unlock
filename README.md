@@ -289,6 +289,10 @@ SERVER_DOMAINS = {
 
 Twelve numbers. That is the model's entire authority over physical geometry. It cannot widen the domain, cannot add a template, and cannot construct anything outside it — arguments carrying extra fields, invalid IDs, unsupported templates or out-of-domain parameters are rejected before any native process starts.
 
+<p align="center">
+  <img src="assets/readme/twelve-numbers.svg" width="100%" alt="The twelve numbers of SERVER_DOMAINS against the eight capabilities structurally unavailable to the model" />
+</p>
+
 Construction happens in an isolated worker and returns a candidate with a real changed solid. **Construction is not verification** — the tool description says so in as many words.
 
 ### Stage 06–07 — Verify and compare
@@ -1200,3 +1204,33 @@ Issues and PRs welcome — particularly around new server-owned templates (finit
   <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
   <img src="https://img.shields.io/badge/track-Push%20the%20Frontier-3268f5?style=flat-square&labelColor=151719" alt="Track: Push the Frontier" />
 </p>
+
+---
+
+## Objections we would raise ourselves
+
+A project that claims to verify everything should expect to be interrogated. These are the eight questions we asked of it, answered as honestly as we can.
+
+**"Isn't this just a language model with a CAD plugin?"**
+No — and the distinction is the project. A plugin trusts the model's output. Here the model's output is a proposal, bounded to twelve integers, and nothing downstream of the dispatcher accepts anything the model asserts. The kernel rebuilds geometry from frozen parameters and compares it against the original by two-way B-rep difference. If the model vanished mid-run, the verification would still be valid; if the model lied about its own result, the verification would still be correct. That independence is the thing being built, not a refinement of it.
+
+**"Why not let the model write a CadQuery script? It is more general."**
+It is more general, and that is the problem. Generated code is an unbounded action space: it can build any solid, but it can also silently violate a constraint in a way nobody detects until a part is on a machine. Bounded grids trade generality for a property you cannot retrofit — *the model's authority is enumerable by reading one dictionary*. Every additional template widens the kernel. None of them widen the model's reach.
+
+**"The deterministic selector found a smaller relief, faster, for free. Why pay for the model?"**
+It did, and we say so plainly in [the live run](#the-live-run). Two answers. First, on this fixture the task was small enough that a heuristic sufficed; `stable_enumeration` — included precisely as a harder control — tried three candidates and found nothing. Second, the point of the run was never to win a benchmark. It was to establish that a frontier model can be *admitted* to this loop at all with zero trust and bounded authority, and reach a verified result. That generalises to tasks where no heuristic exists. This fixture was the protocol check.
+
+**"One run on one synthetic fixture is not evidence of much."**
+Correct, which is why the README calls it a protocol check rather than a result, and why the two deterministic controls were frozen *before* the live call rather than chosen afterwards. The credible claim is narrow and defensible: the loop works end to end, the guardrails fire on real input, and the verification is genuinely independent. Generalisation across fixtures is the work that comes next, and the roadmap says so.
+
+**"Where is the model actually necessary?"**
+In the reasoning step between evidence and action. The planner can tell you *that* the bracket blocks extraction and *where* the witness is. It cannot decide that the right move is to relieve the web rather than relocate the mounting, that a 40 × 16 window is sufficient, or to read a rejection certificate and change tactics when the first attempt is refused. Those are judgements over unstructured evidence — and when the model gets one wrong, as it did at t = 25.4 s, the system catches it rather than trusting it.
+
+**"Is `unknown` not just a slower way of saying `fail`?"**
+No, and the distinction matters operationally. A `fail` says *this translation is impossible under this policy*. An `unknown` says *we could not establish whether it is possible*, and — critically — forbids a passing aggregate. Folding `unknown` into `fail` would silently under-report capability. Folding it into `pass` would silently over-report safety. Keeping it distinct is the only option that does not lie in one direction or the other, which is why witness sampling may reject or leave unknown but can never admit.
+
+**"What stops someone from shipping a `pass` that means nothing?"**
+Three things. Every check carries provenance, and the frontend only paints green for `live` or `computed_earlier` — an illustrative pass renders as an outline. The policy digest is bound into the evidence identity, so a pass computed under different tolerances cannot be replayed against a different policy. And the exported STEP is reimported and re-verified before it is called a success, so the artefact a machinist receives is the artefact that was checked, not one that merely shares a name.
+
+**"Does the model ever see the geometry?"**
+Never. It receives compact structured evidence — coordinates, rejection certificates, finite domains, measured bounds. Not a STEP file, not a mesh, not a tensor. This is partly a cost decision and partly a trust one: the model reasons about a *description* of the geometry, and the kernel reasons about the geometry. Keeping those two objects separate is what makes check 3, `trusted_reconstruction`, meaningful.
