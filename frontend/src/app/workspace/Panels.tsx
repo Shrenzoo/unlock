@@ -637,7 +637,7 @@ function ComparePanel({ state, run, health, onDecide }: PanelProps) {
             <span>{run.provenance.kind === 'illustrative' ? 'Illustrative, verifier not run' : ver?.status ?? 'Not checked'}</span>
           </li>
           <li>
-            <span>Engineer acceptance</span>
+            <span>{health?.access === 'read_only' ? 'Recorded demo acceptance' : 'Engineer acceptance'}</span>
             <span>{c?.review_decision ?? 'Not recorded'}</span>
           </li>
           <li>
