@@ -163,10 +163,17 @@ both key and flag reports **skipped**, never live success.
 
 ## F — Live results
 
-No successful live Meta request is claimed. During implementation inspection,
-`MODEL_API_KEY` was absent and `RUN_META_LIVE_TESTS` was disabled. The saved smoke
-report records `status: skipped`, no requests and no token or cost measurements.
-The model identifier configured for future live runs is `muse-spark-1.3`.
+**Update (October 29, 2026):** native tool calling is now verified live. In one
+two-request cycle, `muse-spark-1.3` requested the real read-only
+`inspect_assembly` tool on B01. The backend validated and executed it, and the
+result returned under the provider's tool-call ID. The model's final answer
+matched the tool payload: 3,314 tokens, an estimated $0.0054 at list price, and
+no geometry changed. See [META_TOOL_CALLING_VERIFICATION.md](META_TOOL_CALLING_VERIFICATION.md).
+A live redesign (construct/verify/compare) has still **not** been run.
+
+At the time of this handoff, `MODEL_API_KEY` was absent and `RUN_META_LIVE_TESTS`
+was disabled. The saved smoke report records `status: skipped`, no requests and
+no token or cost measurements.
 
 The offline policy's token counts are synthetic and labeled accordingly. Its
 engineering results are actual computations. No model superiority over the
@@ -265,6 +272,12 @@ AI_PROVIDER=mock backend/.venv/bin/python -m unlock_engine.api --port 8000
 The browser reports the scripted provider while running real CAD operations.
 To inspect the earlier illustrative UI alone, start Vite with
 `VITE_UNLOCK_MODE=fixture npm run dev`; it performs no engineering computation.
+
+Live engineering tool-call check (2 requests at most, read-only B01 inspection):
+
+```sh
+RUN_META_LIVE_TESTS=1 .venv/bin/python -m unlock_engine.ai smoke --tool inspect_assembly --output .work/meta-tool-smoke/live.json
+```
 
 Low-cost live protocol check (3 requests at most, no CAD):
 
