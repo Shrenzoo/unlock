@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="100%" role="img"
+     aria-label="The evidence hash chain: manifest hashes into revision, which feeds plan and candidate, all bound to the policy digest">
+  <defs>
+    <style>
+      .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+      @keyframes link{0%{stroke-dashoffset:120}100%{stroke-dashoffset:0}}
+      @keyframes glow{0%,100%{stroke-opacity:.4}50%{stroke-opacity:1}}
+      @keyframes rise{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+      @keyframes hashpulse{0%,100%{opacity:.5}50%{opacity:1}}
+      .lk{stroke-dasharray:120;animation:link 2.6s ease-in-out infinite}
+      .lk2{animation-delay:.4s}.lk3{animation-delay:.8s}.lk4{animation-delay:1.2s}
+      .gl{animation:glow 2.6s ease-in-out infinite}
+      .rn{animation:rise .5s ease-out both}
+      .hp{animation:hashpulse 2.4s ease-in-out infinite}
+    </style>
+  </defs>
+  <rect width="960" height="300" fill="#151719"/>
+
+  <text x="40" y="42" class="mono" font-size="13" fill="#3268f5">every artefact carries a content hash, and every hash is checked</text>
+
+  <!-- manifest -->
+  <g class="rn" style="animation-delay:.05s">
+    <rect x="40" y="120" width="150" height="62" rx="9" fill="#1d2023" stroke="#33383d"/>
+    <text x="56" y="146" class="mono" font-size="11.5" fill="#e9e8e3">manifest</text>
+    <text x="56" y="166" class="mono" font-size="9.5" fill="#7d8287">assembly.step</text>
+    <text x="56" y="178" class="mono" font-size="9.5" fill="#7d8287">+ manifest.json</text>
+  </g>
+
+  <!-- revision -->
+  <g class="rn" style="animation-delay:.2s">
+    <rect x="250" y="104" width="170" height="94" rx="9" fill="#1a2233" stroke="#3268f5" stroke-opacity=".6"/>
+    <text x="266" y="130" class="mono" font-size="11.5" fill="#3268f5">revision</text>
+    <text x="266" y="150" class="mono" font-size="9.5" fill="#a5a9ad">immutable · hashed</text>
+    <text x="266" y="166" class="mono" font-size="9.5" fill="#7d8287">geometry hash</text>
+    <text x="266" y="180" class="mono" font-size="9.5" fill="#7d8287">constraint hash</text>
+  </g>
+
+  <!-- plan -->
+  <g class="rn" style="animation-delay:.35s">
+    <rect x="470" y="120" width="130" height="62" rx="9" fill="#1d2023" stroke="#33383d"/>
+    <text x="486" y="146" class="mono" font-size="11.5" fill="#e9e8e3">plan</text>
+    <text x="486" y="166" class="mono" font-size="9.5" fill="#7d8287">no_path_supported</text>
+    <text x="486" y="178" class="mono" font-size="9.5" fill="#7d8287">+ rej_ handle</text>
+  </g>
+
+  <!-- candidate -->
+  <g class="rn" style="animation-delay:.5s">
+    <rect x="650" y="120" width="150" height="62" rx="9" fill="#1d2023" stroke="#33383d"/>
+    <text x="666" y="146" class="mono" font-size="11.5" fill="#e9e8e3">candidate</text>
+    <text x="666" y="166" class="mono" font-size="9.5" fill="#7d8287">T01 40 × 16</text>
+    <text x="666" y="178" class="mono" font-size="9.5" fill="#7d8287">cites rej_17a8…</text>
+  </g>
+
+  <!-- report -->
+  <g class="rn" style="animation-delay:.65s">
+    <rect x="850" y="104" width="80" height="94" rx="9" fill="#14211c" stroke="#34866b"/>
+    <text x="890" y="152" class="mono" font-size="11" fill="#34866b" text-anchor="middle">report</text>
+    <text x="890" y="170" class="mono" font-size="9.5" fill="#34866b" text-anchor="middle">12/12</text>
+  </g>
+
+  <!-- links -->
+  <path class="lk gl" d="M190 151 H248" stroke="#3268f5" stroke-width="2" fill="none"/>
+  <path class="lk lk2 gl" d="M420 151 H468" stroke="#3268f5" stroke-width="2" fill="none"/>
+  <path class="lk lk3 gl" d="M600 151 H648" stroke="#3268f5" stroke-width="2" fill="none"/>
+  <path class="lk lk4 gl" d="M800 151 H848" stroke="#34866b" stroke-width="2" fill="none"/>
+
+  <!-- SHA labels on the links -->
+  <g class="hp">
+    <text x="219" y="140" class="mono" font-size="8.5" fill="#4f5357" text-anchor="middle">SHA-256</text>
+    <text x="444" y="140" class="mono" font-size="8.5" fill="#4f5357" text-anchor="middle">SHA-256</text>
+    <text x="624" y="140" class="mono" font-size="8.5" fill="#4f5357" text-anchor="middle">SHA-256</text>
+    <text x="824" y="140" class="mono" font-size="8.5" fill="#4f5357" text-anchor="middle">SHA-256</text>
+  </g>
+
+  <!-- the policy band underneath -->
+  <rect x="250" y="236" width="550" height="46" rx="9" fill="#2a1a14" stroke="#e4602f" stroke-opacity=".6"/>
+  <text x="270" y="258" class="mono" font-size="11" fill="#e4602f">contracts.Policy — full digest bound into every identity above</text>
+  <text x="270" y="274" class="mono" font-size="9.5" fill="#a5a9ad">change a tolerance → every geometry and constraint hash derived under the old one is invalidated</text>
+
+  <!-- vertical ties from policy to the hashed objects -->
+  <path d="M335 236 V198 M535 236 V182 M725 236 V182" stroke="#e4602f" stroke-width="1" stroke-dasharray="3 4" fill="none" opacity=".55"/>
+
+  <text x="40" y="88" class="mono" font-size="10.5" fill="#4f5357">stale evidence cannot masquerade as fresh evidence — the digest is part of the identity, not a footnote</text>
+</svg>
