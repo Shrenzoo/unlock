@@ -38,36 +38,47 @@
 2. [What UNLOCK does](#what-unlock-does)
 3. [Why this pushes the frontier](#why-this-pushes-the-frontier)
 4. [Why nothing like this exists](#why-nothing-like-this-exists)
+5. [The trust boundary](#the-trust-boundary)
+6. [Objections we would raise ourselves](#objections-we-would-raise-ourselves)
 
 </td>
 <td width="50%">
 
-**The substance**
-5. [How it works](#how-it-works)
-6. [The trust boundary](#the-trust-boundary)
-7. [The eight tools](#the-eight-tools)
-8. [The live run](#the-live-run)
+**The mechanism**
+7. [How it works](#how-it-works)
+8. [The eight tools](#the-eight-tools)
 9. [Verification](#verification)
+10. [Architecture](#architecture)
+11. [Performance, measured](#performance-measured)
+12. [The API surface](#the-api-surface)
 
 </td>
 </tr>
 <tr>
 <td>
 
-10. [Architecture](#architecture)
-11. [Getting started](#getting-started)
-12. [The API surface](#the-api-surface)
+**The evidence**
+13. [The live run](#the-live-run)
+14. [Evidence & reproducibility](#evidence--reproducibility)
+15. [Scope, honestly](#scope-honestly)
+16. [Built during the hackathon](#built-during-the-hackathon)
+17. [Roadmap](#roadmap)
 
 </td>
 <td>
 
-13. [Evidence & reproducibility](#evidence--reproducibility)
-14. [Scope, honestly](#scope-honestly)
-15. [Built during the hackathon](#built-during-the-hackathon)
+**Running it**
+18. [Getting started](#getting-started)
+19. [The demo in five minutes](#the-demo-in-five-minutes)
+20. [The whole thing in ninety seconds](#the-whole-thing-in-ninety-seconds)
+21. [Glossary](#glossary)
+22. [Credits](#credits)
 
 </td>
 </tr>
 </table>
+
+<sub>New here? Read <a href="#the-whole-thing-in-ninety-seconds">the whole thing in ninety seconds</a>, then <a href="#the-demo-in-five-minutes">the demo in five minutes</a>. Judging? The <a href="#objections-we-would-raise-ourselves">objections section</a> is where we interrogate our own claims.</sub>
 
 ---
 
