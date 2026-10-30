@@ -7,6 +7,7 @@ import functools
 import json
 import os
 from pathlib import Path
+import select
 import subprocess
 import sys
 import tempfile
@@ -15,21 +16,61 @@ import time
 
 from .contracts import EngineError
 
+# Every operation a worker can run. Callers pass internal literals only; anything
+# else is refused before a process starts (and again inside a standby).
+NATIVE_OPERATIONS = frozenset(
+    {
+        "import",
+        "plan",
+        "http_fixture",
+        "http_import",
+        "http_export",
+        "ai_construct",
+        "ai_verify",
+        "demo_prepare",
+        "demo_verify",
+        "demo_export",
+        "benchmark",
+    }
+)
 HEAVY_OPERATIONS = ("plan", "ai_verify", "http_export")
+STARTUP_LIMIT_S = 60
 
 # Optional warm standby. Process start-up and the CAD stack import cost several
-# seconds per operation; a standby pays that cost while the previous operation
-# or model turn runs. It is a fresh, single-use process that has installed its
-# limits and imported libraries only: it receives exactly one request and exits,
-# so no engineering state is ever shared between operations.
+# seconds per operation; a standby pays that cost while the model thinks between
+# operations. It is a fresh, single-use process that has installed its limits and
+# imported libraries only: it accepts exactly one request and exits, so no
+# engineering state is ever shared between operations.
+#
+# Resource policy: at most one pooled CAD process exists at a time. A replacement
+# starts only after the operation that consumed the previous standby has exited,
+# so peak worker memory equals the cold path. UNLOCK_PREWARM_WORKERS=0 disables it.
+#
+# Handoff: a standby writes ACCEPTED before doing any work. Without it the
+# operation provably never started and is safely cold-started; after it, any
+# failure is the operation's own and is never retried.
+ACCEPTED = b"accepted\n"
 _standby_lock = threading.Lock()
 _standby: subprocess.Popen | None = None
 _standby_depth = 0
-STANDBY_STATS = dict(handovers=0, cold_starts=0)
+STANDBY_STATS = dict(handovers=0, cold_starts=0, spawn_failures=0, handoff_failures=0)
 
 
 def cpu_limit_for(operation: str) -> int:
     return 180 if operation in HEAVY_OPERATIONS else 60
+
+
+def prewarm_enabled() -> bool:
+    return os.environ.get("UNLOCK_PREWARM_WORKERS", "1") != "0"
+
+
+def _checked_request(work, operation) -> Path:
+    if operation not in NATIVE_OPERATIONS:
+        raise ValueError("unsupported native operation")
+    work = Path(work)
+    if not work.is_absolute() or not work.is_dir():
+        raise ValueError("native work directory must be an existing absolute path")
+    return work
 
 
 def _worker_env() -> dict:
@@ -51,16 +92,17 @@ def _spawn_standby() -> subprocess.Popen:
     return subprocess.Popen(
         [sys.executable, "-m", "unlock_engine.worker", "--standby"],
         stdin=subprocess.PIPE,
-        stdout=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
         env=_worker_env(),
     )
 
 
 def _stop(process: subprocess.Popen):
-    with contextlib.suppress(OSError):
-        if process.stdin:
-            process.stdin.close()
+    for pipe in (process.stdin, process.stdout):
+        with contextlib.suppress(OSError):
+            if pipe:
+                pipe.close()
     if process.poll() is None:
         process.terminate()
     try:
@@ -70,27 +112,94 @@ def _stop(process: subprocess.Popen):
         process.wait()
 
 
-def _take_standby() -> subprocess.Popen | None:
-    """Claim the warm process (if alive) and start warming its replacement."""
+def _replenish():
+    """Start an idle standby if a pool is active and no pooled process exists.
+
+    Best-effort: a refused process start only means the next operation cold-starts.
+    """
     global _standby
     with _standby_lock:
-        if _standby_depth == 0:
-            return None
-        process, _standby = _standby, _spawn_standby()
+        if _standby_depth == 0 or _standby is not None or not prewarm_enabled():
+            return
+        try:
+            _standby = _spawn_standby()
+        except (OSError, subprocess.SubprocessError):
+            STANDBY_STATS["spawn_failures"] += 1
+
+
+def _take_standby() -> subprocess.Popen | None:
+    """Claim the idle standby; its replacement starts after this operation ends."""
+    global _standby
+    with _standby_lock:
+        process, _standby = _standby, None
     if process is not None and process.poll() is not None:
-        return None  # died while waiting; the caller cold-starts instead
+        _stop(process)
+        return None  # died while idle; the caller cold-starts instead
+    return process
+
+
+def _await_acceptance(process, started, timeout_seconds, cancel_event, phase_limits):
+    """True once the standby accepted; False if it ended or answered otherwise."""
+    fd = process.stdout.fileno()
+    received = b""
+    while True:
+        if cancel_event is not None and cancel_event.is_set():
+            raise EngineError("CANCELLED", "native operation cancelled")
+        elapsed = time.monotonic() - started
+        if elapsed > timeout_seconds:
+            raise EngineError(
+                "GEOMETRY_FAILED", "native operation timed out; no completed revision"
+            )
+        if phase_limits and elapsed > STARTUP_LIMIT_S:
+            raise EngineError(
+                "LIMIT_EXCEEDED", "native runtime startup exceeded its deadline"
+            )
+        ready, _, _ = select.select([fd], [], [], 0.02)
+        if not ready:
+            continue
+        chunk = os.read(fd, len(ACCEPTED))
+        if not chunk:
+            return False
+        received += chunk
+        if received == ACCEPTED:
+            return True
+        if not ACCEPTED.startswith(received):
+            return False
+
+
+def _hand_over(work, operation, started, timeout_seconds, cancel_event, phase_limits):
+    """The accepted standby process, or None when the caller should cold-start."""
+    process = _take_standby()
+    if process is None:
+        return None
+    try:
+        process.stdin.write((json.dumps([str(work), operation]) + "\n").encode())
+        process.stdin.close()
+        accepted = _await_acceptance(
+            process, started, timeout_seconds, cancel_event, phase_limits
+        )
+    except OSError:
+        accepted = False
+    except EngineError:
+        _stop(process)
+        raise
+    if not accepted:
+        _stop(process)
+        STANDBY_STATS["handoff_failures"] += 1
+        return None
+    process.stdout.close()
+    STANDBY_STATS["handovers"] += 1
     return process
 
 
 @contextlib.contextmanager
 def prewarmed_workers():
-    """Keep one warm single-use worker available for the duration of the block."""
+    """Keep one idle single-use worker ready between operations in the block."""
     global _standby, _standby_depth
     with _standby_lock:
         _standby_depth += 1
-        if _standby is None:
-            _standby = _spawn_standby()
     try:
+        _replenish()
         yield
     finally:
         with _standby_lock:
@@ -135,18 +244,19 @@ def isolated_operation(operation, request, *, timeout_seconds=30, cancel_event=N
 
 
 def _run_worker(work, operation, timeout_seconds, cancel_event, *, phase_limits=None):
+    work = _checked_request(work, operation)
+    try:
+        return _supervise(work, operation, timeout_seconds, cancel_event, phase_limits)
+    finally:
+        _replenish()
+
+
+def _supervise(work, operation, timeout_seconds, cancel_event, phase_limits):
     with (work / "native.log").open("wb") as log:
-        process = _take_standby()
-        if process is not None:
-            try:
-                process.stdin.write(
-                    (json.dumps([str(work), operation]) + "\n").encode()
-                )
-                process.stdin.close()
-                STANDBY_STATS["handovers"] += 1
-            except OSError:
-                _stop(process)
-                process = None
+        started = time.monotonic()
+        process = _hand_over(
+            work, operation, started, timeout_seconds, cancel_event, phase_limits
+        )
         if process is None:
             STANDBY_STATS["cold_starts"] += 1
             process = subprocess.Popen(
@@ -156,7 +266,7 @@ def _run_worker(work, operation, timeout_seconds, cancel_event, *, phase_limits=
                 stderr=log,
                 env=_worker_env(),
             )
-        started = time.monotonic()
+            started = time.monotonic()
         try:
             while process.poll() is None:
                 if cancel_event is not None and cancel_event.is_set():
@@ -228,9 +338,14 @@ def main():
         from .planning import runner  # noqa: F401
 
         line = sys.stdin.readline()
-        if not line:
-            return  # pool closed or parent gone; no operation was assigned
-        work_text, operation = json.loads(line)
+        try:
+            work_text, operation = json.loads(line)
+            _checked_request(work_text, operation)
+        except (ValueError, TypeError):
+            return  # pool closed, parent gone or invalid request: never accepted
+        # Accept before any engineering work, so a missing acceptance proves the
+        # operation never ran and the parent may cold-start it.
+        os.write(1, ACCEPTED)
         log = os.open(
             Path(work_text) / "native.log", os.O_WRONLY | os.O_CREAT | os.O_APPEND
         )

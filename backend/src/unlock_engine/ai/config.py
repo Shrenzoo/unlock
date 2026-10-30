@@ -74,6 +74,17 @@ META_LIST_PRICES = PriceTable(
 )
 
 
+def list_prices_for(provider: str | None, model: str | None) -> PriceTable | None:
+    """Public list price for an exact provider/model pair, or None when unknown.
+
+    Never extended to another provider or model (including contributor mode),
+    so an unknown pair yields an unavailable estimate rather than a wrong one.
+    """
+    if provider == META["provider"] and model == META["model"]:
+        return META_LIST_PRICES
+    return None
+
+
 @dataclass(frozen=True)
 class ProviderConfig:
     provider: str

@@ -1037,7 +1037,8 @@
   "cost_estimate": {
     "estimated_usd": 0.029778,
     "price_source": "https://dev.meta.ai/docs/pricing-rate-limits (muse-spark-1.3 Standard list price, not account-verified)",
-    "price_retrieved_at": "2026-10-29"
+    "price_retrieved_at": "2026-10-29",
+    "basis": "public list price for meta/muse-spark-1.3"
   },
   "timings": {
     "total_s": 48.147,

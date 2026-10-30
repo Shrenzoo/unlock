@@ -1,5 +1,6 @@
 """Warm single-use worker standby: same results, same isolation, no leaked processes."""
 
+import json
 import subprocess
 import sys
 import threading
@@ -121,3 +122,124 @@ def test_standby_environment_excludes_credentials(monkeypatch):
 def test_handed_over_operations_keep_their_own_cpu_limit(operation, limit):
     # The cold and standby paths both install cpu_limit_for(operation).
     assert cpu_limit_for(operation) == limit
+
+
+def fake_standby(code):
+    """A scripted stand-in for the standby process (a test fixture, not a worker)."""
+
+    def spawn():
+        return subprocess.Popen(
+            [sys.executable, "-c", code],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+
+    return spawn
+
+
+def test_refused_standby_spawn_falls_back_to_a_cold_start(package, monkeypatch):
+    def refuse():
+        raise OSError(11, "Resource temporarily unavailable")
+
+    monkeypatch.setattr(worker, "_spawn_standby", refuse)
+    failures = worker.STANDBY_STATS["spawn_failures"]
+    cold_starts = worker.STANDBY_STATS["cold_starts"]
+    with prewarmed_workers():
+        inventory = isolated_import(package)
+    assert stable(inventory)["components"]
+    assert worker.STANDBY_STATS["cold_starts"] == cold_starts + 1
+    # Pool entry and the post-operation replenish both failed without raising.
+    assert worker.STANDBY_STATS["spawn_failures"] == failures + 2
+    assert worker._standby_depth == 0 and worker._standby is None
+
+
+def test_no_pooled_process_overlaps_a_running_operation(package, monkeypatch):
+    spawned = []
+    original = worker._spawn_standby
+
+    def checked():
+        # Memory policy: a new standby never starts beside a live pooled process.
+        assert all(p.poll() is not None for p in spawned)
+        process = original()
+        spawned.append(process)
+        return process
+
+    monkeypatch.setattr(worker, "_spawn_standby", checked)
+    with prewarmed_workers():
+        for _ in range(2):
+            isolated_import(package)
+    assert len(spawned) == 3
+
+
+def test_prewarming_can_be_disabled(package, spawned, monkeypatch):
+    monkeypatch.setenv("UNLOCK_PREWARM_WORKERS", "0")
+    cold_starts = worker.STANDBY_STATS["cold_starts"]
+    with prewarmed_workers():
+        isolated_import(package)
+    assert spawned == [] and worker.STANDBY_STATS["cold_starts"] == cold_starts + 1
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        "import sys; sys.stdin.readline()",
+        "import sys; sys.stdin.readline(); print('busy', flush=True)",
+        "import os; os._exit(9)",
+    ],
+    ids=["exits-before-accepting", "wrong-answer", "dies-at-startup"],
+)
+def test_unaccepted_handoff_is_safely_cold_started(package, monkeypatch, code):
+    monkeypatch.setattr(worker, "_spawn_standby", fake_standby(code))
+    failures = worker.STANDBY_STATS["handoff_failures"]
+    cold_starts = worker.STANDBY_STATS["cold_starts"]
+    with prewarmed_workers():
+        inventory = isolated_import(package)
+    assert stable(inventory)["components"]
+    assert worker.STANDBY_STATS["cold_starts"] == cold_starts + 1
+    assert worker.STANDBY_STATS["handoff_failures"] >= failures
+
+
+def test_accepted_operation_is_never_retried(package, monkeypatch):
+    code = (
+        "import os, sys; sys.stdin.readline(); os.write(1, b'accepted\\n'); os._exit(3)"
+    )
+    monkeypatch.setattr(worker, "_spawn_standby", fake_standby(code))
+    handovers = worker.STANDBY_STATS["handovers"]
+    cold_starts = worker.STANDBY_STATS["cold_starts"]
+    with prewarmed_workers():
+        with pytest.raises(EngineError, match="interrupted"):
+            isolated_import(package)
+    assert worker.STANDBY_STATS["handovers"] == handovers + 1
+    assert worker.STANDBY_STATS["cold_starts"] == cold_starts
+
+
+@pytest.mark.parametrize(
+    "work, operation",
+    [
+        (None, "rm -rf /"),
+        (None, "--standby"),
+        ("relative/dir", "import"),
+        ("/nonexistent/unlock-work", "import"),
+    ],
+)
+def test_operations_and_work_directories_are_allowlisted(
+    tmp_path, monkeypatch, work, operation
+):
+    def never(*args, **kwargs):
+        raise AssertionError("no process may start for a refused request")
+
+    monkeypatch.setattr(worker.subprocess, "Popen", never)
+    with pytest.raises(ValueError):
+        worker._run_worker(work or tmp_path, operation, 5, None)
+
+
+def test_real_standby_never_accepts_an_unlisted_operation(tmp_path):
+    process = worker._spawn_standby()
+    try:
+        process.stdin.write(json.dumps([str(tmp_path), "evil"]).encode() + b"\n")
+        process.stdin.close()
+        assert process.stdout.read() == b""
+        assert process.wait(timeout=60) == 0
+    finally:
+        worker._stop(process)

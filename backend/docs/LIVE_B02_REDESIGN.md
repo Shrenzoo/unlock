@@ -139,21 +139,43 @@ are unmodified.
   from <https://dev.meta.ai/docs/pricing-rate-limits>, retrieved 2026-10-29, and
   is not account-verified. The API reports no credit balance.
 
-## Runtime hardening done first (commit `c9b2c3a`)
+## Runtime hardening (commits `c9b2c3a`, `12ed6f6`)
 
 The offline preflight run took 77.9 s of the 120 s budget with zero model
 latency. Each native operation cold-starts Python and imports OCP, CadQuery and
 VTK, which takes 4–6 s under load. The engineering work itself is about 8 s per
 candidate in-process.
 
-A warm, single-use standby worker now overlaps that start-up with the previous
-step. The standby imports libraries only, then takes exactly one request, lowers
-its CPU cap to that operation's own limit, and exits. Per-operation isolation,
+A warm, single-use standby worker takes the start-up cost off the critical path.
+The standby imports libraries only, then takes exactly one request, lowers its
+CPU cap to that operation's own limit, and exits. Per-operation isolation,
 independent reconstruction, phase deadlines, cancellation and credential
 stripping are unchanged.
 
-Alternating offline B02 runs under the same load: cold 46.1 / 47.0 s, warm
-29.5 / 29.7 s, with identical candidates and outcomes.
+The live run above used the first version (`c9b2c3a`), in which a replacement
+standby warmed while the operation was still running. Review of PR #4 led to
+four changes (`12ed6f6`):
+
+| Change | Behaviour now |
+|---|---|
+| Spawning | Best-effort: if the OS refuses a standby, the operation cold-starts. |
+| Memory | At most one pooled CAD process exists at a time. A replacement starts only after the operation using the previous one has exited. Peak worker memory therefore equals the cold path: about 440 MiB peak RSS on B02. `UNLOCK_PREWARM_WORKERS=0` turns prewarming off. |
+| Handoff | A standby writes an explicit acceptance before any work. Without it, the operation provably never ran and is cold-started; after it, a failure is never retried. |
+| Requests | Operations and work directories are allowlisted before any process starts. |
+
+The one-process policy can't warm a worker during back-to-back engine steps, so
+the benefit now comes from overlap with the model's think time.
+
+| Measurement | Cold | Warm |
+|---|---:|---:|
+| First version, no model latency, load ≈ 5–6 | 46.1 / 47.0 s | 29.5 / 29.7 s |
+| One-process policy, no model latency, load ≈ 12 | 59.2 s | 55.2 s |
+| One-process policy, simulated 3 s model turns (live turns took 1.6–5.3 s), load ≈ 10 | 80.5 s | 60.0 s |
+
+All of these runs produced identical candidates and outcomes. Replaying the
+live-chosen 40 × 16 relief through the current engine gives the same geometry
+hash (`7aebefb8395f5414…`), 2,560 mm³ removed, 12/12 mandatory checks, the same
+route, and `VERIFIED_IMPROVEMENT`.
 
 | Option | Saving | Decision |
 |---|---|---|
