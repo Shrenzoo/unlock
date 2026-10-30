@@ -159,15 +159,22 @@ def test_cancelled_redesign_leaves_nothing_accepted(browser, stack):
     context.close()
 
 
-def test_interrupted_connection_recovers_without_duplicate_work(browser, stack):
+def test_offline_interval_mid_job_completes_without_duplicate_work(browser, stack):
     context, page, monitor = new_page(browser, stack.api)
     open_b02(page, stack)
     run_id = run_baseline(page)
     job_id = request_redesign(page, run_id)
     page.wait_for_timeout(1500)
-    page.route(f"{stack.api}/**", lambda route: route.abort("internetdisconnected"))
+    # The browser goes offline for 4 s mid-job; a request made meanwhile must fail.
+    # Chromium keeps an already-open loopback event stream alive, so severing the
+    # stream itself is not exercised here (SSE resume is covered in test_api).
+    context.set_offline(True)
+    during = page.evaluate(
+        f"() => fetch('{stack.api}/health').then(() => 'reached', () => 'failed')"
+    )
     page.wait_for_timeout(4000)
-    page.unroute(f"{stack.api}/**")
+    context.set_offline(False)
+    assert during == "failed", "the outage must be real"
     page.get_by_test_id("run-outcome").wait_for(timeout=300_000)
     run = stack.get(f"/v1/runs/{run_id}")
     assert stack.get(f"/v1/jobs/{job_id}")["state"] == "completed"
