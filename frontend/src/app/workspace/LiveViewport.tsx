@@ -65,7 +65,7 @@ function Part({ component, color, opacity, offset, visible, dispatch }: { compon
 function FitCamera({ radius }: { radius: number }) {
   const { camera, size, controls, invalidate } = useThree()
   useEffect(() => {
-    if (!(camera instanceof THREE.PerspectiveCamera) || !size.width || !size.height) return
+    if (!(camera instanceof THREE.PerspectiveCamera) || !size.width || !size.height || !radius) return
     const vertical = THREE.MathUtils.degToRad(camera.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * (size.width / size.height))
     const needed = (radius * 1.08) / Math.sin(Math.min(vertical, horizontal) / 2)
@@ -121,11 +121,14 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
     const size = Math.max(...e.max.map((x, i) => x - e.min[i])) * 0.001
     return [size * 1.8, size * 1.4, size * 1.8] as Vec3
   }, [revision])
-  // Bounding-sphere radius about the orbit target (the origin), in metres.
+  // Bounding-sphere radius of the actual tessellated parts about the orbit target
+  // (the origin), in metres. The declared design envelope is far larger than the
+  // parts and would make every view needlessly distant.
   const radius = useMemo(() => {
-    const e = revision.manifest.envelope_mm
-    return Math.hypot(...[0, 1, 2].map((i) => Math.max(Math.abs(e.min[i]), Math.abs(e.max[i])))) * 0.001
-  }, [revision])
+    let r = 0
+    for (const c of original.mesh?.components ?? []) for (const v of c.vertices_m) r = Math.max(r, Math.hypot(v[0], v[1], v[2]))
+    return r
+  }, [original.mesh])
 
   const draw = (mesh: PreviewMesh | null, index: number, revisedSide: boolean) => {
     if (!mesh) return <p className="panel__empty">Loading actual CAD tessellation…</p>
