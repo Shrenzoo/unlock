@@ -847,6 +847,62 @@ Verified working on macOS ARM64 with Python 3.12.16, CadQuery 2.6.1, cadquery-oc
 
 ---
 
+## The demo in five minutes
+
+If you are judging this and have a short clock, this is the path that shows the most per second. No API key required for any of it.
+
+<p align="center">
+  <img src="assets/readme/demo-flow.svg" width="100%" alt="Four clicks in the workspace: analyze, baseline, explore, request" />
+</p>
+
+### Minute 0 — get it running
+
+```sh
+cd backend && python3.12 -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
+.venv/bin/python -m pip install --no-deps --no-build-isolation -e .
+AI_PROVIDER=mock .venv/bin/python -m unlock_engine.api --port 8000 &
+
+cd ../frontend && npm ci && npm run dev -- --host 127.0.0.1 --port 5183 --strictPort &
+```
+
+Expect the first backend start to take a minute or two — B01/B02/B03 are real STEP assemblies being generated and parsed, not fixtures loaded from a table.
+
+### Minute 1 — watch it fail honestly
+
+Open **B02**, select `fan_module`, set it as the repair target, then **Analyze → Run baseline analysis**.
+
+This is the most important screen in the product and it shows a failure. The planner reports `no_path_supported`, names two `CONFIRMED_GEOMETRIC_OBSTRUCTION` rejections, and pins one to a BRep witness at `(0, −20, 36)` mm. **Look at what is absent**: no invented operation count, no zero baseline, no percentage improvement against nothing. The system declines to manufacture a number it cannot compute.
+
+### Minute 2 — watch the guardrail fire
+
+Click **Explore a redesign**, then **Request redesign**. With `AI_PROVIDER=mock` the scripted policy reproduces the live run's decision sequence exactly, against real geometry, with the real planner and the real verifier.
+
+Watch for the refused turn. The first proposal is rejected by the dispatcher — `INVALID_PROPOSAL`, citing only `ev_` handles — and the evidence panel shows the refusal with the citable handles named. Then the corrected proposal, `T01 40 × 16`, builds and verifies.
+
+**A guardrail that never fires is an untested guardrail.** Seeing it reject a proposal in the UI is the single fastest way to understand what this project is.
+
+### Minute 3 — check the green is earned
+
+Open the verification panel on the accepted candidate. Twelve mandatory checks, all passing, each with provenance attached. Note that `tool_access` is reported separately rather than folded in.
+
+Then look at the provenance tags. The UI will not paint a check green unless its provenance is `live` or `computed_earlier`. An illustrative pass renders as an outline. This is the entire trust story expressed as a CSS rule.
+
+### Minute 4 — see the route change
+
+Switch to compare view. Left: `no_path_supported`. Right: `feasible`, revised route `target TRANSLATE Z+ 80 mm`, cost `(0,0,0,1)`, forward replay passed, reverse insertion passed. Same target, same frozen policy, both sides.
+
+### Minute 5 — export, and confirm the export is checked
+
+Accept the candidate and export. The bundle is reimported and re-verified before it is called a success — the file you receive is the file that was checked. It lands in `.work/` as a real AP214 STEP; open it in FreeCAD or any CAD tool if you want to see the relief with your own eyes.
+
+### If you have a key
+
+Add `MODEL_API_KEY` to `backend/.env`, set `AI_PROVIDER=meta`, restart the backend, and repeat steps 3–5. The same four clicks now perform real inference against Meta's Model API. Expect roughly 48 seconds and about three cents.
+
+To see the full recorded live run without spending anything, read [`backend/evidence/live-b02/live_run.json`](backend/evidence/live-b02/live_run.json) — every tool response, plan, certificate and hash, exactly as the engine wrote it.
+
+---
+
 ## The API surface
 
 Interactive documentation is served at **http://127.0.0.1:8000/docs**. Artifacts are immutable SHA-256 identifiers rather than caller-supplied filesystem paths — nothing can be smuggled in through a filename.
