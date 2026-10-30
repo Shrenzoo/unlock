@@ -1508,9 +1508,9 @@ Issues and PRs welcome — particularly around new server-owned templates (finit
 <p align="center">
   <a href="https://dev.meta.ai/docs/models"><img src="https://img.shields.io/badge/Muse-Spark%201.3-3268f5?style=flat-square&labelColor=151719" alt="Muse Spark 1.3" /></a>
   <img src="https://img.shields.io/badge/tests-327%20passing-34866b?style=flat-square&labelColor=151719" alt="327 tests passing" />
-  <img src="https://img.shields.io/badge/checks-12%2F12-34866b?style=flat-square&labelColor=151719" alt="12 of 12 checks" />
+  <img src="https://img.shields.io/badge/checks-12%20of%2012%20mandatory-34866b?style=flat-square&labelColor=151719" alt="12 of 12 mandatory checks passed" />
   <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
-  <img src="https://img.shields.io/badge/track-Push%20the%20Frontier-3268f5?style=flat-square&labelColor=151719" alt="Track: Push the Frontier" />
+  <img src="https://img.shields.io/badge/decision%20space-12%20numbers-74787c?style=flat-square&labelColor=151719" alt="The model's entire decision space is twelve numbers" />
 </p>
 
 ---
