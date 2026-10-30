@@ -49,8 +49,8 @@
 8. [The eight tools](#the-eight-tools)
 9. [Verification](#verification)
 10. [Architecture](#architecture)
-11. [Performance, measured](#performance-measured)
-12. [The API surface](#the-api-surface)
+11. [Design decisions and what they cost](#design-decisions-and-what-they-cost)
+12. [Security model](#security-model)
 
 </td>
 </tr>
@@ -70,9 +70,11 @@
 **Running it**
 18. [Getting started](#getting-started)
 19. [The demo in five minutes](#the-demo-in-five-minutes)
-20. [The whole thing in ninety seconds](#the-whole-thing-in-ninety-seconds)
-21. [Glossary](#glossary)
-22. [Credits](#credits)
+20. [Performance, measured](#performance-measured)
+21. [The API surface](#the-api-surface)
+22. [The whole thing in ninety seconds](#the-whole-thing-in-ninety-seconds)
+23. [Glossary](#glossary)
+24. [Credits](#credits)
 
 </td>
 </tr>
@@ -1193,128 +1195,91 @@ Every item above widens what the *kernel* can do. None of them widen what the *m
 
 ---
 
-## The whole thing in ninety seconds
+## Design decisions and what they cost
 
-If you read nothing above, read this.
+Every interesting engineering choice is a trade we accepted somewhere. These are the six that shaped the system, with what each one actually cost us.
 
-```text
-YOU          point UNLOCK at an assembly, name the dead part
-  │
-  ▼
-PLANNER      searches for a way out. Finds none.
-             no_path_supported · two confirmed obstructions · BRep witness at (0, −20, 36) mm
-  │
-  ▼
-MUSE         reads the evidence, picks a relief from a twelve-number domain.
-             Proposes T01 24 × 12. Cites two ev_ handles.
-  │
-  ▼
-DISPATCHER   REFUSES IT. Construction never starts.
-             "cite a rej_, plan_ or ver_ handle"
-  │
-  ▼
-MUSE         resubmits T01 40 × 16, citing rej_17a84dbaf811.
-  │
-  ▼
-KERNEL       builds it. Rebuilds it again from scratch, in its own process.
-             Runs twelve mandatory checks. 12/12. Replans. Replays. Reverses.
-  │
-  ▼
-COMPARISON   original vs revised, same target, same frozen policy.
-             VERIFIED_IMPROVEMENT. Route: target TRANSLATE Z+ 80 mm. Cost (0,0,0,1).
-  │
-  ▼
-YOU          accept it. Export a checked STEP bundle that is reimported
-             and re-verified before anyone calls it a file.
+### 1 — Bounded grids instead of generated code
 
-48.1 seconds. 31,122 tokens. About three cents.
-The model's own final "safe": true was recorded — and then ignored.
-```
+**Decision.** The model selects integers from server-owned finite domains. It never emits code and never emits geometry.
 
-The part that could not be serviced can now be serviced. That is the whole project.
+**What it cost.** Generality, immediately and obviously. A generated CadQuery script could express a relief shape these twelve numbers cannot. Adding a template means writing a constructor, proving geometric preconditions, and adding tests — not asking the model nicely.
 
----
+**Why it was worth it.** The model's total authority is legible by reading one dictionary, and there is no code path from model output to unbounded behaviour. That property cannot be retrofitted onto generated code later, because by then the code has already run.
 
-## Credits
+### 2 — Independent reconstruction rather than inspecting the candidate
 
-Built by **[@Shrenzoo](https://github.com/Shrenzoo)** and contributors, with [@maanas-pab](https://github.com/maanas-pab), for the **Meta Global AI Developer Hackathon 2026** — Cerebral Valley batch, **Push the Frontier** track.
+**Decision.** The verifier throws away the geometry the constructor produced and rebuilds the bracket from the frozen parameters in its own process, then compares by two-way B-rep difference.
 
-**The model:** [Muse Spark 1.3](https://dev.meta.ai) via the Meta Model API. It was chosen because it supports native tool calling with the exact protocol shape this architecture needs — `tool_choice`, `max_completion_tokens`, structured tool results — and because the alternative, a model that had to be trusted, would have made the project impossible.
+**What it cost.** Roughly a doubling of verification work, and a second implementation of the same parameter interpretation that must be kept in sync.
 
-Everything else is open source, and this project stands on it:
+**Why it was worth it.** It is the only check that fails when the constructor and the verifier disagree about what a parameter means. Inspecting the candidate the model's pipeline produced would only confirm that the code did what it said it did.
 
-| | |
-|:--|:--|
-| [OCCT](https://dev.opencascade.org/) / [CadQuery](https://github.com/CadQuery/cadquery) | The B-rep kernel. Twelve checks mean nothing without real topology. |
-| [Pydantic](https://docs.pydantic.dev/) | Typed contracts at every boundary — `additionalProperties: false` is doing real security work here. |
-| [FastAPI](https://fastapi.tiangolo.com/) | The coordinator, including the SSE plumbing the resumable event stream rides on. |
-| [React 19](https://react.dev/) · [Three.js](https://threejs.org/) · [R3F](https://docs.pmnd.rs/react-three-fiber) | The workspace and the viewport. |
-| [Vite](https://vite.dev/) · [TypeScript](https://www.typescriptlang.org/) | The frontend toolchain. |
+### 3 — `unknown` as a first-class result
 
-Design system: **Instrument Sans** and **IBM Plex Mono**, on a graphite-and-paper palette. All diagrams in this README are hand-drawn SVG animations built from the same tokens as the product.
+**Decision.** `clear`, `blocked` and `unknown` are distinct, never merged, and a mandatory `unknown` forbids a passing aggregate.
 
-### Contribute
+**What it cost.** The system returns "we don't know" in situations where a scorecard would return a number. Reviewers have asked why a check is not simply red.
 
-Issues and PRs welcome — particularly around new server-owned templates (finite grids and geometric preconditions only, please) and additional invariant checks. If you find a defect, the bar for a good report is the one this project sets for itself: reproduction, evidence, and a specific claim about what should have happened instead.
+**Why it was worth it.** Folding `unknown` into `fail` under-reports capability. Folding it into `pass` over-reports safety. Keeping it distinct is the only option that does not lie in one direction or the other — and witness sampling may reject or leave unknown, but can never admit.
 
-> **Licensing.** No license file has been chosen for this repository yet — which, legally, means all rights reserved by default. Before this is reused or forked for commercial work, the maintainers should pick one. We would suggest **Apache-2.0** or **MPL-2.0**: both are permissive enough for engineering adoption while keeping patent grants explicit, which matters for anything safety-adjacent. Raising a PR adding a `LICENSE` is a genuinely useful contribution.
+### 4 — Finite policy baked into evidence identity
+
+**Decision.** The full `contracts.Policy` digest is part of every evidence identity, so changing a tolerance invalidates geometry and constraint hashes derived under the old one.
+
+**What it cost.** Debugging is more annoying. Adjusting a tolerance invalidates prior evidence, and you cannot quietly compare a fresh run against stale results.
+
+**Why it was worth it.** Stale evidence cannot masquerade as fresh evidence. The alternative — hashes over geometry only — lets a pass computed under one set of assumptions be replayed against a different policy, which is exactly the failure that makes a verification layer decorative.
+
+### 5 — Per-operation subprocess isolation
+
+**Decision.** Every native operation runs in its own subprocess with a 30 s wall limit. Credentials are stripped from worker environments before any process starts.
+
+**What it cost.** Process-spawn overhead on every operation, and the need for a warm standby just to make OCCT's import cost tolerable. Peak RSS sits around ~440 MiB.
+
+**Why it was worth it.** A hung or corrupted kernel cannot take the coordinator with it, the blast radius of a native crash is one operation, and the credential-stripping property is enforceable rather than aspirational.
+
+### 6 — One retry policy, owned by the controller
+
+**Decision.** SDK retries are disabled. The controller owns bounded retries, with exactly one schema repair allowed per run.
+
+**What it cost.** More controller code, and we reimplemented backoff ourselves.
+
+**Why it was worth it.** With SDK retries on, a 429 would be retried invisibly below the layer that tracks budgets, and a run could silently exceed its stated cost and latency envelope. One retry policy in the system means one place to reason about it — and a second malformed response fails the run rather than entering a negotiation with a model.
 
 ---
 
-<p align="center">
-  <img src="assets/readme/logo-mark.svg" width="54" height="54" alt="UNLOCK mark" />
-</p>
+## Security model
 
-<h3 align="center">UNLOCK</h3>
+The threat model is not "a hostile user." It is **a language model that produces plausible nonsense with full confidence, running in a process that can modify real geometry.** Everything below follows from taking that seriously.
 
 <p align="center">
-  <em>Design for the day it breaks.</em>
+  <img src="assets/readme/defense-in-depth.svg" width="100%" alt="Six gates between a model token and physical geometry" />
 </p>
 
-<p align="center">
-  The model proposes. The kernel disposes. There is exactly one door between them,<br/>
-  and it only opens for evidence this run issued itself.
-</p>
+### What the model can reach
 
-<p align="center">
-  <a href="https://dev.meta.ai/docs/models"><img src="https://img.shields.io/badge/Muse-Spark%201.3-3268f5?style=flat-square&labelColor=151719" alt="Muse Spark 1.3" /></a>
-  <img src="https://img.shields.io/badge/tests-327%20passing-34866b?style=flat-square&labelColor=151719" alt="327 tests passing" />
-  <img src="https://img.shields.io/badge/checks-12%2F12-34866b?style=flat-square&labelColor=151719" alt="12 of 12 checks" />
-  <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
-  <img src="https://img.shields.io/badge/track-Push%20the%20Frontier-3268f5?style=flat-square&labelColor=151719" alt="Track: Push the Frontier" />
-</p>
+Eight tools. Seven are read-only inspection. One — `construct_candidate` — can affect geometry, and only by choosing integers from a finite server-owned grid. There is no shell tool, no filesystem tool, no URL tool, no Python tool, no acceptance tool and no release tool. A tool that is not on the list returns a typed `TOOL_NOT_ALLOWED` and is never dispatched, so the capability set is enumerable by reading one dictionary.
 
----
+### How imported geometry is treated
 
-## Objections we would raise ourselves
+A package is untrusted input. `load_zip` enforces a strict **filename allowlist of exactly three entries** — `assembly.step` (or `.stp`), `manifest.json`, optional `attribution.txt`. Anything else raises `unsafe or unsupported ZIP path`, which is what rejects scripts, external references and archive-path tricks: not by detecting malice, but by refusing everything that is not on the list. On top of that it rejects **encrypted** archives, **non-regular members** (which is the symlink check, via `stat.S_ISLNK`), unsupported compression methods, and duplicate entries. Extraction is bounded twice — 25 MiB compressed, 100 MiB expanded — and the expanded size is re-checked against the bytes actually read, so a lying header cannot overflow the budget.
 
-A project that claims to verify everything should expect to be interrogated. These are the eight questions we asked of it, answered as honestly as we can.
+Artifacts are addressed by SHA-256 rather than caller-supplied paths, so nothing can be smuggled in through a filename.
 
-**"Isn't this just a language model with a CAD plugin?"**
-No — and the distinction is the project. A plugin trusts the model's output. Here the model's output is a proposal, bounded to twelve integers, and nothing downstream of the dispatcher accepts anything the model asserts. The kernel rebuilds geometry from frozen parameters and compares it against the original by two-way B-rep difference. If the model vanished mid-run, the verification would still be valid; if the model lied about its own result, the verification would still be correct. That independence is the thing being built, not a refinement of it.
+### How the geometry process is contained
 
-**"Why not let the model write a CadQuery script? It is more general."**
-It is more general, and that is the problem. Generated code is an unbounded action space: it can build any solid, but it can also silently violate a constraint in a way nobody detects until a part is on a machine. Bounded grids trade generality for a property you cannot retrofit — *the model's authority is enumerable by reading one dictionary*. Every additional template widens the kernel. None of them widen the model's reach.
+Every native operation runs in its **own subprocess** with a 30 s wall limit and a 120 s parent budget. Operations and work directories are allowlisted *before* a process is spawned, not discovered after. **Credentials are stripped from the worker environment before any process starts** — which is why the tool-calling smoke test includes a check that scans the report, stdout and stderr for the key and asserts it is absent.
 
-**"The deterministic selector found a smaller relief, faster, for free. Why pay for the model?"**
-It did, and we say so plainly in [the live run](#the-live-run). Two answers. First, on this fixture the task was small enough that a heuristic sufficed; `stable_enumeration` — included precisely as a harder control — tried three candidates and found nothing. Second, the point of the run was never to win a benchmark. It was to establish that a frontier model can be *admitted* to this loop at all with zero trust and bounded authority, and reach a verified result. That generalises to tasks where no heuristic exists. This fixture was the protocol check.
+A hung or corrupt OCCT call cannot take the coordinator down, and the blast radius of a native crash is exactly one operation.
 
-**"One run on one synthetic fixture is not evidence of much."**
-Correct, which is why the README calls it a protocol check rather than a result, and why the two deterministic controls were frozen *before* the live call rather than chosen afterwards. The credible claim is narrow and defensible: the loop works end to end, the guardrails fire on real input, and the verification is genuinely independent. Generalisation across fixtures is the work that comes next, and the roadmap says so.
+### How state is kept honest
 
-**"Where is the model actually necessary?"**
-In the reasoning step between evidence and action. The planner can tell you *that* the bracket blocks extraction and *where* the witness is. It cannot decide that the right move is to relieve the web rather than relocate the mounting, that a 40 × 16 window is sufficient, or to read a rejection certificate and change tactics when the first attempt is refused. Those are judgements over unstructured evidence — and when the model gets one wrong, as it did at t = 25.4 s, the system catches it rather than trusting it.
+Revisions are immutable, and frozen constraints, keep-outs and envelope are hashed into a revision's identity. Every evidence identity includes the full policy digest, so changing a tolerance invalidates everything derived under the old one. A foreign project ID or a stale revision returns `STALE_EVIDENCE` rather than executing. No candidate from a cancelled, active or superseded run can be accepted or exported, and export re-checks acceptance both before native work and again at commit.
 
-**"Is `unknown` not just a slower way of saying `fail`?"**
-No, and the distinction matters operationally. A `fail` says *this translation is impossible under this policy*. An `unknown` says *we could not establish whether it is possible*, and — critically — forbids a passing aggregate. Folding `unknown` into `fail` would silently under-report capability. Folding it into `pass` would silently over-report safety. Keeping it distinct is the only option that does not lie in one direction or the other, which is why witness sampling may reject or leave unknown but can never admit.
+### What we are explicitly *not* claiming
 
-**"What stops someone from shipping a `pass` that means nothing?"**
-Three things. Every check carries provenance, and the frontend only paints green for `live` or `computed_earlier` — an illustrative pass renders as an outline. The policy digest is bound into the evidence identity, so a pass computed under different tolerances cannot be replayed against a different policy. And the exported STEP is reimported and re-verified before it is called a success, so the artefact a machinist receives is the artefact that was checked, not one that merely shares a name.
-
-**"Does the model ever see the geometry?"**
-Never. It receives compact structured evidence — coordinates, rejection certificates, finite domains, measured bounds. Not a STEP file, not a mesh, not a tensor. This is partly a cost decision and partly a trust one: the model reasons about a *description* of the geometry, and the kernel reasons about the geometry. Keeping those two objects separate is what makes check 3, `trusted_reconstruction`, meaningful.
-
----
+This is a **local, single-queue engineering tool**, not a hardened multi-tenant service. The coordinator binds to loopback with trusted hosts and explicit CORS origins. There is no authentication, no project ownership, no rate limiting per user, and no sandboxing beyond the subprocess boundaries described above. **Do not expose it to the public internet in its current form.** Public hosting, auth and ownership are real deployment work, deliberately out of scope for this project — and pretending otherwise would be exactly the kind of unverified claim this system is built to refuse.
 
 ## Performance, measured
 
@@ -1371,6 +1336,78 @@ These are deliberate. A 12-component ceiling keeps the removal search tractable;
 
 ---
 
+## Objections we would raise ourselves
+
+A project that claims to verify everything should expect to be interrogated. These are the eight questions we asked of it, answered as honestly as we can.
+
+**"Isn't this just a language model with a CAD plugin?"**
+No — and the distinction is the project. A plugin trusts the model's output. Here the model's output is a proposal, bounded to twelve integers, and nothing downstream of the dispatcher accepts anything the model asserts. The kernel rebuilds geometry from frozen parameters and compares it against the original by two-way B-rep difference. If the model vanished mid-run, the verification would still be valid; if the model lied about its own result, the verification would still be correct. That independence is the thing being built, not a refinement of it.
+
+**"Why not let the model write a CadQuery script? It is more general."**
+It is more general, and that is the problem. Generated code is an unbounded action space: it can build any solid, but it can also silently violate a constraint in a way nobody detects until a part is on a machine. Bounded grids trade generality for a property you cannot retrofit — *the model's authority is enumerable by reading one dictionary*. Every additional template widens the kernel. None of them widen the model's reach.
+
+**"The deterministic selector found a smaller relief, faster, for free. Why pay for the model?"**
+It did, and we say so plainly in [the live run](#the-live-run). Two answers. First, on this fixture the task was small enough that a heuristic sufficed; `stable_enumeration` — included precisely as a harder control — tried three candidates and found nothing. Second, the point of the run was never to win a benchmark. It was to establish that a frontier model can be *admitted* to this loop at all with zero trust and bounded authority, and reach a verified result. That generalises to tasks where no heuristic exists. This fixture was the protocol check.
+
+**"One run on one synthetic fixture is not evidence of much."**
+Correct, which is why the README calls it a protocol check rather than a result, and why the two deterministic controls were frozen *before* the live call rather than chosen afterwards. The credible claim is narrow and defensible: the loop works end to end, the guardrails fire on real input, and the verification is genuinely independent. Generalisation across fixtures is the work that comes next, and the roadmap says so.
+
+**"Where is the model actually necessary?"**
+In the reasoning step between evidence and action. The planner can tell you *that* the bracket blocks extraction and *where* the witness is. It cannot decide that the right move is to relieve the web rather than relocate the mounting, that a 40 × 16 window is sufficient, or to read a rejection certificate and change tactics when the first attempt is refused. Those are judgements over unstructured evidence — and when the model gets one wrong, as it did at t = 25.4 s, the system catches it rather than trusting it.
+
+**"Is `unknown` not just a slower way of saying `fail`?"**
+No, and the distinction matters operationally. A `fail` says *this translation is impossible under this policy*. An `unknown` says *we could not establish whether it is possible*, and — critically — forbids a passing aggregate. Folding `unknown` into `fail` would silently under-report capability. Folding it into `pass` would silently over-report safety. Keeping it distinct is the only option that does not lie in one direction or the other, which is why witness sampling may reject or leave unknown but can never admit.
+
+**"What stops someone from shipping a `pass` that means nothing?"**
+Three things. Every check carries provenance, and the frontend only paints green for `live` or `computed_earlier` — an illustrative pass renders as an outline. The policy digest is bound into the evidence identity, so a pass computed under different tolerances cannot be replayed against a different policy. And the exported STEP is reimported and re-verified before it is called a success, so the artefact a machinist receives is the artefact that was checked, not one that merely shares a name.
+
+**"Does the model ever see the geometry?"**
+Never. It receives compact structured evidence — coordinates, rejection certificates, finite domains, measured bounds. Not a STEP file, not a mesh, not a tensor. This is partly a cost decision and partly a trust one: the model reasons about a *description* of the geometry, and the kernel reasons about the geometry. Keeping those two objects separate is what makes check 3, `trusted_reconstruction`, meaningful.
+
+---
+
+## The whole thing in ninety seconds
+
+If you read nothing above, read this.
+
+```text
+YOU          point UNLOCK at an assembly, name the dead part
+  │
+  ▼
+PLANNER      searches for a way out. Finds none.
+             no_path_supported · two confirmed obstructions · BRep witness at (0, −20, 36) mm
+  │
+  ▼
+MUSE         reads the evidence, picks a relief from a twelve-number domain.
+             Proposes T01 24 × 12. Cites two ev_ handles.
+  │
+  ▼
+DISPATCHER   REFUSES IT. Construction never starts.
+             "cite a rej_, plan_ or ver_ handle"
+  │
+  ▼
+MUSE         resubmits T01 40 × 16, citing rej_17a84dbaf811.
+  │
+  ▼
+KERNEL       builds it. Rebuilds it again from scratch, in its own process.
+             Runs twelve mandatory checks. 12/12. Replans. Replays. Reverses.
+  │
+  ▼
+COMPARISON   original vs revised, same target, same frozen policy.
+             VERIFIED_IMPROVEMENT. Route: target TRANSLATE Z+ 80 mm. Cost (0,0,0,1).
+  │
+  ▼
+YOU          accept it. Export a checked STEP bundle that is reimported
+             and re-verified before anyone calls it a file.
+
+48.1 seconds. 31,122 tokens. About three cents.
+The model's own final "safe": true was recorded — and then ignored.
+```
+
+The part that could not be serviced can now be serviced. That is the whole project.
+
+---
+
 ## Glossary
 
 Terms this README uses that may be unfamiliar if you do not work in mechanical CAD.
@@ -1423,54 +1460,53 @@ Terms this README uses that may be unfamiliar if you do not work in mechanical C
 
 ---
 
-## Design decisions and what they cost
+## Credits
 
-Every interesting engineering choice is a trade we accepted somewhere. These are the six that shaped the system, with what each one actually cost us.
+Built by **[@Shrenzoo](https://github.com/Shrenzoo)** and contributors, with [@maanas-pab](https://github.com/maanas-pab), for the **Meta Global AI Developer Hackathon 2026** — Cerebral Valley batch, **Push the Frontier** track.
 
-### 1 — Bounded grids instead of generated code
+**The model:** [Muse Spark 1.3](https://dev.meta.ai) via the Meta Model API. It was chosen because it supports native tool calling with the exact protocol shape this architecture needs — `tool_choice`, `max_completion_tokens`, structured tool results — and because the alternative, a model that had to be trusted, would have made the project impossible.
 
-**Decision.** The model selects integers from server-owned finite domains. It never emits code and never emits geometry.
+Everything else is open source, and this project stands on it:
 
-**What it cost.** Generality, immediately and obviously. A generated CadQuery script could express a relief shape these twelve numbers cannot. Adding a template means writing a constructor, proving geometric preconditions, and adding tests — not asking the model nicely.
+| | |
+|:--|:--|
+| [OCCT](https://dev.opencascade.org/) / [CadQuery](https://github.com/CadQuery/cadquery) | The B-rep kernel. Twelve checks mean nothing without real topology. |
+| [Pydantic](https://docs.pydantic.dev/) | Typed contracts at every boundary — `additionalProperties: false` is doing real security work here. |
+| [FastAPI](https://fastapi.tiangolo.com/) | The coordinator, including the SSE plumbing the resumable event stream rides on. |
+| [React 19](https://react.dev/) · [Three.js](https://threejs.org/) · [R3F](https://docs.pmnd.rs/react-three-fiber) | The workspace and the viewport. |
+| [Vite](https://vite.dev/) · [TypeScript](https://www.typescriptlang.org/) | The frontend toolchain. |
 
-**Why it was worth it.** The model's total authority is legible by reading one dictionary, and there is no code path from model output to unbounded behaviour. That property cannot be retrofitted onto generated code later, because by then the code has already run.
+Design system: **Instrument Sans** and **IBM Plex Mono**, on a graphite-and-paper palette. All diagrams in this README are hand-drawn SVG animations built from the same tokens as the product.
 
-### 2 — Independent reconstruction rather than inspecting the candidate
+### Contribute
 
-**Decision.** The verifier throws away the geometry the constructor produced and rebuilds the bracket from the frozen parameters in its own process, then compares by two-way B-rep difference.
+Issues and PRs welcome — particularly around new server-owned templates (finite grids and geometric preconditions only, please) and additional invariant checks. If you find a defect, the bar for a good report is the one this project sets for itself: reproduction, evidence, and a specific claim about what should have happened instead.
 
-**What it cost.** Roughly a doubling of verification work, and a second implementation of the same parameter interpretation that must be kept in sync.
+> **Licensing.** No license file has been chosen for this repository yet — which, legally, means all rights reserved by default. Before this is reused or forked for commercial work, the maintainers should pick one. We would suggest **Apache-2.0** or **MPL-2.0**: both are permissive enough for engineering adoption while keeping patent grants explicit, which matters for anything safety-adjacent. Raising a PR adding a `LICENSE` is a genuinely useful contribution.
 
-**Why it was worth it.** It is the only check that fails when the constructor and the verifier disagree about what a parameter means. Inspecting the candidate the model's pipeline produced would only confirm that the code did what it said it did.
+---
 
-### 3 — `unknown` as a first-class result
+<p align="center">
+  <img src="assets/readme/logo-mark.svg" width="54" height="54" alt="UNLOCK mark" />
+</p>
 
-**Decision.** `clear`, `blocked` and `unknown` are distinct, never merged, and a mandatory `unknown` forbids a passing aggregate.
+<h3 align="center">UNLOCK</h3>
 
-**What it cost.** The system returns "we don't know" in situations where a scorecard would return a number. Reviewers have asked why a check is not simply red.
+<p align="center">
+  <em>Design for the day it breaks.</em>
+</p>
 
-**Why it was worth it.** Folding `unknown` into `fail` under-reports capability. Folding it into `pass` over-reports safety. Keeping it distinct is the only option that does not lie in one direction or the other — and witness sampling may reject or leave unknown, but can never admit.
+<p align="center">
+  The model proposes. The kernel disposes. There is exactly one door between them,<br/>
+  and it only opens for evidence this run issued itself.
+</p>
 
-### 4 — Finite policy baked into evidence identity
+<p align="center">
+  <a href="https://dev.meta.ai/docs/models"><img src="https://img.shields.io/badge/Muse-Spark%201.3-3268f5?style=flat-square&labelColor=151719" alt="Muse Spark 1.3" /></a>
+  <img src="https://img.shields.io/badge/tests-327%20passing-34866b?style=flat-square&labelColor=151719" alt="327 tests passing" />
+  <img src="https://img.shields.io/badge/checks-12%2F12-34866b?style=flat-square&labelColor=151719" alt="12 of 12 checks" />
+  <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
+  <img src="https://img.shields.io/badge/track-Push%20the%20Frontier-3268f5?style=flat-square&labelColor=151719" alt="Track: Push the Frontier" />
+</p>
 
-**Decision.** The full `contracts.Policy` digest is part of every evidence identity, so changing a tolerance invalidates geometry and constraint hashes derived under the old one.
-
-**What it cost.** Debugging is more annoying. Adjusting a tolerance invalidates prior evidence, and you cannot quietly compare a fresh run against stale results.
-
-**Why it was worth it.** Stale evidence cannot masquerade as fresh evidence. The alternative — hashes over geometry only — lets a pass computed under one set of assumptions be replayed against a different policy, which is exactly the failure that makes a verification layer decorative.
-
-### 5 — Per-operation subprocess isolation
-
-**Decision.** Every native operation runs in its own subprocess with a 30 s wall limit. Credentials are stripped from worker environments before any process starts.
-
-**What it cost.** Process-spawn overhead on every operation, and the need for a warm standby just to make OCCT's import cost tolerable. Peak RSS sits around ~440 MiB.
-
-**Why it was worth it.** A hung or corrupted kernel cannot take the coordinator with it, the blast radius of a native crash is one operation, and the credential-stripping property is enforceable rather than aspirational.
-
-### 6 — One retry policy, owned by the controller
-
-**Decision.** SDK retries are disabled. The controller owns bounded retries, with exactly one schema repair allowed per run.
-
-**What it cost.** More controller code, and we reimplemented backoff ourselves.
-
-**Why it was worth it.** With SDK retries on, a 429 would be retried invisibly below the layer that tracks budgets, and a run could silently exceed its stated cost and latency envelope. One retry policy in the system means one place to reason about it — and a second malformed response fails the run rather than entering a negotiation with a model.
+---
