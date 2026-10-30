@@ -1357,3 +1357,55 @@ Two things follow. First, the run used **40% of its wall-clock budget** — the 
 | Reported API rate limits | 3,000 req/min · 4,000,000 tok/min |
 
 These are deliberate. A 12-component ceiling keeps the removal search tractable; a 500 mm envelope keeps B-rep booleans within the 30 s native limit. Widening them is straightforward engineering. The constraints that *cannot* widen are the twelve-number decision space and the one-way dispatcher, and neither is a performance trade-off.
+
+---
+
+## Glossary
+
+Terms this README uses that may be unfamiliar if you do not work in mechanical CAD.
+
+<dl>
+
+<dt><strong>B-rep</strong> (boundary representation)</dt>
+<dd>The standard way CAD software represents a solid: not a mesh of triangles, but an exact mathematical description of its faces, edges and vertices. UNLOCK works on real B-reps throughout, which is why verification means something — a mesh could be approximate, a B-rep cannot.
+
+<dt><strong>STEP file</strong></dt>
+<dd>A neutral, vendor-independent file format (<code>.step</code>, ISO 10303) for exchanging 3D geometry. AP214 and AP242 are the two flavours accepted here. If a CAD tool can open it, UNLOCK can read it.
+
+<dt><strong>Assembly</strong></dt>
+<dd>Multiple parts, each a solid, positioned relative to one another. UNLOCK treats parts as discrete components with declared roles, so it knows which one failed and which ones are fixed.
+
+<dt><strong>Keep-out / protected region</strong></dt>
+<dd>An area of the model that must not be touched — a mounting interface, a sealing surface, a clearance zone. Declared up front, hashed into the revision's identity, checked on every candidate.
+
+<dt><strong>Envelope</strong></dt>
+<dd>The bounding volume the design must stay inside. Removing material outside it would break the assembly's fit, so it is a mandatory check.
+
+<dt><strong>Removal path</strong></dt>
+<dd>The trajectory a part takes to leave its assembly. Here it is searched along six axes with tool-approach constraints, using conservative coverage plus complete analytic sweep separation.
+
+<dt><strong>Sweep separation</strong></dt>
+<dd>Proving that as a part moves along a path, no other solid ever intersects the volume it swept through. It is the geometric core of "can this part actually come out."
+
+<dt><strong>Conservative coverage</strong></dt>
+<dd>Over-approximating a region rather than under-approximating it. If the checker is unsure, it says <code>unknown</code> rather than guessing — the direction of doubt is always toward safety.
+
+<dt><strong>Witness</strong></dt>
+<dd>A concrete, inspectable piece of evidence for a claim. When the planner says a bracket blocks extraction, it produces a BRep witness at real coordinates you can open and look at.
+
+<dt><strong>Boolean operation</strong></dt>
+<dd>Union, subtraction or intersection between two solids. UNLOCK uses them to remove material and to prove the removal stayed inside the declared region.
+
+<dt><strong>Deep copy at mutation boundaries</strong></dt>
+<dd>OCCT, the geometry kernel, can silently mutate shared topology flags during boolean and transfer operations. Taking private copies at each boundary is what keeps the original geometry true.
+
+<dt><strong>Tessellation</strong></dt>
+<dd>Converting an exact B-rep into triangles for display. UNLOCK renders tessellated geometry in Three.js but always verifies against the exact B-rep underneath.
+
+<dt><strong>Provenance</strong></dt>
+<dd>Where a result came from: computed live, computed earlier, or merely illustrated. The frontend only paints a check green for the first two. An illustrative pass is drawn as an outline.
+
+<dt><strong>Revision</strong></dt>
+<dd>An immutable snapshot of imported geometry with its constraints hashed into its identity. Nothing can be edited in place, so evidence computed against one revision cannot be replayed against another.
+
+</dl>
