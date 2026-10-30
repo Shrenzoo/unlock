@@ -58,7 +58,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
   const restoring = useRef<RunRecord | null>(null)
   useEffect(() => {
     if (!revision) return
-    const id = new URLSearchParams(window.location.search).get('run')
+    const id = new URLSearchParams(window.location.search).get('run') ?? health?.demo_run_id
     if (!id) return
     let live = true
     api.getRun(id).then((r) => {
@@ -67,7 +67,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
       dispatch({ type: 'target', id: r.target_id })
     }).catch(() => { /* an unknown or foreign run leaves a clean workspace */ })
     return () => { live = false }
-  }, [revision])
+  }, [revision, health?.demo_run_id])
 
   useEffect(() => {
     stopActive()
@@ -95,6 +95,10 @@ export default function Workspace({ projectId }: { projectId: string }) {
   }, [state.target, stopActive])
 
   const execute = useCallback(async (kind: 'baseline' | 'redesign' | 'export') => {
+    if (health?.access === 'read_only') {
+      dispatch({ type: 'notice', notice: { tone: 'info', text: 'Read-only demonstration. This view uses previously computed CAD evidence; new engineering jobs require authenticated access.' } })
+      return
+    }
     if (!revision || !state.target || (kind !== 'baseline' && !run)) return
     stopActive()
     const current = generation.current
@@ -135,9 +139,10 @@ export default function Workspace({ projectId }: { projectId: string }) {
       dispatch({ type: 'job', job: jobKind, status: 'failed' })
       dispatch({ type: 'notice', notice: { tone: 'refuse', text: (e as Error).message } })
     } finally { if (current === generation.current) jobs.current = null }
-  }, [revision, run, state.target, state.candidateId, stopActive])
+  }, [revision, run, state.target, state.candidateId, stopActive, health?.access])
 
   const decide = useCallback(async (decision: 'accept' | 'reject') => {
+    if (health?.access === 'read_only') return
     const c = run?.candidates.find((c) => c.id === state.candidateId)
     if (!run || !c?.input_hash) return
     const current = generation.current
@@ -148,7 +153,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
       setRun(fresh)
       dispatch({ type: 'notice', notice: { tone: 'info', text: decision === 'accept' ? 'Accepted for checked export. Engineering release remains unassessed.' : 'Candidate rejected; evidence is preserved.' } })
     } catch (e) { if (current === generation.current) dispatch({ type: 'notice', notice: { tone: 'refuse', text: (e as Error).message } }) }
-  }, [run, state.candidateId, state.target, revision?.id])
+  }, [run, state.candidateId, state.target, revision?.id, health?.access])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

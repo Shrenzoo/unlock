@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-30",
+  "base_commit": "84a9778",
+  "branch": "codex/modal-deployment",
+  "account": {
+    "workspace": "shreyas-pabbathi",
+    "plan": "Starter",
+    "usage_limit_usd": 30,
+    "spend_limit_usd": 0,
+    "displayed_credits_usd_after_smoke": 30,
+    "displayed_charges_usd_after_smoke": 0,
+    "note": "Verified after saving and reloading. Dashboard amounts are rounded and billing may lag."
+  },
+  "checks": {
+    "baseline": {
+      "tests": 327,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "time": 294.104
+    },
+    "regression": {
+      "tests": 327,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time": 635.649
+    },
+    "deployment": {
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time": 79.175
+    },
+    "browser": {
+      "tests": 14,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "time": 434.869
+    },
+    "browser-retry": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time": 107.639
+    },
+    "readonly-browser": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time": 10.654
+    },
+    "final": {
+      "tests": 335,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time": 664.9
+    }
+  },
+  "initial_failures": [
+    "First baseline forced AI_PROVIDER=mock globally and failed the configuration precedence test. Clean environment: 327 passed; isolated config tests: 11 passed.",
+    "First read-only browser attempt lacked downloaded files after a Modal CLI directory-download failure. Authenticated SDK download succeeded.",
+    "Next read-only browser attempt used a nonexistent exact Compare control name. Corrected the test to existing 4 Compare and Accept for export controls; it passed.",
+    "The existing 14-case browser run had one 30-second landing-page load timeout. The specific desktop case passed on retry; the other 13 passed originally.",
+    "Real Modal SDK definition validation rejected retries=0 on ASGI web functions. Removed that unsupported option and the definition passed."
+  ],
+  "other_validation": {
+    "ruff": "passed, src/tests/scripts and Modal definitions",
+    "format": "passed, 90 files",
+    "pip_check": "passed",
+    "frontend_typecheck": "passed",
+    "frontend_build": "passed",
+    "vercel_missing_url_build": "correctly rejected",
+    "vercel_https_url_build": "passed with a configuration-only example URL",
+    "frontend_lint": "No standalone frontend lint script exists; TypeScript and browser checks were run.",
+    "native_libraries_loaded_by_snapshot_api": false,
+    "modal_public_asgi_definition": "validated with Modal SDK 1.6.3; not publicly deployed"
+  },
+  "cloud": {
+    "job_id": "6a2d843e1bf5462b93d0d6b12affa6ea",
+    "state": "completed",
+    "fixture": "B02",
+    "live_model": false,
+    "run_id": "run_76c6b92971594dada1abfbe1",
+    "updated_at": 1793401815.9809973,
+    "engineering_job_id": "job_808f2b478eab4c1dbf8eef5e",
+    "phase": "export",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "export_sha256": "48e94908462543c87692b478ca6c2c89863a9410d9e1a161efdc5a4ac0857ea8",
+    "elapsed_seconds": 71.443,
+    "artifact_bytes": 1791109
+  },
+  "cloud_restart": {
+    "separate_fresh_container": true,
+    "persisted_export_integrity": "passed"
+  },
+  "cloud_app_id": "ap-XVxxSaKn0e1IY7kYVfliw5",
+  "cloud_image_id": "im-FcfKbzYYeM3hhE9leExxtZ",
+  "estimated_compute": {
+    "rate_source": "https://modal.com/pricing",
+    "cpu_usd_per_core_second": 1.31e-05,
+    "memory_usd_per_gib_second": 2.22e-06,
+    "observed_body_upper_estimate_usd": 0.00157031714,
+    "planning_allowance_usd_per_full_b02_job": 0.003,
+    "theoretical_runs_per_30_usd_excluding_shared_usage": 10000,
+    "approx_retained_jobs_before_storage_guard": 450,
+    "note": "Estimate, not metered invoice. Startup/build/idle/web usage and separate model tokens are not in the body estimate."
+  },
+  "public_deployment": false,
+  "vercel_project_created": false,
+  "live_model_calls": false,
+  "limitations": [
+    "Public engineering is read-only; private compute requires Modal workspace SDK authentication.",
+    "Cloud B02 and fresh-container persistence were executed, not the full regression suite on Linux.",
+    "Concurrency has a local rejection test and Modal serial/max-container configuration, not a cloud stress test.",
+    "Public Modal/Vercel end-to-end verification and fixture publication approval remain deployment checkpoints.",
+    "Verification establishes the listed geometry/motion checks, not physical safety or manufacturing readiness."
+  ]
+}

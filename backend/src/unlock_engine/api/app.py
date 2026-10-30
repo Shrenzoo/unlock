@@ -26,12 +26,21 @@ from .contracts import (
     RunView,
     StartRun,
 )
-from .coordinator import Coordinator, TERMINAL, uid
+
+TERMINAL = {"completed", "failed", "cancelled", "interrupted"}
 
 IDEM = Annotated[str, Header(alias="Idempotency-Key", min_length=1, max_length=128)]
 
 
-def create_app(*, root=None, config=None, seed=True):
+def create_app(
+    *,
+    root=None,
+    config=None,
+    seed=True,
+    coordinator_factory=None,
+    read_only=False,
+    allowed_hosts=None,
+):
     env = load_environment()
     path = Path(root) if root else Path(env.get("UNLOCK_DATA_DIR", ".data"))
     if not path.is_absolute():
@@ -46,7 +55,12 @@ def create_app(*, root=None, config=None, seed=True):
 
     @asynccontextmanager
     async def lifespan(app):
-        coordinator = Coordinator(path, config=config)
+        if coordinator_factory:
+            coordinator = coordinator_factory(path)
+        else:
+            from .coordinator import Coordinator
+
+            coordinator = Coordinator(path, config=config)
         app.state.coordinator = coordinator
         if seed:
             coordinator.seed()
@@ -55,23 +69,40 @@ def create_app(*, root=None, config=None, seed=True):
 
     app = FastAPI(title="UNLOCK engineering API", version="1.0", lifespan=lifespan)
     app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "Idempotency-Key", "Last-Event-ID"],
-    )
-    app.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["localhost", "127.0.0.1", "[::1]", "testserver"],
+        allowed_hosts=allowed_hosts
+        or ["localhost", "127.0.0.1", "[::1]", "testserver"],
     )
 
     @app.middleware("http")
     async def local_boundary(request, call_next):
+        if read_only:
+            if request.method not in ("GET", "HEAD", "OPTIONS"):
+                return JSONResponse(
+                    EngineError(
+                        "FORBIDDEN",
+                        "This is a read-only recorded engineering demonstration. Compute requires authenticated Modal access.",
+                    ).envelope(),
+                    403,
+                )
+            if not request.app.state.coordinator.limiter.allow():
+                return JSONResponse(
+                    EngineError(
+                        "LIMIT_EXCEEDED", "Demo request limit reached; retry later."
+                    ).envelope(),
+                    429,
+                    headers={"Retry-After": "60"},
+                )
         # This coordinator is a local tool. No implicit unauthenticated public upload/API mode.
-        if request.client and request.client.host not in (
-            "127.0.0.1",
-            "::1",
-            "testclient",
+        if (
+            not read_only
+            and request.client
+            and request.client.host
+            not in (
+                "127.0.0.1",
+                "::1",
+                "testclient",
+            )
         ):
             return JSONResponse(
                 EngineError(
@@ -111,6 +142,14 @@ def create_app(*, root=None, config=None, seed=True):
             )
         return await call_next(request)
 
+    # Wrap boundary errors too, so authorized frontends can read a 403/429 envelope.
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type", "Idempotency-Key", "Last-Event-ID"],
+    )
+
     @app.exception_handler(EngineError)
     async def engine_error(request, exc):
         status = {
@@ -141,7 +180,18 @@ def create_app(*, root=None, config=None, seed=True):
     @app.get("/health")
     def health(request: Request):
         c = coord(request)
-        return dict(status="ok", mode="local", provider=c.config.public())
+        return dict(
+            status="ok",
+            mode="read_only" if read_only else "local",
+            provider=dict(
+                c.config.public(),
+                **(
+                    dict(access="read_only", demo_run_id=c.demo_run_id)
+                    if read_only
+                    else {}
+                ),
+            ),
+        )
 
     @app.get("/v1/projects", response_model=list[ProjectSummary])
     def projects(request: Request):
@@ -149,6 +199,8 @@ def create_app(*, root=None, config=None, seed=True):
 
     @app.post("/v1/projects", status_code=201)
     def create_project(body: ProjectInput, request: Request):
+        from .coordinator import uid
+
         p = coord(request).project(uid("project"), body.name)
         return dict(project_id=p["id"], revisions=[])
 

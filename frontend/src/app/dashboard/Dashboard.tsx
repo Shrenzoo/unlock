@@ -16,17 +16,20 @@ export default function Dashboard() {
   const [upload, setUpload] = useState<UploadState>({ kind: 'idle' })
   const [connection, setConnection] = useState<'checking' | 'connected' | 'unreachable'>('checking')
   const [dragging, setDragging] = useState(false)
+  const [readOnly, setReadOnly] = useState(false)
   const input = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let live = true
+    let recorded = false
+    api.health().then((h) => { recorded = h?.access === 'read_only'; if (live) setReadOnly(recorded) }).catch(() => {})
     // A failed refresh is a connection problem, never a package problem, and never
     // a reason to show example data instead.
     const refresh = () => api.listProjects()
       .then((p) => { if (live) { setProjects(p); setConnection('connected') } })
       .catch(() => { if (live) setConnection('unreachable') })
     void refresh()
-    const timer = window.setInterval(() => { if (api.mode === 'http') void refresh() }, 2000)
+    const timer = window.setInterval(() => { if (api.mode === 'http' && !recorded) void refresh() }, 2000)
     return () => {
       live = false
       window.clearInterval(timer)
@@ -34,6 +37,7 @@ export default function Dashboard() {
   }, [])
 
   async function accept(files: File[]) {
+    if (readOnly) return
     const errors = validatePackage(files)
     if (errors.length) return setUpload({ kind: 'invalid', errors })
     try {
@@ -63,7 +67,7 @@ export default function Dashboard() {
         </Link>
         <span className="appbar__crumb">Projects</span>
         <span className="appbar__mode mono" data-connection={api.mode === 'fixture' ? 'fixture' : connection}>
-          {api.mode === 'fixture' ? 'Fixture mode, bundled examples only' : connection === 'connected' ? 'Connected to the local engine' : connection === 'unreachable' ? 'Engine unreachable' : 'Connecting…'}
+          {api.mode === 'fixture' ? 'Fixture mode, bundled examples only' : connection === 'connected' ? readOnly ? 'Read-only engineering demonstration' : 'Connected to the engineering service' : connection === 'unreachable' ? 'Engine unreachable' : 'Connecting…'}
         </span>
       </header>
 
@@ -131,11 +135,12 @@ export default function Dashboard() {
               })}
             </tbody>
           </table>
-          <p className="dash__foot">{api.mode === 'http' ? 'B01, B02 and B03 use generated synthetic STEP assemblies. Loading and analysis execute on the local backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
+          <p className="dash__foot">{readOnly ? 'B02 uses a real synthetic STEP assembly and previously computed verification evidence. Public access is read-only; it runs no CAD jobs or model inference.' : api.mode === 'http' ? 'B01, B02 and B03 use generated synthetic STEP assemblies. Loading and analysis execute on the connected backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
         </section>
 
         <aside className="dash__side" aria-label="Import a package">
           <h2>Import a package</h2>
+          {readOnly && <p role="status">Uploads are disabled in this public demonstration. Engineering jobs require authenticated access.</p>}
           <div
             className={`drop ${dragging ? 'is-over' : ''}`}
             onDragOver={(e) => {
@@ -150,12 +155,13 @@ export default function Dashboard() {
               <path d="M20 4v16M14 10l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="1.5" />
             </svg>
             <p>Drop a ZIP, or a STEP file with its manifest.json</p>
-            <button type="button" className="btn btn--quiet btn--sm" onClick={() => input.current?.click()}>
+            <button type="button" className="btn btn--quiet btn--sm" disabled={readOnly} onClick={() => input.current?.click()}>
               Choose files
             </button>
             <input
               ref={input}
               type="file"
+              disabled={readOnly}
               multiple
               accept=".zip,.step,.stp,.json"
               className="visually-hidden"

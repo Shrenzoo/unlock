@@ -9,6 +9,8 @@ export interface ServiceHealth {
   provider: string
   model: string
   credentials: 'configured' | 'missing'
+  access?: 'read_only'
+  demo_run_id?: string | null
 }
 
 export interface UnlockApi {

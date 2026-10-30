@@ -55,6 +55,7 @@ export function EvidencePanel(props: PanelProps) {
   useEffect(() => { scroller.current?.scrollTo({ top: 0 }) }, [state.mode])
   return (
     <aside className="panel" aria-label="Evidence">
+      {props.health?.access === 'read_only' && <p className="panel__fine" role="status">Read-only B02 demonstration. Real CAD and verified exports were computed earlier. The recorded decision policy is identified in the evidence.</p>}
       {state.notice && (
         <div className={`panel__notice panel__notice--${state.notice.tone}`} role={state.notice.tone === 'refuse' ? 'alert' : 'status'}>
           <Glyph kind={state.notice.tone === 'refuse' ? 'fail' : 'pass'} />
@@ -283,7 +284,7 @@ const PLAN_HEADLINE: Record<PlanResult['status'], string> = {
   cancelled: 'Analysis cancelled',
 }
 
-function AnalyzePanel({ state, dispatch, run, onRunBaseline }: PanelProps) {
+function AnalyzePanel({ state, dispatch, run, health, onRunBaseline }: PanelProps) {
   const b = run?.baseline
   const st = state.baseline.status
   return (
@@ -295,7 +296,7 @@ function AnalyzePanel({ state, dispatch, run, onRunBaseline }: PanelProps) {
         </p>
         {(st === 'idle' || st === 'failed') && (
           <div className="panel__cta panel__cta--inline">
-            <button type="button" className="btn btn--primary" onClick={onRunBaseline}>
+            <button type="button" className="btn btn--primary" disabled={health?.access === 'read_only'} onClick={onRunBaseline}>
               <span className="btn__key" aria-hidden="true" />
               Run baseline analysis
             </button>
@@ -393,7 +394,7 @@ function RedesignPanel({ state, dispatch, run, revision, health, onRunRedesign }
         </dl>
         {(st === 'idle' || st === 'failed') && (
           <div className="panel__cta panel__cta--inline">
-            <button type="button" className="btn btn--primary" onClick={onRunRedesign}>
+            <button type="button" className="btn btn--primary" disabled={health?.access === 'read_only'} onClick={onRunRedesign}>
               <span className="btn__key" aria-hidden="true" />
               Request redesign
             </button>
@@ -567,7 +568,7 @@ function Checks({ checks, run }: { checks: CheckRecord[]; run: RunRecord }) {
 
 /* ── compare ────────────────────────────────────────────────────────────── */
 
-function ComparePanel({ state, run, onDecide }: PanelProps) {
+function ComparePanel({ state, run, health, onDecide }: PanelProps) {
   if (!run) return null
   const c = selectedCandidate(run, state)
   const ver = c?.verification
@@ -636,7 +637,7 @@ function ComparePanel({ state, run, onDecide }: PanelProps) {
             <span>{run.provenance.kind === 'illustrative' ? 'Illustrative, verifier not run' : ver?.status ?? 'Not checked'}</span>
           </li>
           <li>
-            <span>Engineer acceptance</span>
+            <span>{health?.access === 'read_only' ? 'Recorded demo acceptance' : 'Engineer acceptance'}</span>
             <span>{c?.review_decision ?? 'Not recorded'}</span>
           </li>
           <li>
@@ -645,10 +646,10 @@ function ComparePanel({ state, run, onDecide }: PanelProps) {
           </li>
         </ul>
         <div className="detail__actions">
-          <button type="button" className="btn btn--primary btn--sm" disabled={api.mode !== 'http' || !c?.verified_improvement || c.review_decision === 'accept'} onClick={() => onDecide('accept')} aria-describedby="accept-why">
+          <button type="button" className="btn btn--primary btn--sm" disabled={health?.access === 'read_only' || api.mode !== 'http' || !c?.verified_improvement || c.review_decision === 'accept'} onClick={() => onDecide('accept')} aria-describedby="accept-why">
             Accept for export
           </button>
-          <button type="button" className="btn btn--quiet btn--sm" disabled={api.mode !== 'http' || !c} onClick={() => onDecide('reject')} aria-describedby="accept-why">
+          <button type="button" className="btn btn--quiet btn--sm" disabled={health?.access === 'read_only' || api.mode !== 'http' || !c} onClick={() => onDecide('reject')} aria-describedby="accept-why">
             Reject candidate
           </button>
         </div>
@@ -700,7 +701,7 @@ function ExportPanel({ run, state, health, onExport }: PanelProps) {
           ))}
         </ul>
         <div className="detail__actions">
-          <button type="button" className={`btn btn--sm ${exported ? 'btn--quiet' : 'btn--primary'}`} disabled={api.mode !== 'http' || !accepted || exporting} onClick={onExport} aria-describedby="export-why">
+          <button type="button" className={`btn btn--sm ${exported ? 'btn--quiet' : 'btn--primary'}`} disabled={health?.access === 'read_only' || api.mode !== 'http' || !accepted || exporting} onClick={onExport} aria-describedby="export-why">
             {exporting ? 'Checking and packaging…' : exported ? 'Create the package again' : 'Create checked package'}
           </button>
           {exported && (

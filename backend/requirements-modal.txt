@@ -1,0 +1,2 @@
+# Optional deployment tooling, kept separate from the engineering environment.
+modal==1.6.3
