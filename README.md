@@ -279,7 +279,7 @@ The model receives compact structured evidence — never a STEP file, never raw 
 SERVER_DOMAINS = {
     "T01": dict(
         center_x_mm=(-4.0, 0.0, 4.0),
-        center_y_mm=(-28.0, -20.0, -12.0, -4.0),
+        center_y_mm=(-24.0, -20.0, -16.0, 0.0),
         width_mm=(24.0, 40.0, 46.0, 52.0),
         depth_mm=(8.0, 12.0, 16.0, 20.0),
     ),
