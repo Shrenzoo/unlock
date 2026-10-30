@@ -301,7 +301,8 @@ export interface RunRecord {
   outcome?: string | null
   explanation?: string | null
   ai_report_artifact_id?: string | null
-  export?: { artifact_id: string; status: string; roundtrip_status: string } | null
+  /** `review_candidate_id` is the accepted candidate this package was built from. */
+  export?: { artifact_id: string; status: string; roundtrip_status: string; review_candidate_id?: string; candidate_id?: string } | null
 }
 
 /* ── projects ─────────────────────────────────────────────────────────── */

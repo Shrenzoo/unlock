@@ -86,8 +86,9 @@ export default function Workspace({ projectId }: { projectId: string }) {
       if (current !== generation.current || fresh.target_id !== state.target || fresh.revision_id !== revision.id) return
       setRun(fresh)
       dispatch({ type: 'job', job: jobKind, status: 'done' })
-      if (kind !== 'baseline') dispatch({ type: 'candidate', id: fresh.selected_candidate_id })
-      if (kind === 'export' && fresh.export) window.open(api.artifactUrl(fresh.export.artifact_id), '_blank', 'noopener')
+      // Export keeps the reviewed candidate selected; the panel then offers a plain
+      // download link (a delayed window.open would be swallowed by popup blockers).
+      if (kind === 'redesign') dispatch({ type: 'candidate', id: fresh.selected_candidate_id })
     } catch (e) {
       if (current !== generation.current) return
       if (runId) {

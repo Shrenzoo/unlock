@@ -668,12 +668,22 @@ const PACKAGE = [
   ['metrics.json', 'Defined metrics, original and revised'],
   ['paths.json', 'Removal and insertion segments'],
   ['verification.json', 'Per-constraint results and evidence'],
+  ['roundtrip.json', 'STEP reimport check of the revised assembly'],
+  ['geometry_difference.json', 'Measured removed and added material'],
+  ['ai_run.json', 'Decision record: tool calls, candidates, policy'],
+  ['preview.json', 'Presentation mesh, not CAD output'],
+  ['attribution.txt', 'Fixture provenance'],
   ['limitations.txt', 'Human-readable summary with limitations'],
+  ['bundle.json', 'SHA-256 of every file above'],
 ]
 
-function ExportPanel({ run, state, onExport }: PanelProps) {
+function ExportPanel({ run, state, health, onExport }: PanelProps) {
   if (!run) return null
   const c = selectedCandidate(run, state)
+  const accepted = c?.review_decision === 'accept'
+  const exporting = state.redesign.status === 'running'
+  const exported = run.export && run.export.review_candidate_id === c?.id ? run.export : null
+  const policy = decisionPolicy(run, health)
   return (
     <>
       <Section title="Export package">
@@ -687,17 +697,30 @@ function ExportPanel({ run, state, onExport }: PanelProps) {
           ))}
         </ul>
         <div className="detail__actions">
-          <button type="button" className="btn btn--primary btn--sm" disabled={api.mode !== 'http' || c?.review_decision !== 'accept' || state.redesign.status === 'running'} onClick={onExport} aria-describedby="export-why">
-            Download checked package
+          <button type="button" className={`btn btn--sm ${exported ? 'btn--quiet' : 'btn--primary'}`} disabled={api.mode !== 'http' || !accepted || exporting} onClick={onExport} aria-describedby="export-why">
+            {exporting ? 'Checking and packaging…' : exported ? 'Create the package again' : 'Create checked package'}
           </button>
+          {exported && (
+            // A plain link: the browser treats the attachment as a download, so no popup blocker can swallow it.
+            <a className="btn btn--primary btn--sm" href={api.artifactUrl(exported.artifact_id)} download data-testid="export-download" data-artifact-id={exported.artifact_id}>
+              Download checked package (ZIP)
+            </a>
+          )}
         </div>
-        <p id="export-why" className="panel__fine">
-          {run.export ? `Export ${run.export.status}; round trip ${run.export.roundtrip_status}.` : 'Accept the checked candidate first. Export reconstructs the solid, replans the route, and reimports the STEP output before download.'} <ProvenanceTag provenance={run.provenance} compact />
+        <p id="export-why" className="panel__fine" role="status">
+          {exported
+            ? `Export ${exported.status.replaceAll('_', ' ')}; STEP round trip ${exported.roundtrip_status}. Package SHA-256 ${exported.artifact_id.slice(0, 12)}…`
+            : exporting
+              ? 'Reconstructing the solid, replanning the route and reimporting the STEP output. This takes up to a minute.'
+              : accepted
+                ? 'Ready. Export reconstructs the solid, replans the route and reimports the STEP output before the package is offered for download.'
+                : 'Accept the checked candidate first. Export reconstructs the solid, replans the route and reimports the STEP output before download.'}{' '}
+          <ProvenanceTag provenance={run.provenance} compact />
         </p>
       </Section>
       <Section title="Attribution">
         <p className="panel__body">
-          {run.model ? `Inference: ${run.model.id}, provider ${run.model.provider}.` : 'No live inference recorded.'} Fixture provenance and engineering limitations are included in the export. Redistribution rights must be confirmed before publication.
+          Decision policy: {policy.label}{policy.model ? ` (${policy.model})` : ''}. Fixture provenance and engineering limitations are included in the export. Redistribution rights must be confirmed before publication.
         </p>
       </Section>
     </>
