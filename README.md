@@ -866,3 +866,90 @@ Every state-changing POST accepts an `Idempotency-Key` header. Retrying a redesi
 ### The coordinator is deliberately not a platform
 
 One serial queue, loopback clients, trusted hosts, explicit CORS origins. It is a local engineering tool with real concurrency limits, not a public multi-user scheduler — and the README says so rather than pretending otherwise. Public hosting, authentication and project ownership are separate deployment work, deliberately out of scope.
+
+---
+
+## Evidence & reproducibility
+
+Claims in this README are backed by committed artefacts. Nothing here is a screenshot of a terminal someone typed `figlet` into.
+
+### What is in the repository
+
+```text
+backend/evidence/
+├── live-b02/                          the live Meta redesign run
+│   ├── live_run.json                  160 KB · full AIRunReport: every tool
+│   │                                  response, plan, certificate, hash
+│   ├── live_changed_bridge.step       92 KB · the actual constructed bracket
+│   ├── live_engineering_summary.json  derived by scripts/summarize_ai_run.py
+│   ├── selector_geometry_ranked.json  the deterministic control
+│   ├── selector_stable_enumeration.json  the blind control
+│   └── worker_*_benchmark.jsonl       cold vs warm timing, measured
+├── meta-tool-smoke/                   live native tool-calling check
+│   └── live_report.json               15/15 checks passed
+├── meta/                              frozen validation record
+│   ├── final-pytest.txt               267 passed at freeze time
+│   ├── browser-compare.png            real browser, real backend
+│   ├── browser-export.png             real browser, real backend
+│   ├── checked-export.zip             155 KB · reimported and re-verified
+│   ├── SHA256.json                    every artifact, content-addressed
+│   └── validation.json                exact commands and counts
+└── browser-acceptance/
+    └── report.json                    headless Chrome through the real service
+```
+
+### Live verification, independently re-run
+
+Native tool calling was verified live: Muse Spark 1.3 requested the real read-only `inspect_assembly` tool, the backend validated and executed it, the result returned under the provider's tool-call ID, and the model's final answer matched the tool payload field by field. **All 15 outcome checks passed**, including a scan confirming the credential never appeared in the report, stdout or stderr.
+
+```text
+UNLOCK Meta tool-calling smoke: PASSED
+  tool            inspect_assembly  (1 structured call, finish_reason=tool_calls)
+  tool-call id    call_28a…385a     preserved verbatim, 41 characters
+  tool execution  ok · evidence ev_0ea1a6dc61f8 · 7.2 ms · 5 real records
+  grounding       final answer matched the tool payload · no invented components
+  geometry        input STEP + manifest SHA-256 unchanged · nothing constructed
+  secrets         key absent from report, stdout and stderr
+```
+
+### The test suite
+
+**327 tests pass.** They cover the geometry kernel, the planner, template construction, the verifier, the AI controller, the HTTP coordinator, and end-to-end integration over real CAD.
+
+```sh
+$ .venv/bin/python -m pytest -q
+327 passed, 17 deselected, 17 warnings in 534.28s (0:08:54)
+```
+
+The 17 deselected are the paid `meta_live` tests — deselected by default so ordinary CI never spends credits. The 17 warnings are third-party deprecations inside CadQuery and starlette.
+
+Coverage by layer:
+
+| Layer | What the tests actually exercise |
+|:--|:--|
+| Geometry | B-rep booleans, deep copies, tessellation, envelope math |
+| Planner | Six-axis sweep separation, conservative coverage, reverse insertion |
+| Templates | T01/T02 constructors, domain bounds, geometric preconditions |
+| Verifier | All twelve checks, unknown propagation, aggregation refusal |
+| AI controller | Limits, dedup, injection, schema violations, cancellation |
+| Meta SDK | Request shape, 401/402/403/404/429/5xx, model substitution, timeouts |
+| HTTP | Import → baseline → redesign → verify → export, over real CAD |
+| Browser | Headless Chrome through the real service, zero console errors |
+
+### Reproducing the engineering demo
+
+```sh
+.venv/bin/python -m unlock_engine plan-demo --output .work/planning
+```
+
+Runs the complete real CAD planning demonstration: import genuine STEP, search for a removal path, identify the obstruction with BRep evidence, construct a candidate, verify it independently, and write a content-addressed artifact tree.
+
+```sh
+.venv/bin/python -m unlock_engine.ai demo --offline --fixture B02 --output .work/meta-offline
+```
+
+Same workflow with the AI loop, explicitly offline. Produces identical candidates and outcomes to the live path — which is how we know the geometry, not the model, is doing the verification.
+
+### A note on how this was built
+
+The integration history is preserved as chronological commits with real validation counts at each milestone. No history was backdated or rewritten. Where a defect was found — and one was, during the live run — it is documented with the commit that fixed it and a regression test that fails on the previous code. See [the integration handoff](backend/docs/META_INTEGRATION_HANDOFF.md) for the full record.
