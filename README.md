@@ -617,6 +617,10 @@ If the constructor and the verifier disagree about what those parameters mean, c
 
 ### The aggregation rule
 
+<p align="center">
+  <img src="assets/readme/aggregation-rule.svg" width="100%" alt="Clear admits, blocked refuses, unknown forbids a passing aggregate" />
+</p>
+
 ```python
 # statuses stay separate — they are never coerced into a single boolean
 clear ────────▶ a translation is admitted
