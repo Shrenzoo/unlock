@@ -14,12 +14,17 @@ type UploadState =
 export default function Dashboard() {
   const [projects, setProjects] = useState<ProjectSummary[] | null>(null)
   const [upload, setUpload] = useState<UploadState>({ kind: 'idle' })
+  const [connection, setConnection] = useState<'checking' | 'connected' | 'unreachable'>('checking')
   const [dragging, setDragging] = useState(false)
   const input = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let live = true
-    const refresh = () => api.listProjects().then((p) => { if (live) setProjects(p) }).catch((e: Error) => { if (live) setUpload({ kind: 'invalid', errors: [{ field: 'backend', message: e.message + '. Start the local UNLOCK backend on port 8000.' }] }) })
+    // A failed refresh is a connection problem, never a package problem, and never
+    // a reason to show example data instead.
+    const refresh = () => api.listProjects()
+      .then((p) => { if (live) { setProjects(p); setConnection('connected') } })
+      .catch(() => { if (live) setConnection('unreachable') })
     void refresh()
     const timer = window.setInterval(() => { if (api.mode === 'http') void refresh() }, 2000)
     return () => {
@@ -57,13 +62,25 @@ export default function Dashboard() {
           <Logo />
         </Link>
         <span className="appbar__crumb">Projects</span>
-        <span className="appbar__mode mono">{api.mode === 'fixture' ? 'Fixture mode, bundled examples only' : 'Connected'}</span>
+        <span className="appbar__mode mono" data-connection={api.mode === 'fixture' ? 'fixture' : connection}>
+          {api.mode === 'fixture' ? 'Fixture mode, bundled examples only' : connection === 'connected' ? 'Connected to the local engine' : connection === 'unreachable' ? 'Engine unreachable' : 'Connecting…'}
+        </span>
       </header>
 
       <main className="dash__main">
         <section className="dash__projects" aria-labelledby="projects-title">
           <h1 id="projects-title">Projects</h1>
           <p className="dash__lede">Open a supported assembly to define a repair target and review a bounded redesign.</p>
+          {connection === 'unreachable' && (
+            <div className="notice notice--fail" role="alert" data-testid="connection-error">
+              <p className="notice__title">
+                <Glyph kind="fail" /> Cannot reach the UNLOCK engineering service
+              </p>
+              <p>
+                No response from <span className="mono">{api.origin}</span>. Start the backend (<span className="mono">python -m unlock_engine.api</span>) and this page reconnects on its own. {projects ? 'The list below is from the last successful response.' : 'No example data is shown in its place.'}
+              </p>
+            </div>
+          )}
 
           <table className="ptable">
             <thead>
@@ -83,8 +100,8 @@ export default function Dashboard() {
             <tbody>
               {projects === null && (
                 <tr>
-                  <td colSpan={6} className="ptable__loading">
-                    Loading projects…
+                  <td colSpan={6} className="ptable__loading" aria-busy={connection === 'checking'}>
+                    {connection === 'unreachable' ? 'No projects: the engineering service is not reachable.' : 'Loading projects…'}
                   </td>
                 </tr>
               )}

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from 'react'
-import { api, ServiceNotConnected } from '@/api'
+import { api, ServiceNotConnected, type ServiceHealth } from '@/api'
 import type { Revision, RunRecord } from '@/domain/types'
 import { Link } from '@/router'
 import { Mark } from '@/ui/Logo'
@@ -24,6 +24,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
   const [revision, setRevision] = useState<Revision | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [run, setRun] = useState<RunRecord | null>(null)
+  const [health, setHealth] = useState<ServiceHealth | null>(null)
   const [state, dispatch] = useReducer(reducer, initialState)
   const jobs = useRef<{ controller: AbortController; id: string | null } | null>(null)
   const generation = useRef(0)
@@ -41,7 +42,14 @@ export default function Workspace({ projectId }: { projectId: string }) {
     setRevision(null)
     setError(null)
     api.latestRevisionId(projectId).then((id) => api.getRevision(id)).then((r) => { if (live) setRevision(r) })
-      .catch((e) => { if (live) setError(e instanceof ServiceNotConnected ? `There is no prepared data for ${projectId} in this build.` : (e as Error).message) })
+      .catch((e) => {
+        if (!live) return
+        if (e instanceof ServiceNotConnected) setError(`There is no prepared data for ${projectId} in this build.`)
+        // fetch() rejects with TypeError only when no HTTP response arrived at all.
+        else if (e instanceof TypeError) setError(`Cannot reach the UNLOCK engineering service at ${api.origin}. Start the backend, then reload this page.`)
+        else setError((e as Error).message)
+      })
+    api.health().then((h) => { if (live) setHealth(h) }).catch(() => { if (live) setHealth(null) })
     return () => { live = false; stopActive() }
   }, [projectId, stopActive])
 
@@ -194,7 +202,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
         {api.mode === 'http' ? <Suspense fallback={<p>Loading CAD viewer…</p>}><LiveViewport revision={revision} state={state} dispatch={dispatch} run={run} /></Suspense> : <Viewport state={state} dispatch={dispatch} run={run} />}
       </main>
 
-      <EvidencePanel state={state} dispatch={dispatch} run={run} revision={revision} onRunBaseline={() => void execute('baseline')} onRunRedesign={() => void execute('redesign')} onDecide={(d) => void decide(d)} onExport={() => void execute('export')} />
+      <EvidencePanel state={state} dispatch={dispatch} run={run} revision={revision} health={health} onRunBaseline={() => void execute('baseline')} onRunRedesign={() => void execute('redesign')} onDecide={(d) => void decide(d)} onExport={() => void execute('export')} />
 
       <p className="ws__narrow" role="note">
         The workspace is built for screens at least 1280 px wide. Evidence and controls stay available below.

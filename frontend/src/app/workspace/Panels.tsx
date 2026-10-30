@@ -3,7 +3,7 @@ import type { Axis, Candidate, CheckRecord, Component, PlanResult, Revision, Run
 import { CheckResultTag, Glyph, ProvenanceTag } from '@/ui/Evidence'
 import type { PartId } from '@/three/ModuleAssembly'
 import { REPLAY_SCALE } from '@/api/fixtureApi'
-import { api } from '@/api'
+import { api, type ServiceHealth } from '@/api'
 import { trySetTarget } from './ComponentTree'
 import { selectedCandidate, type Action, type WorkspaceState } from './model'
 
@@ -12,10 +12,40 @@ interface PanelProps {
   dispatch: Dispatch<Action>
   run: RunRecord | null
   revision: Revision
+  health?: ServiceHealth | null
   onRunBaseline: () => void
   onRunRedesign: () => void
   onDecide: (decision: 'accept' | 'reject') => void
   onExport: () => void
+}
+
+type Policy = { label: string; kind: 'none' | 'offline' | 'live' | 'unavailable' | 'recorded'; model?: string }
+
+/**
+ * Who chooses the edit, stated plainly. An offline scripted policy is never called
+ * inference, and a model that never answered is never called a live run.
+ */
+export function decisionPolicy(run: RunRecord | null, health: ServiceHealth | null | undefined): Policy {
+  const name = (provider: string) => (provider === 'meta' ? 'Meta' : provider)
+  const m = run?.model
+  if (run?.outcome === 'MODEL_UNAVAILABLE') {
+    return { label: `${m ? `${name(m.provider)} ${m.id}` : 'Configured model'}: unavailable, no inference completed`, kind: 'unavailable', model: m?.id }
+  }
+  if (m) {
+    if (m.live === false) return { label: 'Offline scripted policy, no model inference', kind: 'offline', model: m.id }
+    if (m.live === true) return { label: `${name(m.provider)} ${m.id}, live inference`, kind: 'live', model: m.id }
+    return { label: `Recorded policy (${m.provider})`, kind: 'recorded', model: m.id }
+  }
+  if (!health) return { label: 'Not connected to the engineering service', kind: 'none' }
+  if (health.provider === 'mock') return { label: 'Offline scripted policy, no model inference', kind: 'offline', model: health.model }
+  if (health.credentials === 'missing') return { label: `${name(health.provider)} ${health.model}: credentials missing, requests will report the model as unavailable`, kind: 'unavailable', model: health.model }
+  return { label: `${name(health.provider)} ${health.model}, live inference (paid)`, kind: 'live', model: health.model }
+}
+
+/** T01/T02 labels can repeat their IDs; describe them instead of printing "T01 t01". */
+const TEMPLATE_PLAIN: Record<string, string> = { T01: 'relief cut through the web', T02: 'web offset' }
+function templateName(t: { id: string; label: string }) {
+  return t.label && t.label.toLowerCase() !== t.id.toLowerCase() ? `${t.id} ${t.label.toLowerCase()}` : `${t.id} ${TEMPLATE_PLAIN[t.id] ?? ''}`.trim()
 }
 
 export function EvidencePanel(props: PanelProps) {
@@ -333,26 +363,30 @@ function AnalyzePanel({ state, dispatch, run, onRunBaseline }: PanelProps) {
 
 /* ── redesign ───────────────────────────────────────────────────────────── */
 
-function RedesignPanel({ state, dispatch, run, revision, onRunRedesign }: PanelProps) {
+function RedesignPanel({ state, dispatch, run, revision, health, onRunRedesign }: PanelProps) {
   if (!run) return null
   const st = state.redesign.status
   const cand = selectedCandidate(run, state)
   const binding = revision.manifest.template_bindings[0]
   const visible = st === 'done' ? run.candidates : []
+  const policy = decisionPolicy(st === 'done' ? run : null, health)
 
   return (
     <>
       <Section title="Redesign" aside={<span className="psec__meta mono">{binding?.family ?? 'No supported template family'}</span>}>
         <p className="panel__body">
-          A model chooses one supported edit to <span className="mono">{binding?.bracket_id ?? 'the selected component'}</span> and its parameters. The server builds the solid, and a separate verifier rebuilds it and checks every declared constraint. The model cannot mark its own proposal as valid.
+          The decision policy below chooses one supported edit to <span className="mono">{binding?.bracket_id ?? 'the selected component'}</span> and its parameters. The server builds the solid, and a separate verifier rebuilds it and checks every declared constraint. The policy cannot mark its own proposal as valid.
         </p>
         <dl className="kv kv--tight">
-          <dt>Model</dt>
-          <dd>{run.model ? <span className="mono">{run.model.id}</span> : 'Not called. Configured live model: Muse Spark 1.3.'}</dd>
+          <dt>Decision policy</dt>
+          <dd data-testid="decision-policy" data-policy={policy.kind}>
+            {policy.label}
+            {policy.model && <> · <span className="mono">{policy.model}</span></>}
+          </dd>
           <dt>Budget</dt>
           <dd>3 candidates, 12 tool calls, 120 s</dd>
           <dt>Templates</dt>
-          <dd>{binding?.templates.map((t) => `${t.id} ${t.label.toLowerCase()}`).join(', ')}</dd>
+          <dd>{binding?.templates.map(templateName).join(', ')}</dd>
         </dl>
         {(st === 'idle' || st === 'failed') && (
           <div className="panel__cta panel__cta--inline">
@@ -366,7 +400,13 @@ function RedesignPanel({ state, dispatch, run, revision, onRunRedesign }: PanelP
         {st !== 'idle' && <ReplayNote run={run} />}
       </Section>
 
-      {st === 'done' && <Section title="Engineering outcome"><p className="panel__body">{run.outcome?.replaceAll('_', ' ') ?? 'Recorded result'}</p><p className="panel__body">{run.explanation ?? 'Inspect the candidate evidence below.'}</p></Section>}
+      {st === 'done' && (
+        <Section title="Engineering outcome">
+          <p className="panel__body" data-testid="run-outcome" data-outcome={run.outcome ?? ''} data-run-id={run.id}>{run.outcome?.replaceAll('_', ' ') ?? 'Recorded result'}</p>
+          <p className="panel__body">{run.explanation ?? 'Inspect the candidate evidence below.'}</p>
+          <p className="panel__body panel__note" data-testid="run-provenance">{run.provenance.note}</p>
+        </Section>
+      )}
       {visible.length > 0 && (
         <Section title="Candidates" aside={<span className="psec__meta mono">{visible.length} of 3</span>}>
           <ul className="cands">
@@ -376,7 +416,7 @@ function RedesignPanel({ state, dispatch, run, revision, onRunRedesign }: PanelP
                   <span className="cand__n mono">{i + 1}</span>
                   <span className="cand__what">
                     <strong>
-                      {c.proposal.template_id} {revision.manifest.template_bindings[0].templates.find((t) => t.id === c.proposal.template_id)?.label.toLowerCase()}
+                      {templateName(revision.manifest.template_bindings[0].templates.find((t) => t.id === c.proposal.template_id) ?? { id: c.proposal.template_id, label: '' })}
                     </strong>
                     <span className="mono">{paramSummary(c)}</span>
                   </span>

@@ -289,7 +289,8 @@ export interface RunRecord {
   target_id: string
   policy_version: string
   provenance: Provenance
-  model: { id: string; provider: string } | null
+  /** `live` is false for the offline scripted policy; absent on older records. */
+  model: { id: string; provider: string; live?: boolean; turns?: number } | null
   baseline: PlanResult | null
   events: StageEvent[]
   candidates: Candidate[]

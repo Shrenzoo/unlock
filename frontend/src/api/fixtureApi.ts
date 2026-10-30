@@ -15,6 +15,11 @@ export const REPLAY_SCALE = 0.35
  */
 export const fixtureApi: UnlockApi = {
   mode: 'fixture',
+  origin: null,
+
+  async health() {
+    return null
+  },
 
   async listProjects() {
     return projects
