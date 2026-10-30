@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shrenzoo/unlock/assets/readme/hero-trapped-part.svg"><img src="assets/readme/hero-trapped-part.svg" width="100%" alt="A fan module trapped behind a bridge bracket; a relief is cut so it lifts out" /></a>
+  <img src="assets/readme/hero-trapped-part.svg" width="100%" alt="A fan module trapped behind a bridge bracket; a relief is cut so it lifts out" />
 </p>
 
 <p align="center">
@@ -1125,6 +1125,8 @@ Design system: **Instrument Sans** and **IBM Plex Mono**, on a graphite-and-pape
 
 Issues and PRs welcome — particularly around new server-owned templates (finite grids and geometric preconditions only, please) and additional invariant checks. If you find a defect, the bar for a good report is the one this project sets for itself: reproduction, evidence, and a specific claim about what should have happened instead.
 
+> **Licensing.** No license file has been chosen for this repository yet — which, legally, means all rights reserved by default. Before this is reused or forked for commercial work, the maintainers should pick one. We would suggest **Apache-2.0** or **MPL-2.0**: both are permissive enough for engineering adoption while keeping patent grants explicit, which matters for anything safety-adjacent. Raising a PR adding a `LICENSE` is a genuinely useful contribution.
+
 ---
 
 <p align="center">
@@ -1147,5 +1149,5 @@ Issues and PRs welcome — particularly around new server-owned templates (finit
   <img src="https://img.shields.io/badge/tests-327%20passing-34866b?style=flat-square&labelColor=151719" alt="327 tests passing" />
   <img src="https://img.shields.io/badge/checks-12%2F12-34866b?style=flat-square&labelColor=151719" alt="12 of 12 checks" />
   <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
-  <img src="https://img.shields.io/badge/license-see%20repo-74787c?style=flat-square&labelColor=151719" alt="License: see repo" />
+  <img src="https://img.shields.io/badge/track-Push%20the%20Frontier-3268f5?style=flat-square&labelColor=151719" alt="Track: Push the Frontier" />
 </p>
