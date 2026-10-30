@@ -169,7 +169,13 @@ two-request cycle, `muse-spark-1.3` requested the real read-only
 result returned under the provider's tool-call ID. The model's final answer
 matched the tool payload: 3,314 tokens, an estimated $0.0054 at list price, and
 no geometry changed. See [META_TOOL_CALLING_VERIFICATION.md](META_TOOL_CALLING_VERIFICATION.md).
-A live redesign (construct/verify/compare) has still **not** been run.
+**Update (October 29, 2026, later):** one live B02 redesign run reached
+`VERIFIED_IMPROVEMENT_FOUND`. Muse chose T01 (0, −20) 40 × 16 mm; all mandatory
+checks passed; the revised removal is target Z+ 80 mm; replay and reverse
+insertion passed. It used 6 requests, 31,122 tokens and about $0.030 at list
+price, in 48.1 s. It matched, but did not beat, the geometry-ranked selector, and
+it exposed a citation-contract defect that has since been fixed. See
+[LIVE_B02_REDESIGN.md](LIVE_B02_REDESIGN.md).
 
 At the time of this handoff, `MODEL_API_KEY` was absent and `RUN_META_LIVE_TESTS`
 was disabled. The saved smoke report records `status: skipped`, no requests and
