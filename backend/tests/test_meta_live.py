@@ -40,6 +40,16 @@ def test_live_meta_connectivity_native_tools_and_correlated_continuation(live_co
     assert all(r["model"] == "muse-spark-1.3" for r in report["requests"])
 
 
+def test_live_meta_engineering_tool_call_cycle(live_config):
+    """Two requests at most: Muse calls read-only inspect_assembly on B01."""
+    from unlock_engine.ai.smoke import run_tool_smoke
+
+    report = run_tool_smoke(live_config)
+    save("tool-smoke.json", report)
+    assert report["usage"]["requests_sent"] <= 2
+    assert report["status"] == "passed", report["checks"]
+
+
 def test_live_meta_real_engineering_fixture(live_config, tmp_path):
     source = generate_fixture(tmp_path / "B02", "B02")
     report = run_with_model(
