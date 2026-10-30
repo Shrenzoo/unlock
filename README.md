@@ -605,3 +605,98 @@ This is the rule that separates a checker from a scorecard. A system that folds 
 ### Export is verified too
 
 A STEP export is not considered successful because a file appeared. Success requires **real reimport** of the exported file, followed by geometry and path checks on the reimported result. Hierarchy and occurrence placements are preserved; where a part-only fallback was used, it is labelled explicitly rather than passed off as a full assembly.
+
+---
+
+## Architecture
+
+<p align="center">
+  <img src="assets/readme/architecture-stack.svg" width="100%" alt="Six-layer architecture from the model down to the OCCT kernel" />
+</p>
+
+```text
+┌─────────────────────────────────────────────────────────────────────────┐
+│  React 19 · TypeScript · Vite 7 · Three.js / R3F                        │
+│  renders what a report says · never derives a status of its own         │
+├─────────────────────────────────────────────────────────────────────────┤
+│  FastAPI coordinator    immutable revisions · frozen targets            │
+│                         ordered resumable SSE · cancellation            │
+│                         SQLite + FKs · one serial job queue             │
+├─────────────────────────────────────────────────────────────────────────┤
+│  AI controller          8 allowlisted tools · hard budgets              │
+│  (Meta Model API)       output reserved before every attempt            │
+├─────────────────────────────────────────────────────────────────────────┤
+│  disassembly planner    conservative coverage + analytic sweep          │
+│  independent verifier   fresh reconstruction · 12 mandatory checks      │
+│  template constructors  T01/T02 · finite server-owned grids             │
+├─────────────────────────────────────────────────────────────────────────┤
+│  OCCT / CadQuery 2.6.1  real BReps · private deep copies                │
+│  isolated subprocesses  30 s wall limit · 120 s parent budget           │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### The isolation model
+
+Every native operation runs in its **own subprocess**. Credentials are stripped from the worker environment before any process starts. Operations and work directories are allowlisted *before* a process is spawned — not discovered after.
+
+| Property | Value |
+|:--|:--|
+| Import | Isolated worker, bounded before native parsing |
+| Demo prep / verification / export | Separate workers each |
+| Native wall limit | 30 s per operation |
+| Parent budget | 120 s |
+| Peak worker RSS on B02 | ~440 MiB |
+| Warm standby | Single-use, one request then exits |
+
+The warm standby exists because OCCT cold-starts cost 4–6 s per native operation under load. A standby imports the libraries, takes exactly one request, lowers its CPU cap to that operation's own limit, and exits. It is best-effort: if the OS refuses a standby, the operation simply cold-starts. Per-operation isolation, independent reconstruction, phase deadlines and credential stripping are all unchanged.
+
+At most one pooled CAD process exists at a time, and a replacement starts only after the operation using the previous one has exited — so peak memory equals the cold path.
+
+### Data flow
+
+```text
+  package ─▶ import ─▶ revision (immutable, hashed)
+                            │
+                            ▼
+                     run (frozen target + policy)
+                       │            │
+              baseline plan    model loop ──▶ candidate
+                       │            │              │
+                       └───── comparison ◀── verification
+                                        │
+                                        ▼
+                              decision (append-only)
+                                        │
+                                        ▼
+                              checked STEP export
+                                        │
+                                        ▼
+                              reimport + re-verify
+```
+
+No candidate from a cancelled, active or superseded run can be accepted or exported. Export re-checks acceptance **both** before native work and again at commit. Artifacts are addressed by SHA-256 rather than caller-supplied paths, so nothing can be smuggled in through a filename.
+
+### Frontend integration
+
+```
+src/
+  domain/types.ts     contracts mirrored from the PRD — manifest, plan,
+                      proposal, verification, events, errors
+  api/                UnlockApi interface · fixture adapter · HTTP/SSE adapter
+  three/              procedural assembly, studio lighting, label projector
+  app/workspace/      state model, tree, viewport + compare, evidence panels
+  ui/                 logo, evidence tags — result and provenance rules
+```
+
+The `UnlockApi` interface is the single boundary between UI and engine. Screens depend on that interface only, so swapping the bundled illustrative fixture for the live coordinator is a one-line change in `api/index.ts`:
+
+```ts
+// frontend/src/api/index.ts
+const base = import.meta.env.VITE_UNLOCK_MODE === 'fixture'
+  ? undefined
+  : (import.meta.env.VITE_UNLOCK_API as string | undefined) ?? 'http://127.0.0.1:8000'
+
+export const api: UnlockApi = base ? createHttpApi(base) : fixtureApi
+```
+
+**Illustrative mode is explicit and visibly labelled.** Setting `VITE_UNLOCK_MODE=fixture` runs the UI against prepared records with zero engineering computation, and the interface says so in the header. It is a demo mode that cannot be mistaken for a live one.
