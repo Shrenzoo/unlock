@@ -778,7 +778,13 @@ class Toolbox:
                 {},
                 Feedback(
                     category="INVALID_PROPOSAL",
-                    message="cite at least one rejection, plan or verification evidence ID",
+                    message=(
+                        "construction did not start: evidence_ids must include at "
+                        "least one rejection (rej_), plan (plan_) or verification "
+                        "(ver_) ID; correct the citations and resubmit, the same "
+                        "parameters are allowed"
+                    ),
+                    retry_permitted=True,
                 ),
                 False,
             )

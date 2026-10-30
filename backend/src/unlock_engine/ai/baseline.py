@@ -24,6 +24,7 @@ import threading
 from ..contracts import POLICY
 from ..planning.contracts import SearchPolicy
 from ..templates import SERVER_DOMAINS
+from ..worker import with_prewarmed_workers
 from .controller import RedesignRun
 from .provider import ToolCall
 from .toolbox import Budget
@@ -129,6 +130,7 @@ def geometry_ranked(session, order):
     return [c for _, c in covering] + [c for _, c in clearing] + rest
 
 
+@with_prewarmed_workers
 def run_selector(
     step_bytes: bytes,
     manifest: dict,

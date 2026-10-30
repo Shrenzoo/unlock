@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from ..contracts import POLICY, EngineError
 from ..planning.contracts import SearchPolicy
 from ..verification import UNVERIFIED
+from ..worker import with_prewarmed_workers
 from .config import PriceTable
 from .prompt import SYSTEM_PROMPT, initial_context
 from .report_schema import AIRunReport
@@ -423,6 +424,7 @@ class RedesignRun:
         return AIRunReport.model_validate(report).model_dump(mode="json")
 
 
+@with_prewarmed_workers
 def run_with_model(
     step_bytes: bytes,
     manifest: dict,
