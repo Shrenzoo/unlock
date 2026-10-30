@@ -79,7 +79,7 @@ TOOL_DESCRIPTIONS = {
     "analyze_removal": "Authoritative baseline removal search for the frozen target. Returns status, steps and rejection IDs.",
     "inspect_blocker": "Details of one rejected action: obstacles, evidence classification and BRep witness when available.",
     "list_interventions": "Server-owned templates enabled for a bracket, with the exact finite parameter values allowed.",
-    "construct_candidate": "Ask the trusted CAD constructor to build one bounded template edit. Construction is not verification.",
+    "construct_candidate": "Ask the trusted CAD constructor to build one bounded template edit. evidence_ids must include a rej_, plan_ or ver_ ID. Construction is not verification.",
     "verify_candidate": "Independent reconstruction, mandatory constraint checks, removal replanning and reverse insertion.",
     "compare_candidates": "Authoritative original-versus-candidate comparison under the PRD improvement rule.",
 }

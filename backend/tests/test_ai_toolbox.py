@@ -264,3 +264,52 @@ def test_constraints_are_read_only_and_verify_requires_constructed_candidate(
         ),
     )
     assert verify.feedback.category == compare.feedback.category == "STALE_EVIDENCE"
+
+
+def test_live_regression_uncited_obstruction_is_refused_but_resubmittable(tb, session):
+    """Recorded live B02 turn 2 (muse-spark-1.3, 2026-10-29), handles re-issued here.
+
+    The model cited only ev_ handles from inspect_blocker/list_interventions. The
+    refusal must say construction never started and allow the same parameters
+    again; the prompt and tool description must state the citation rule.
+    """
+    from unlock_engine.ai.prompt import SYSTEM_PROMPT
+    from unlock_engine.ai.schemas import TOOL_DESCRIPTIONS
+
+    rej = rejection_handle(tb, session)
+    blocker = run(
+        tb,
+        "inspect_blocker",
+        base(session, "ib", target_id="target", rejection_id=rej),
+    )[0]
+    options = run(
+        tb,
+        "list_interventions",
+        base(session, "li", target_id="target", bracket_id="bridge"),
+    )[0]
+    params = relief(0, -20, 24, 12)
+
+    def construct(rid, evidence):
+        return run(
+            tb,
+            "construct_candidate",
+            dict(
+                base(session, rid),
+                target_id="target",
+                proposal=proposal(rid, params, evidence),
+            ),
+        )[0]
+
+    refused = construct("first", [blocker.evidence_id, options.evidence_id])
+    assert refused.status == "rejected"
+    assert refused.feedback.category == "INVALID_PROPOSAL"
+    assert refused.feedback.retry_permitted is True
+    assert "construction did not start" in refused.feedback.message
+    assert "rej_" in refused.feedback.message
+    assert not tb.candidates and tb.counters.candidates_constructed == 0
+    corrected = construct("second", [rej, blocker.evidence_id, options.evidence_id])
+    assert corrected.status == "ok", corrected.feedback
+    assert corrected.payload["final_stage"] == "CONSTRUCTED"
+    assert (
+        "rej_" in SYSTEM_PROMPT and "rej_" in TOOL_DESCRIPTIONS["construct_candidate"]
+    )
