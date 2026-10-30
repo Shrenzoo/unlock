@@ -4,8 +4,19 @@ import type { ErrorEnvelope, ProjectSummary, Revision, RunRecord, StageEvent } f
  * The one boundary between the UI and the engineering backend.
  * Screens depend on this interface only; swap the implementation in `api/index.ts`.
  */
+/** Public, secret-free decision-policy configuration reported by the coordinator. */
+export interface ServiceHealth {
+  provider: string
+  model: string
+  credentials: 'configured' | 'missing'
+}
+
 export interface UnlockApi {
   readonly mode: 'fixture' | 'http'
+  /** Coordinator origin, or null for the bundled illustrative fixture. */
+  readonly origin: string | null
+  /** The configured decision policy, or null when no engineering service exists. */
+  health(): Promise<ServiceHealth | null>
   listProjects(): Promise<ProjectSummary[]>
   getRevision(revisionId: string): Promise<Revision>
   /** Returns the revision id for a project's latest revision. */

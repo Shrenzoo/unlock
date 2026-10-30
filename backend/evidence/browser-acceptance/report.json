@@ -1,0 +1,281 @@
+{
+  "started_at": "20261030T104949Z",
+  "environment": {
+    "browser": "chromium 156.0.8078.76 (installed Chrome, headless)",
+    "git_commit": "507a74ecbdc7c3926896bd743a9f1aae659c525e",
+    "git_branch": "feature/browser-e2e-acceptance",
+    "python": "3.12.16",
+    "node": "v26.10.0",
+    "platform": "darwin"
+  },
+  "stacks": {
+    "mock": {
+      "api": "http://127.0.0.1:8100",
+      "web": "http://127.0.0.1:5193",
+      "provider": {
+        "provider": "mock",
+        "base_url": "mock://offline",
+        "model": "fake-scripted-provider",
+        "reasoning_effort": "medium",
+        "request_timeout_s": 45.0,
+        "max_retries": 2,
+        "temperature": null,
+        "credentials": "missing",
+        "price_source": null
+      },
+      "backend_ready_s": 10.79,
+      "frontend_build_s": 3.21
+    }
+  },
+  "tests": {
+    "tests/browser/test_failures.py::test_missing_backend_is_reported_and_never_replaced_by_examples": {
+      "outcome": "passed",
+      "duration_s": 4.56,
+      "detail": null
+    },
+    "tests/browser/test_failures.py::test_unavailable_model_is_reported_honestly": {
+      "outcome": "passed",
+      "duration_s": 25.52,
+      "detail": null
+    },
+    "tests/browser/test_failures.py::test_cancelled_redesign_leaves_nothing_accepted": {
+      "outcome": "passed",
+      "duration_s": 8.77,
+      "detail": null
+    },
+    "tests/browser/test_failures.py::test_offline_interval_mid_job_completes_without_duplicate_work": {
+      "outcome": "passed",
+      "duration_s": 30.8,
+      "detail": null
+    },
+    "tests/browser/test_failures.py::test_reload_restores_the_persisted_run_and_export_needs_acceptance": {
+      "outcome": "passed",
+      "duration_s": 29.73,
+      "detail": null
+    },
+    "tests/browser/test_journey.py::test_b02_first_time_user_journey": {
+      "outcome": "passed",
+      "duration_s": 54.33,
+      "detail": null
+    },
+    "tests/browser/test_upload.py::test_genuine_step_and_manifest_upload_renders_the_imported_revision": {
+      "outcome": "passed",
+      "duration_s": 7.51,
+      "detail": null
+    },
+    "tests/browser/test_upload.py::test_invalid_packages_are_rejected_without_creating_projects[mesh-file]": {
+      "outcome": "passed",
+      "duration_s": 3.6,
+      "detail": null
+    },
+    "tests/browser/test_upload.py::test_invalid_packages_are_rejected_without_creating_projects[geometry-without-manifest]": {
+      "outcome": "passed",
+      "duration_s": 3.66,
+      "detail": null
+    },
+    "tests/browser/test_upload.py::test_invalid_packages_are_rejected_without_creating_projects[unparseable-step]": {
+      "outcome": "passed",
+      "duration_s": 3.69,
+      "detail": null
+    },
+    "tests/browser/test_upload.py::test_invalid_packages_are_rejected_without_creating_projects[invalid-manifest]": {
+      "outcome": "passed",
+      "duration_s": 3.66,
+      "detail": null
+    },
+    "tests/browser/test_visual.py::test_pages_fit_and_name_their_controls[desktop]": {
+      "outcome": "passed",
+      "duration_s": 5.99,
+      "detail": null
+    },
+    "tests/browser/test_visual.py::test_pages_fit_and_name_their_controls[laptop]": {
+      "outcome": "passed",
+      "duration_s": 6.25,
+      "detail": null
+    },
+    "tests/browser/test_visual.py::test_pages_fit_and_name_their_controls[mobile]": {
+      "outcome": "passed",
+      "duration_s": 5.75,
+      "detail": null
+    }
+  },
+  "measurements": {
+    "landing_navigation": {
+      "dom_content_loaded_ms": 126,
+      "load_ms": 126
+    },
+    "superseded_fetches": [
+      "GET http://127.0.0.1:8100/v1/artifacts/52cce6dded18e7462210c7c8cf7fb0f914b256329b2a1801ad20ebc40ca7c9f3 net::ERR_ABORTED"
+    ],
+    "journey_steps_s": {
+      "landing_load_s": 1.16,
+      "projects_load_s": 0.8,
+      "open_assembly_to_render_s": 1.55,
+      "baseline_request_s": 0.05,
+      "baseline_completion_s": 7.98,
+      "redesign_completion_s": 18.41,
+      "compare_render_s": 1.5,
+      "export_completion_s": 9.86
+    },
+    "redesign_breakdown": {
+      "run_total_s": 18.082,
+      "stage_a_ms": {
+        "baseline_ms": 4052.472374867648,
+        "import_ms": 3491.832041880116
+      },
+      "native_geometry_ms": 18065.3,
+      "decision_policy_ms": 6.0,
+      "policy": "offline scripted: no model inference, no network"
+    },
+    "api_calls": 23,
+    "upload_to_workspace_s": 3.87
+  },
+  "correlation": {
+    "model_unavailable": {
+      "run_id": "run_a7f45cef7b20437ea5542833",
+      "job_state": "completed",
+      "outcome": "MODEL_UNAVAILABLE"
+    },
+    "cancelled": {
+      "run_id": "run_d3c7f693aa234cc7a3d232ca",
+      "job_id": "job_573a4fe36a4f4fe5bf880bba",
+      "state": "cancelled"
+    },
+    "interrupted": {
+      "run_id": "run_55379ff63caa443cb2201f01",
+      "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+      "aborted_requests": 1
+    },
+    "project_id": "fixture_B02",
+    "revision_id": "77e8e77df52698035aa2894f487e617b47d9888011a4638d0e17b41c40620bfc",
+    "target": "target",
+    "run_id": "run_aacd752572754413adc475e2",
+    "candidates": [
+      {
+        "id": "candidate_64405c97131ae7bb43644ffb8f877ff7",
+        "state": "failed",
+        "parameters": {
+          "center_x_mm": 0.0,
+          "center_y_mm": -20.0,
+          "width_mm": 24.0,
+          "depth_mm": 8.0
+        }
+      },
+      {
+        "id": "candidate_d4160d33443f997e892572a33dc4aadd",
+        "state": "checked",
+        "parameters": {
+          "center_x_mm": 0.0,
+          "center_y_mm": -20.0,
+          "width_mm": 24.0,
+          "depth_mm": 12.0
+        }
+      }
+    ],
+    "verified_candidate": "candidate_d4160d33443f997e892572a33dc4aadd",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "package": {
+      "sha256": "52cce6dded18e7462210c7c8cf7fb0f914b256329b2a1801ad20ebc40ca7c9f3",
+      "files": [
+        "ai_run.json",
+        "attribution.txt",
+        "bundle.json",
+        "changed_bracket.step",
+        "geometry_difference.json",
+        "limitations.txt",
+        "manifest.json",
+        "metrics.json",
+        "original.step",
+        "paths.json",
+        "preview.json",
+        "revised.step",
+        "roundtrip.json",
+        "template_parameters.json",
+        "verification.json"
+      ],
+      "status": "full_assembly",
+      "roundtrip": "passed",
+      "candidate_revision": "dac660e8e2a511247b9a9d2a5a1594d7ae67ad5019e20cc70940a8cbd0ca3c9b",
+      "independent_reimport": {
+        "occurrences": 8,
+        "changed_component": "bridge",
+        "removed_volume_mm3": 1152.0,
+        "measured_volume_change_mm3": 1152.0
+      }
+    },
+    "upload": {
+      "project_id": "upload_b01_1793357559",
+      "revision_id": "de882f6f75b7f0e5b04268120efa7808af5f42590a17f5cb5c5912367b298f33",
+      "input_hash": "de882f6f75b7f0e5b04268120efa7808af5f42590a17f5cb5c5912367b298f33",
+      "geometry_hash": "3f3355cc06354398573729c4c3d7c0b0c67fb28f938a3e56b762c0dffad9deb5",
+      "components": 5
+    },
+    "rejected_packages": {
+      "mesh-file": "Package not accepted\n\nbracket.stl .stl is not accepted. Meshes such as STL, OBJ or GLB cannot be analysed.\nassembly.step A STEP AP214 or AP242 assembly is required.\nmanifest.json The engineering manifest is required. Geometry alone cannot be analysed.",
+      "geometry-without-manifest": "Package not accepted\n\nmanifest.json The engineering manifest is required. Geometry alone cannot be analysed.",
+      "unparseable-step": "Package not accepted\n\nimport not a complete STEP physical file",
+      "invalid-manifest": "Package not accepted\n\nimport request schema validation failed"
+    }
+  },
+  "visual": {
+    "desktop": {
+      "landing_overflow_px": 0,
+      "landing_unnamed": [],
+      "projects_overflow_px": 0,
+      "projects_unnamed": [],
+      "projects_focus": {
+        "tag": "A",
+        "outline": true,
+        "shadow": true
+      },
+      "workspace_overflow_px": 0,
+      "workspace_document_height": [
+        1000,
+        1000
+      ],
+      "workspace_unnamed": [],
+      "canvas_distinct_colours": 1140,
+      "compare_overflow_px": 0
+    },
+    "laptop": {
+      "landing_overflow_px": 0,
+      "landing_unnamed": [],
+      "projects_overflow_px": 0,
+      "projects_unnamed": [],
+      "projects_focus": {
+        "tag": "A",
+        "outline": true,
+        "shadow": true
+      },
+      "workspace_overflow_px": 0,
+      "workspace_document_height": [
+        768,
+        768
+      ],
+      "workspace_unnamed": [],
+      "canvas_distinct_colours": 1340,
+      "compare_overflow_px": 0
+    },
+    "mobile": {
+      "landing_overflow_px": 0,
+      "landing_unnamed": [],
+      "projects_overflow_px": 0,
+      "projects_unnamed": [],
+      "projects_focus": {
+        "tag": "A",
+        "outline": true,
+        "shadow": true
+      },
+      "workspace_overflow_px": 0,
+      "workspace_document_height": [
+        3491,
+        844
+      ],
+      "workspace_unnamed": [],
+      "canvas_distinct_colours": 1672,
+      "compare_overflow_px": 0
+    }
+  },
+  "finished_at": "20261030T105343Z",
+  "exit_status": 0
+}

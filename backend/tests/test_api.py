@@ -98,6 +98,8 @@ def test_real_import_baseline_rejection_revised_verification_and_evidence(api):
         if c.get("mandatory", True)
     )
     assert run["model"]["provider"] == "fake" and "offline" in run["provenance"]["note"]
+    # The view states plainly that the scripted policy is not live inference.
+    assert run["model"]["live"] is False and run["model"]["turns"] > 0
     assert run["metrics"][1]["original"] is None and run["metrics"][1]["revised"] == "0"
     assert candidate["revised_plan"]["steps"][0]["end_mm"] == [0.0, 0.0, 80.0]
     assert (

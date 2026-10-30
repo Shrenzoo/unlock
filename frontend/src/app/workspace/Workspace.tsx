@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from 'react'
-import { api, ServiceNotConnected } from '@/api'
+import { api, ServiceNotConnected, type ServiceHealth } from '@/api'
 import type { Revision, RunRecord } from '@/domain/types'
-import { Link } from '@/router'
+import { Link, navigate } from '@/router'
 import { Mark } from '@/ui/Logo'
 import { ProvenanceTag } from '@/ui/Evidence'
 import { ComponentTree } from './ComponentTree'
@@ -24,6 +24,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
   const [revision, setRevision] = useState<Revision | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [run, setRun] = useState<RunRecord | null>(null)
+  const [health, setHealth] = useState<ServiceHealth | null>(null)
   const [state, dispatch] = useReducer(reducer, initialState)
   const jobs = useRef<{ controller: AbortController; id: string | null } | null>(null)
   const generation = useRef(0)
@@ -41,13 +42,55 @@ export default function Workspace({ projectId }: { projectId: string }) {
     setRevision(null)
     setError(null)
     api.latestRevisionId(projectId).then((id) => api.getRevision(id)).then((r) => { if (live) setRevision(r) })
-      .catch((e) => { if (live) setError(e instanceof ServiceNotConnected ? `There is no prepared data for ${projectId} in this build.` : (e as Error).message) })
+      .catch((e) => {
+        if (!live) return
+        if (e instanceof ServiceNotConnected) setError(`There is no prepared data for ${projectId} in this build.`)
+        // fetch() rejects with TypeError only when no HTTP response arrived at all.
+        else if (e instanceof TypeError) setError(`Cannot reach the UNLOCK engineering service at ${api.origin}. Start the backend, then reload this page.`)
+        else setError((e as Error).message)
+      })
+    api.health().then((h) => { if (live) setHealth(h) }).catch(() => { if (live) setHealth(null) })
     return () => { live = false; stopActive() }
   }, [projectId, stopActive])
 
+  // Reload recovery: a run in ?run= is restored from the backend when it belongs to
+  // this exact revision. Nothing is re-executed; the persisted record is shown.
+  const restoring = useRef<RunRecord | null>(null)
+  useEffect(() => {
+    if (!revision) return
+    const id = new URLSearchParams(window.location.search).get('run')
+    if (!id) return
+    let live = true
+    api.getRun(id).then((r) => {
+      if (!live || r.revision_id !== revision.id) return
+      restoring.current = r
+      dispatch({ type: 'target', id: r.target_id })
+    }).catch(() => { /* an unknown or foreign run leaves a clean workspace */ })
+    return () => { live = false }
+  }, [revision])
+
   useEffect(() => {
     stopActive()
+    const restored = restoring.current
+    if (restored && restored.target_id === state.target) {
+      restoring.current = null
+      setRun(restored)
+      if (restored.baseline) dispatch({ type: 'job', job: 'baseline', status: 'done' })
+      const redesigned = restored.outcome != null || restored.candidates.length > 0
+      if (redesigned) {
+        dispatch({ type: 'job', job: 'redesign', status: 'done' })
+        const accepted = restored.candidates.find((c) => c.review_decision === 'accept')
+        dispatch({ type: 'candidate', id: accepted?.id ?? restored.selected_candidate_id })
+      }
+      dispatch({ type: 'mode', mode: redesigned ? 'redesign' : 'analyze' })
+      if (restored.state === 'queued' || restored.state === 'running') {
+        dispatch({ type: 'notice', notice: { tone: 'info', text: 'A job for this run was still in progress when the page loaded. Reload again shortly to see its persisted result.' } })
+      }
+      return stopActive
+    }
     setRun(null)
+    // A newly chosen target starts a new analysis; drop the old run from the address.
+    if (state.target && window.location.search.includes('run=')) navigate(window.location.pathname, { replace: true })
     return stopActive
   }, [state.target, stopActive])
 
@@ -70,6 +113,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
       if (current !== generation.current) { void api.cancelJob(result.job_id).catch(() => {}); return }
       if ('run_id' in result) runId = result.run_id as string
       if (!runId) throw new Error('The backend did not return a run identity.')
+      if (kind === 'baseline') navigate(`${window.location.pathname}?run=${encodeURIComponent(runId)}`, { replace: true })
       await api.streamEvents(result.job_id, (event) => {
         if (current === generation.current) dispatch({ type: 'event', job: jobKind, event })
       }, ctrl.signal)
@@ -78,8 +122,9 @@ export default function Workspace({ projectId }: { projectId: string }) {
       if (current !== generation.current || fresh.target_id !== state.target || fresh.revision_id !== revision.id) return
       setRun(fresh)
       dispatch({ type: 'job', job: jobKind, status: 'done' })
-      if (kind !== 'baseline') dispatch({ type: 'candidate', id: fresh.selected_candidate_id })
-      if (kind === 'export' && fresh.export) window.open(api.artifactUrl(fresh.export.artifact_id), '_blank', 'noopener')
+      // Export keeps the reviewed candidate selected; the panel then offers a plain
+      // download link (a delayed window.open would be swallowed by popup blockers).
+      if (kind === 'redesign') dispatch({ type: 'candidate', id: fresh.selected_candidate_id })
     } catch (e) {
       if (current !== generation.current) return
       if (runId) {
@@ -194,7 +239,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
         {api.mode === 'http' ? <Suspense fallback={<p>Loading CAD viewer…</p>}><LiveViewport revision={revision} state={state} dispatch={dispatch} run={run} /></Suspense> : <Viewport state={state} dispatch={dispatch} run={run} />}
       </main>
 
-      <EvidencePanel state={state} dispatch={dispatch} run={run} revision={revision} onRunBaseline={() => void execute('baseline')} onRunRedesign={() => void execute('redesign')} onDecide={(d) => void decide(d)} onExport={() => void execute('export')} />
+      <EvidencePanel state={state} dispatch={dispatch} run={run} revision={revision} health={health} onRunBaseline={() => void execute('baseline')} onRunRedesign={() => void execute('redesign')} onDecide={(d) => void decide(d)} onExport={() => void execute('export')} />
 
       <p className="ws__narrow" role="note">
         The workspace is built for screens at least 1280 px wide. Evidence and controls stay available below.

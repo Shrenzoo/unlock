@@ -266,6 +266,21 @@
   border-right: 1px solid var(--ink);
   text-align: right;
 }
+/* On phones a fixed-length leader pointing left pushes its label off-screen:
+   anchor the label to the right of its dot instead. !important overrides the
+   inline transform written by the projector. */
+@media (max-width: 600px) {
+  .callout--left .callout__leader {
+    display: none;
+  }
+  .callout--left .callout__label {
+    transform: translate(6px, -100%) !important;
+    padding: 0 0 4px 8px;
+    border-right: 0;
+    border-left: 1px solid var(--ink);
+    text-align: left;
+  }
+}
 .callout.is-hot .callout__dot {
   background: var(--cobalt);
 }

@@ -521,7 +521,13 @@ kbd {
 }
 .panel__scroll {
   flex: 1;
+  /* without this the column flex item grows to its content and long event logs
+     push the page past the viewport instead of scrolling inside the panel */
+  min-height: 0;
   overflow: auto;
+  /* contains absolutely positioned visually-hidden captions, which would
+     otherwise escape the scroller and extend the page */
+  position: relative;
   padding-bottom: var(--s-6);
 }
 .panel__notice {
@@ -1137,5 +1143,6 @@ button.chip {
 
 /* Evidence identifiers retain their full value in tooltips and raw reports. */
 .panel .mono, .panel .prov { overflow-wrap: anywhere; }
+.panel .prov { white-space: normal; flex-wrap: wrap; row-gap: 2px; }
 .vp__label { position: absolute; z-index: 2; top: 12px; left: 14px; display: grid; gap: 3px; font-size: 12px; pointer-events: none; }
 .vp__label span { color: var(--ink-3, #6b6f72); font-size: 10px; }

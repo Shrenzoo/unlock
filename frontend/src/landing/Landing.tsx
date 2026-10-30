@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { SAMPLE_PROJECT_PATH } from '@/api'
 import { Link } from '@/router'
 import { Logo, Mark } from '@/ui/Logo'
 import { CheckResultTag, Glyph, ProvenanceTag } from '@/ui/Evidence'
@@ -104,7 +105,7 @@ function WorkspacePreview() {
           <li>Read the proposal: template, parameters, protected regions.</li>
           <li>Compare original and revised paths side by side.</li>
         </ul>
-        <Link to="/projects/prj_b02" className="btn btn--primary">
+        <Link to={SAMPLE_PROJECT_PATH} className="btn btn--primary">
           <span className="btn__key" aria-hidden="true" />
           Open the sample project
         </Link>
@@ -203,7 +204,7 @@ function Footer() {
     <footer className="footer">
       <div className="footer__close">
         <p className="footer__line">Make replacement a design decision.</p>
-        <Link to="/projects/prj_b02" className="btn btn--paper">
+        <Link to={SAMPLE_PROJECT_PATH} className="btn btn--paper">
           <span className="btn__key" aria-hidden="true" />
           Open the sample assembly
         </Link>

@@ -86,5 +86,7 @@ Supported limits: 5–12 rigid single-solid leaf occurrences, ≤500 mm actual a
 State-aware disassembly search and complete supported inverse sequencing are implemented in `planning/`. The bounded redesign controller uses direct Meta Model API through `ai/meta.py`, with a local FastAPI coordinator in `api/` and connected React workflow. Live Meta native tool calling is verified for the read-only `inspect_assembly` tool
 ([META_TOOL_CALLING_VERIFICATION.md](docs/META_TOOL_CALLING_VERIFICATION.md)). One live
 B02 redesign run reached an independently verified improvement on this synthetic fixture
-([LIVE_B02_REDESIGN.md](docs/LIVE_B02_REDESIGN.md)); reliability across runs and fixtures is
+([LIVE_B02_REDESIGN.md](docs/LIVE_B02_REDESIGN.md)). The full browser workflow, from
+landing page to downloaded and reimported checked package, is covered by a real-service
+acceptance suite ([BROWSER_ACCEPTANCE.md](docs/BROWSER_ACCEPTANCE.md)); reliability across runs and fixtures is
 not yet measured. Public authentication and deployment are not implemented. Not assessed: strength, fatigue, torque, threads, flexible parts, arbitrary contacts, free rotation, electrical safety, manufacturing feasibility or restored function.

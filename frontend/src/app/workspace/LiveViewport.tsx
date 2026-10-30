@@ -49,9 +49,38 @@ function Part({ component, color, opacity, offset, visible, dispatch }: { compon
     return g
   }, [component])
   useEffect(() => () => geometry.dispose(), [geometry])
-  return <mesh geometry={geometry} visible={visible} position={offset} onClick={(e) => { e.stopPropagation(); dispatch({ type: 'select', id: component.occurrence_id }) }} onPointerOver={(e) => { e.stopPropagation(); dispatch({ type: 'hover', id: component.occurrence_id }) }} onPointerOut={() => dispatch({ type: 'hover', id: null })}>
+  // e.delta is the pointer travel in px since pointerdown: a drag orbits the camera
+  // and must not also select whatever part the pointer happens to be released over.
+  return <mesh geometry={geometry} visible={visible} position={offset} onClick={(e) => { e.stopPropagation(); if (e.delta > 4) return; dispatch({ type: 'select', id: component.occurrence_id }) }} onPointerOver={(e) => { e.stopPropagation(); dispatch({ type: 'hover', id: component.occurrence_id }) }} onPointerOut={() => dispatch({ type: 'hover', id: null })}>
     <meshStandardMaterial color={color} metalness={0.35} roughness={0.45} transparent={opacity < 1} opacity={opacity} depthWrite={opacity >= 1} />
   </mesh>
+}
+
+/**
+ * Keeps the whole assembly in view for this canvas's aspect ratio. Narrow views
+ * (the side-by-side comparison on a laptop) need more distance than the default
+ * framing; the camera only ever moves further out, keeps its viewing direction,
+ * and the fitted pose becomes what Reset returns to.
+ */
+function FitCamera({ radius }: { radius: number }) {
+  const { camera, size, controls, invalidate } = useThree()
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera) || !size.width || !size.height || !radius) return
+    const vertical = THREE.MathUtils.degToRad(camera.fov)
+    const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * (size.width / size.height))
+    const needed = (radius * 1.08) / Math.sin(Math.min(vertical, horizontal) / 2)
+    const orbit = controls as unknown as OrbitControlsImpl | null
+    const target = orbit?.target ?? new THREE.Vector3()
+    const offset = camera.position.clone().sub(target)
+    if (offset.length() < needed) {
+      camera.position.copy(target).add(offset.setLength(needed))
+      camera.updateProjectionMatrix()
+      orbit?.update()
+    }
+    orbit?.saveState()
+    invalidate()
+  }, [camera, controls, invalidate, radius, size.width, size.height])
+  return null
 }
 
 function SyncControls({ links, index, busy }: { links: MutableRefObject<Array<Link | null>>; index: number; busy: MutableRefObject<boolean> }) {
@@ -92,6 +121,14 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
     const size = Math.max(...e.max.map((x, i) => x - e.min[i])) * 0.001
     return [size * 1.8, size * 1.4, size * 1.8] as Vec3
   }, [revision])
+  // Bounding-sphere radius of the actual tessellated parts about the orbit target
+  // (the origin), in metres. The declared design envelope is far larger than the
+  // parts and would make every view needlessly distant.
+  const radius = useMemo(() => {
+    let r = 0
+    for (const c of original.mesh?.components ?? []) for (const v of c.vertices_m) r = Math.max(r, Math.hypot(v[0], v[1], v[2]))
+    return r
+  }, [original.mesh])
 
   const draw = (mesh: PreviewMesh | null, index: number, revisedSide: boolean) => {
     if (!mesh) return <p className="panel__empty">Loading actual CAD tessellation…</p>
@@ -116,6 +153,7 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
       </group>
       <Grid args={[1, 1]} cellSize={0.01} sectionSize={0.05} fadeDistance={1.5} position={[0, -0.015, 0]} />
       <SyncControls index={index} links={links} busy={syncing} />
+      <FitCamera radius={radius} />
     </Canvas>
   }
 

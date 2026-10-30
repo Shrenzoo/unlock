@@ -244,7 +244,13 @@ def apply_ai(run, report, store):
         selected_candidate_id=selected,
         outcome=report["outcome"],
         explanation=report["explanation"],
-        model=dict(id=report["model"]["model_id"], provider=report["model"]["provider"])
+        # `live` lets the UI name an offline scripted policy as such, never as inference.
+        model=dict(
+            id=report["model"]["model_id"],
+            provider=report["model"]["provider"],
+            live=bool(report["live_model"]),
+            turns=report["usage"]["turns"],
+        )
         if report["live_model"] or report["usage"]["turns"]
         else None,
         provenance=provenance(

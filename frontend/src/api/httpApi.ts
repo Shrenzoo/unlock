@@ -1,5 +1,5 @@
 import type { ErrorEnvelope, ProjectSummary, Revision, RunRecord, StageEvent } from '@/domain/types'
-import { ApiError, type UnlockApi } from './client'
+import { ApiError, type ServiceHealth, type UnlockApi } from './client'
 
 /**
  * FastAPI adapter for the endpoints in PRD §20. Not exercised in this build:
@@ -27,6 +27,8 @@ export function createHttpApi(base: string): UnlockApi {
 
   return {
     mode: 'http',
+    origin: base.replace(/\/$/, ''),
+    health: async () => (await call<{ provider: ServiceHealth }>('/health')).provider,
     listProjects: () => call<ProjectSummary[]>('/v1/projects'),
     latestRevisionId: async (projectId) => {
       const p = await call<{ revisions: Array<{ id: string }> }>(`/v1/projects/${encodeURIComponent(projectId)}`)
