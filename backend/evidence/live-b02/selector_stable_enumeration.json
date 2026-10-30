@@ -1,0 +1,4611 @@
+{
+  "schema_version": "unlock.ai_run.v1",
+  "run_id": "run_fb1d73e4dbd24c3d",
+  "outcome": "NO_VERIFIED_IMPROVEMENT",
+  "explanation": "3 candidate(s) attempted; none passed verification and the improvement rule (candidate_budget).",
+  "stop_reason": "candidate_budget",
+  "provenance": "deterministic_selector:stable_enumeration",
+  "live_model": false,
+  "model": null,
+  "identity": {
+    "project_id": "fixture_B02",
+    "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+    "revision_handle": "rev_57f436068519f0e3",
+    "target_id": "target",
+    "geometry_hash": "4a5f487e6df0374e0ff8c8d59949ceffce53874fd9c92abf41b820b71c7b49fb",
+    "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+    "policy_version": "policy_v1",
+    "search_policy": {
+      "version": "planner_v1",
+      "max_expanded_states": 4096,
+      "max_seconds": 30.0,
+      "clearance_mm": 0.5,
+      "endpoint_rule": "explicit_path_else_nearest_stage_interior_v1",
+      "objective": [
+        "unrelated_parts",
+        "fasteners",
+        "tool_changes",
+        "operations"
+      ]
+    }
+  },
+  "baseline": {
+    "plan_id": "plan_72118c9d3133",
+    "status": "no_path_supported",
+    "complete": true,
+    "optimal_within_scope": false,
+    "expanded_states": 2,
+    "unresolved_transitions": 0,
+    "steps": [],
+    "metrics": null,
+    "replay": "not_run",
+    "reverse": "not_run",
+    "replacement_verified": false,
+    "constraint_checks": [],
+    "rejections": [
+      {
+        "rejection_id": "rej_3a17f8aa1c58",
+        "kind": "TRANSLATE_PART",
+        "component_id": "target",
+        "axis": "Z+",
+        "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+        "evidence_level": "actual_brep_witness",
+        "obstacle_ids": [
+          "base",
+          "board",
+          "bridge",
+          "cover",
+          "screw1",
+          "screw2"
+        ],
+        "reason": "Completed BRep common contains positive material volume"
+      },
+      {
+        "rejection_id": "rej_fd25600f2e20",
+        "kind": "TRANSLATE_PART",
+        "component_id": "target",
+        "axis": "Z+",
+        "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+        "evidence_level": "actual_brep_witness",
+        "obstacle_ids": [
+          "base",
+          "board",
+          "bridge",
+          "screw1",
+          "screw2",
+          "spacer"
+        ],
+        "reason": "Completed BRep common contains positive material volume"
+      },
+      {
+        "rejection_id": "rej_160d2be3722a",
+        "kind": "TRANSLATE_PART",
+        "component_id": "base",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_f8f9694aa3b5",
+        "kind": "TRANSLATE_PART",
+        "component_id": "board",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_12c6002b1acf",
+        "kind": "TRANSLATE_PART",
+        "component_id": "bridge",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_9000d0afcc41",
+        "kind": "REMOVE_FASTENER",
+        "component_id": "screw1",
+        "axis": "Z+",
+        "category": "UNSUPPORTED_OPERATION",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "no supported reusable screw annotation"
+      },
+      {
+        "rejection_id": "rej_e04e87769d5b",
+        "kind": "REMOVE_FASTENER",
+        "component_id": "screw2",
+        "axis": "Z+",
+        "category": "UNSUPPORTED_OPERATION",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "no supported reusable screw annotation"
+      },
+      {
+        "rejection_id": "rej_ce2158b94aed",
+        "kind": "TRANSLATE_PART",
+        "component_id": "spacer",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_ea7ab3e30423",
+        "kind": "TRANSLATE_PART",
+        "component_id": "base",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_cdcb2e87b89a",
+        "kind": "TRANSLATE_PART",
+        "component_id": "board",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_84b49a4b483c",
+        "kind": "TRANSLATE_PART",
+        "component_id": "bridge",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      },
+      {
+        "rejection_id": "rej_bf5a3bb85799",
+        "kind": "REMOVE_FASTENER",
+        "component_id": "screw1",
+        "axis": "Z+",
+        "category": "UNSUPPORTED_OPERATION",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "no supported reusable screw annotation"
+      },
+      {
+        "rejection_id": "rej_d3d75c5e352f",
+        "kind": "REMOVE_FASTENER",
+        "component_id": "screw2",
+        "axis": "Z+",
+        "category": "UNSUPPORTED_OPERATION",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "no supported reusable screw annotation"
+      },
+      {
+        "rejection_id": "rej_8ed1a09932fe",
+        "kind": "TRANSLATE_PART",
+        "component_id": "spacer",
+        "axis": "Z+",
+        "category": "SEMANTICALLY_BLOCKED",
+        "evidence_level": "semantic",
+        "obstacle_ids": [],
+        "reason": "fixed occurrence"
+      }
+    ],
+    "rejections_total": 14,
+    "error": null,
+    "scope": "Finite rigid axis translations and annotated reusable screws; no physical repair or manufacturing certification"
+  },
+  "engineering_evidence": {
+    "inventory": {
+      "id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+      "input_hash": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+      "geometry_hash": "4a5f487e6df0374e0ff8c8d59949ceffce53874fd9c92abf41b820b71c7b49fb",
+      "manifest_hash": "ffa268991a0fad138af494322a87e61d7a302002ef0f72f3b7a3448a44f31113",
+      "message": "Geometry imported \u2014 analysis ready.",
+      "readiness": [
+        {
+          "field": "geometry_and_semantics",
+          "ok": true,
+          "message": "STEP occurrence mapping, solid checks and semantic references validated"
+        }
+      ],
+      "components": [
+        {
+          "id": "base",
+          "native_occurrence_id": "occ_3f19761780d57c3e6acb",
+          "source_occurrence_path": "/0/0",
+          "definition_id": "def_62a6e407eacd93fd2236",
+          "display_name": "base",
+          "role": "chassis",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              -70.0,
+              -50.0,
+              -10.0
+            ],
+            "max": [
+              70.0,
+              50.0,
+              -7.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "d93766719c9e7ea37feacedc3978d63d460df8f86953640544c78561753a4cdf",
+          "volume_mm3": 42000.0,
+          "face_count": 6
+        },
+        {
+          "id": "target",
+          "native_occurrence_id": "occ_d45e0d504ced0a2243dd",
+          "source_occurrence_path": "/0/1",
+          "definition_id": "def_fb8708ca32a04ed8fa1f",
+          "display_name": "target",
+          "role": "service_module",
+          "fixed": false,
+          "replaceable": true,
+          "removal_axes": [
+            "Z+"
+          ],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              -10.0,
+              -24.0,
+              15.0
+            ],
+            "max": [
+              10.0,
+              -16.0,
+              27.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "34026aded41cd86ec9230732e2623fb11d807de78d911ca13122dfa370962922",
+          "volume_mm3": 1920.0,
+          "face_count": 6
+        },
+        {
+          "id": "cover",
+          "native_occurrence_id": "occ_3035bb3dbdf57794cf16",
+          "source_occurrence_path": "/0/2",
+          "definition_id": "def_6213fb23be217f7837b6",
+          "display_name": "cover",
+          "role": "cover",
+          "fixed": false,
+          "replaceable": false,
+          "removal_axes": [
+            "Z+"
+          ],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              55.0,
+              0.0,
+              1.0,
+              0.0,
+              35.0,
+              0.0,
+              0.0,
+              1.0,
+              20.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              55.0,
+              35.0,
+              20.0
+            ],
+            "max": [
+              75.0,
+              45.0,
+              22.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "691f8b48e655f57d87fdf74469cff0af22d45c70219c59440f7237565c351c04",
+          "volume_mm3": 399.9999999999999,
+          "face_count": 6
+        },
+        {
+          "id": "screw1",
+          "native_occurrence_id": "occ_286c3f19423fd1699b84",
+          "source_occurrence_path": "/0/3",
+          "definition_id": "def_77c54a625f6f385feb2f",
+          "display_name": "screw1",
+          "role": "fastener",
+          "fixed": false,
+          "replaceable": false,
+          "removal_axes": [
+            "Z+"
+          ],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              -60.0,
+              0.0,
+              1.0,
+              0.0,
+              35.0,
+              0.0,
+              0.0,
+              1.0,
+              8.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              -62.0,
+              33.0,
+              8.0
+            ],
+            "max": [
+              -58.0,
+              37.0,
+              14.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "da397a134a3d6339e2e4b8cfc2c0486c5366542e605c5754b618e750385bf797",
+          "volume_mm3": 75.39822368615502,
+          "face_count": 3
+        },
+        {
+          "id": "screw2",
+          "native_occurrence_id": "occ_8edb5d068551aa297426",
+          "source_occurrence_path": "/0/4",
+          "definition_id": "def_77c54a625f6f385feb2f",
+          "display_name": "screw2",
+          "role": "fastener",
+          "fixed": false,
+          "replaceable": false,
+          "removal_axes": [
+            "Z+"
+          ],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              60.0,
+              0.0,
+              1.0,
+              0.0,
+              -35.0,
+              0.0,
+              0.0,
+              1.0,
+              8.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              58.0,
+              -37.0,
+              8.0
+            ],
+            "max": [
+              62.0,
+              -33.0,
+              14.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "fed6fddaed2fb184d5974ee77b2f24dea81aabe4fbb7d8718d8a02b8769a73c9",
+          "volume_mm3": 75.39822368615502,
+          "face_count": 3
+        },
+        {
+          "id": "bridge",
+          "native_occurrence_id": "occ_37dbc07d4d502055af66",
+          "source_occurrence_path": "/0/5",
+          "definition_id": "def_7345d422c2e589de510a",
+          "display_name": "bridge",
+          "role": "bracket",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              -56.0,
+              -34.0,
+              0.0
+            ],
+            "max": [
+              56.0,
+              34.0,
+              38.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "8db90c447cc40d9a24ec838ba786d9a0871ff3a6425fa50c9f1b73f4aa8a2f7e",
+          "volume_mm3": 36663.366377849,
+          "face_count": 28
+        },
+        {
+          "id": "board",
+          "native_occurrence_id": "occ_ad64577b29639bed7d75",
+          "source_occurrence_path": "/0/6",
+          "definition_id": "def_ae572b6573b5ea098cd1",
+          "display_name": "board",
+          "role": "chassis",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              -65.0,
+              0.0,
+              1.0,
+              0.0,
+              -40.0,
+              0.0,
+              0.0,
+              1.0,
+              15.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              -65.0,
+              -40.0,
+              15.0
+            ],
+            "max": [
+              -55.0,
+              -34.0,
+              17.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "d476b9921b5b564c1f5adbc474ffe6ac0d6fd0e4119fce0a53ba2c0ae54ce849",
+          "volume_mm3": 120.0,
+          "face_count": 6
+        },
+        {
+          "id": "spacer",
+          "native_occurrence_id": "occ_f400f1f3cb9e7cb8dbb0",
+          "source_occurrence_path": "/0/7",
+          "definition_id": "def_e0d192af8d502f25257e",
+          "display_name": "spacer",
+          "role": "chassis",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              58.0,
+              0.0,
+              1.0,
+              0.0,
+              36.0,
+              0.0,
+              0.0,
+              1.0,
+              5.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "bounds_mm": {
+            "min": [
+              58.0,
+              36.0,
+              5.0
+            ],
+            "max": [
+              62.0,
+              40.0,
+              9.0
+            ]
+          },
+          "geometry_valid": true,
+          "geometry_hash": "f8657387bb61a6925f6d53600631bff719ed76e2c6ca190265b2f74f822de5ad",
+          "volume_mm3": 63.999999999999986,
+          "face_count": 6
+        }
+      ],
+      "manifest": {
+        "schema_version": "1.0",
+        "project_id": "fixture_B02",
+        "assembly_id": "B02",
+        "units": "mm",
+        "frame": {
+          "handedness": "right",
+          "up": "Z"
+        },
+        "envelope_mm": {
+          "min": [
+            -80.0,
+            -60.0,
+            -15.0
+          ],
+          "max": [
+            80.0,
+            60.0,
+            50.0
+          ]
+        },
+        "components": [
+          {
+            "id": "base",
+            "source_occurrence_path": "/0/0",
+            "display_name": "base",
+            "role": "chassis",
+            "fixed": true,
+            "replaceable": false,
+            "removal_axes": [],
+            "staging_region_id": null,
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                -70.0,
+                -50.0,
+                -10.0
+              ],
+              "max": [
+                70.0,
+                50.0,
+                -7.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "target",
+            "source_occurrence_path": "/0/1",
+            "display_name": "target",
+            "role": "service_module",
+            "fixed": false,
+            "replaceable": true,
+            "removal_axes": [
+              "Z+"
+            ],
+            "staging_region_id": "above",
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                -10.0,
+                -24.0,
+                15.0
+              ],
+              "max": [
+                10.0,
+                -16.0,
+                27.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "cover",
+            "source_occurrence_path": "/0/2",
+            "display_name": "cover",
+            "role": "cover",
+            "fixed": false,
+            "replaceable": false,
+            "removal_axes": [
+              "Z+"
+            ],
+            "staging_region_id": "above",
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                55.0,
+                35.0,
+                20.0
+              ],
+              "max": [
+                75.0,
+                45.0,
+                22.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                55.0,
+                0.0,
+                1.0,
+                0.0,
+                35.0,
+                0.0,
+                0.0,
+                1.0,
+                20.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "screw1",
+            "source_occurrence_path": "/0/3",
+            "display_name": "screw1",
+            "role": "fastener",
+            "fixed": false,
+            "replaceable": false,
+            "removal_axes": [
+              "Z+"
+            ],
+            "staging_region_id": "above",
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                -62.0,
+                33.0,
+                8.0
+              ],
+              "max": [
+                -58.0,
+                37.0,
+                14.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                -60.0,
+                0.0,
+                1.0,
+                0.0,
+                35.0,
+                0.0,
+                0.0,
+                1.0,
+                8.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "screw2",
+            "source_occurrence_path": "/0/4",
+            "display_name": "screw2",
+            "role": "fastener",
+            "fixed": false,
+            "replaceable": false,
+            "removal_axes": [
+              "Z+"
+            ],
+            "staging_region_id": "above",
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                58.0,
+                -37.0,
+                8.0
+              ],
+              "max": [
+                62.0,
+                -33.0,
+                14.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                60.0,
+                0.0,
+                1.0,
+                0.0,
+                -35.0,
+                0.0,
+                0.0,
+                1.0,
+                8.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "bridge",
+            "source_occurrence_path": "/0/5",
+            "display_name": "bridge",
+            "role": "bracket",
+            "fixed": true,
+            "replaceable": false,
+            "removal_axes": [],
+            "staging_region_id": null,
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                -56.0,
+                -34.0,
+                0.0
+              ],
+              "max": [
+                56.0,
+                34.0,
+                38.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "board",
+            "source_occurrence_path": "/0/6",
+            "display_name": "board",
+            "role": "chassis",
+            "fixed": true,
+            "replaceable": false,
+            "removal_axes": [],
+            "staging_region_id": null,
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                -65.0,
+                -40.0,
+                15.0
+              ],
+              "max": [
+                -55.0,
+                -34.0,
+                17.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                -65.0,
+                0.0,
+                1.0,
+                0.0,
+                -40.0,
+                0.0,
+                0.0,
+                1.0,
+                15.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          {
+            "id": "spacer",
+            "source_occurrence_path": "/0/7",
+            "display_name": "spacer",
+            "role": "chassis",
+            "fixed": true,
+            "replaceable": false,
+            "removal_axes": [],
+            "staging_region_id": null,
+            "fixed_reason": null,
+            "bounds_mm": {
+              "min": [
+                58.0,
+                36.0,
+                5.0
+              ],
+              "max": [
+                62.0,
+                40.0,
+                9.0
+              ]
+            },
+            "template_family": null,
+            "shared_definition": null,
+            "placement": {
+              "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                58.0,
+                0.0,
+                1.0,
+                0.0,
+                36.0,
+                0.0,
+                0.0,
+                1.0,
+                5.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          }
+        ],
+        "connections": [],
+        "tools": [],
+        "constraints": [
+          {
+            "id": "target_path",
+            "mandatory": true,
+            "kind": "clearance",
+            "label": "Target complete upward segment",
+            "component_ids": [
+              "target"
+            ],
+            "limit": "0.5 mm continuous gap",
+            "threshold_mm": 0.5,
+            "scope": "path",
+            "axis": "Z+",
+            "distance_mm": 80.0,
+            "region_ids": []
+          }
+        ],
+        "keep_outs": [],
+        "template_bindings": [
+          {
+            "bracket_id": "bridge",
+            "family": "bridge_bracket_v1",
+            "parameters": {
+              "span_mm": 96.0,
+              "foot_width_mm": 16.0,
+              "foot_depth_mm": 24.0,
+              "foot_thickness_mm": 4.0,
+              "hole_diameter_mm": 3.4,
+              "post_width_mm": 6.0,
+              "post_depth_mm": 24.0,
+              "web_length_mm": 92.0,
+              "web_depth_mm": 68.0,
+              "web_thickness_mm": 4.0,
+              "web_underside_height_mm": 34.0
+            },
+            "editable_region_id": "web",
+            "templates": [
+              {
+                "id": "T01",
+                "label": "T01",
+                "domain": {
+                  "center_x_mm": [
+                    -4.0,
+                    0.0,
+                    4.0
+                  ],
+                  "center_y_mm": [
+                    -24.0,
+                    -20.0,
+                    -16.0,
+                    0.0
+                  ],
+                  "width_mm": [
+                    24.0,
+                    40.0,
+                    46.0,
+                    52.0
+                  ],
+                  "depth_mm": [
+                    8.0,
+                    12.0,
+                    16.0,
+                    20.0
+                  ]
+                }
+              },
+              {
+                "id": "T02",
+                "label": "T02",
+                "domain": {
+                  "offset_y_mm": [
+                    -12.0,
+                    12.0,
+                    24.0,
+                    36.0
+                  ]
+                }
+              }
+            ],
+            "minimum_web_mm": 6.0,
+            "maximum_cut_volume_mm3": 5000.0,
+            "constructor_version": "1"
+          }
+        ],
+        "provenance": {
+          "author": "UNLOCK synthetic constructor",
+          "license": "Redistribution license pending author approval; local engineering fixture",
+          "source": "unlock_engine.fixtures.generate_fixture(B02, held_out=False); deterministic seed 0"
+        },
+        "regions": [
+          {
+            "id": "web",
+            "component_id": "bridge",
+            "kind": "editable",
+            "bounds_mm": {
+              "min": [
+                -46.0,
+                -34.0,
+                34.0
+              ],
+              "max": [
+                46.0,
+                34.0,
+                38.0
+              ]
+            },
+            "plane_axis": null,
+            "plane_coordinate_mm": null
+          }
+        ],
+        "staging_regions": [
+          {
+            "id": "above",
+            "bounds_mm": {
+              "min": [
+                -100.0,
+                -100.0,
+                70.0
+              ],
+              "max": [
+                100.0,
+                100.0,
+                160.0
+              ]
+            }
+          }
+        ],
+        "unsupported_assumptions": []
+      }
+    },
+    "manifest": {
+      "schema_version": "1.0",
+      "project_id": "fixture_B02",
+      "assembly_id": "B02",
+      "units": "mm",
+      "frame": {
+        "handedness": "right",
+        "up": "Z"
+      },
+      "envelope_mm": {
+        "min": [
+          -80,
+          -60,
+          -15
+        ],
+        "max": [
+          80,
+          60,
+          50
+        ]
+      },
+      "components": [
+        {
+          "id": "base",
+          "source_occurrence_path": "/0/0",
+          "display_name": "base",
+          "role": "chassis",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "staging_region_id": null,
+          "bounds_mm": {
+            "min": [
+              -70.0,
+              -50.0,
+              -10.0
+            ],
+            "max": [
+              70.0,
+              50.0,
+              -7.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "target",
+          "source_occurrence_path": "/0/1",
+          "display_name": "target",
+          "role": "service_module",
+          "fixed": false,
+          "replaceable": true,
+          "removal_axes": [
+            "Z+"
+          ],
+          "staging_region_id": "above",
+          "bounds_mm": {
+            "min": [
+              -10.0,
+              -24.0,
+              15.0
+            ],
+            "max": [
+              10.0,
+              -16.0,
+              27.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "cover",
+          "source_occurrence_path": "/0/2",
+          "display_name": "cover",
+          "role": "cover",
+          "fixed": false,
+          "replaceable": false,
+          "removal_axes": [
+            "Z+"
+          ],
+          "staging_region_id": "above",
+          "bounds_mm": {
+            "min": [
+              55.0,
+              35.0,
+              20.0
+            ],
+            "max": [
+              75.0,
+              45.0,
+              22.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              55.0,
+              0.0,
+              1.0,
+              0.0,
+              35.0,
+              0.0,
+              0.0,
+              1.0,
+              20.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "screw1",
+          "source_occurrence_path": "/0/3",
+          "display_name": "screw1",
+          "role": "fastener",
+          "fixed": false,
+          "replaceable": false,
+          "removal_axes": [
+            "Z+"
+          ],
+          "staging_region_id": "above",
+          "bounds_mm": {
+            "min": [
+              -62.0,
+              33.0,
+              8.0
+            ],
+            "max": [
+              -58.0,
+              37.0,
+              14.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              -60.0,
+              0.0,
+              1.0,
+              0.0,
+              35.0,
+              0.0,
+              0.0,
+              1.0,
+              8.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "screw2",
+          "source_occurrence_path": "/0/4",
+          "display_name": "screw2",
+          "role": "fastener",
+          "fixed": false,
+          "replaceable": false,
+          "removal_axes": [
+            "Z+"
+          ],
+          "staging_region_id": "above",
+          "bounds_mm": {
+            "min": [
+              58.0,
+              -37.0,
+              8.0
+            ],
+            "max": [
+              62.0,
+              -33.0,
+              14.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              60.0,
+              0.0,
+              1.0,
+              0.0,
+              -35.0,
+              0.0,
+              0.0,
+              1.0,
+              8.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "bridge",
+          "source_occurrence_path": "/0/5",
+          "display_name": "bridge",
+          "role": "bracket",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "staging_region_id": null,
+          "bounds_mm": {
+            "min": [
+              -56.0,
+              -34.0,
+              0.0
+            ],
+            "max": [
+              56.0,
+              34.0,
+              38.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "board",
+          "source_occurrence_path": "/0/6",
+          "display_name": "board",
+          "role": "chassis",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "staging_region_id": null,
+          "bounds_mm": {
+            "min": [
+              -65.0,
+              -40.0,
+              15.0
+            ],
+            "max": [
+              -55.0,
+              -34.0,
+              17.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              -65.0,
+              0.0,
+              1.0,
+              0.0,
+              -40.0,
+              0.0,
+              0.0,
+              1.0,
+              15.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "id": "spacer",
+          "source_occurrence_path": "/0/7",
+          "display_name": "spacer",
+          "role": "chassis",
+          "fixed": true,
+          "replaceable": false,
+          "removal_axes": [],
+          "staging_region_id": null,
+          "bounds_mm": {
+            "min": [
+              58.0,
+              36.0,
+              5.0
+            ],
+            "max": [
+              62.0,
+              40.0,
+              9.0
+            ]
+          },
+          "placement": {
+            "matrix": [
+              1.0,
+              0.0,
+              0.0,
+              58.0,
+              0.0,
+              1.0,
+              0.0,
+              36.0,
+              0.0,
+              0.0,
+              1.0,
+              5.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        }
+      ],
+      "connections": [],
+      "tools": [],
+      "constraints": [
+        {
+          "id": "target_path",
+          "kind": "clearance",
+          "mandatory": true,
+          "label": "Target complete upward segment",
+          "component_ids": [
+            "target"
+          ],
+          "limit": "0.5 mm continuous gap",
+          "threshold_mm": 0.5,
+          "scope": "path",
+          "axis": "Z+",
+          "distance_mm": 80
+        }
+      ],
+      "keep_outs": [],
+      "template_bindings": [
+        {
+          "bracket_id": "bridge",
+          "family": "bridge_bracket_v1",
+          "parameters": {
+            "span_mm": 96.0,
+            "foot_width_mm": 16.0,
+            "foot_depth_mm": 24.0,
+            "foot_thickness_mm": 4.0,
+            "hole_diameter_mm": 3.4,
+            "post_width_mm": 6.0,
+            "post_depth_mm": 24.0,
+            "web_length_mm": 92.0,
+            "web_depth_mm": 68.0,
+            "web_thickness_mm": 4.0,
+            "web_underside_height_mm": 34.0
+          },
+          "editable_region_id": "web",
+          "templates": [
+            {
+              "id": "T01",
+              "label": "T01",
+              "domain": {
+                "center_x_mm": [
+                  -4.0,
+                  0.0,
+                  4.0
+                ],
+                "center_y_mm": [
+                  -24.0,
+                  -20.0,
+                  -16.0,
+                  0.0
+                ],
+                "width_mm": [
+                  24.0,
+                  40.0,
+                  46.0,
+                  52.0
+                ],
+                "depth_mm": [
+                  8.0,
+                  12.0,
+                  16.0,
+                  20.0
+                ]
+              }
+            },
+            {
+              "id": "T02",
+              "label": "T02",
+              "domain": {
+                "offset_y_mm": [
+                  -12.0,
+                  12.0,
+                  24.0,
+                  36.0
+                ]
+              }
+            }
+          ],
+          "minimum_web_mm": 6.0,
+          "maximum_cut_volume_mm3": 5000.0,
+          "constructor_version": "1"
+        }
+      ],
+      "regions": [
+        {
+          "id": "web",
+          "component_id": "bridge",
+          "kind": "editable",
+          "bounds_mm": {
+            "min": [
+              -46.0,
+              -34.0,
+              34.0
+            ],
+            "max": [
+              46.0,
+              34.0,
+              38.0
+            ]
+          }
+        }
+      ],
+      "staging_regions": [
+        {
+          "id": "above",
+          "bounds_mm": {
+            "min": [
+              -100,
+              -100,
+              70
+            ],
+            "max": [
+              100,
+              100,
+              160
+            ]
+          }
+        }
+      ],
+      "unsupported_assumptions": [],
+      "provenance": {
+        "author": "UNLOCK synthetic constructor",
+        "license": "Redistribution license pending author approval; local engineering fixture",
+        "source": "unlock_engine.fixtures.generate_fixture(B02, held_out=False); deterministic seed 0"
+      }
+    },
+    "baseline": {
+      "id": "e058fd89f17592d2d1e17b06fd4726c526897ed61edd113ca328bcfcbc3de0ff",
+      "status": "no_path_supported",
+      "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+      "original_revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+      "modified_occurrence_ids": [],
+      "target_id": "target",
+      "input_hash": "026692a4f34c3067c6cb6a8f26df9b737ea6d44b77c08b1c83fb8c8b93f783fc",
+      "geometry_hash": "729c4ae4f24b68df1c8a8e105b99ac438fd723fbb9e9a36cd5b2026042590529",
+      "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+      "comparison_hash": "baaca9eced804959af3b5e8cec6afbb5dabdbf36e5688241a9a3cac7d153ae3e",
+      "policy_version": "policy_v1",
+      "search_policy": {
+        "version": "planner_v1",
+        "max_expanded_states": 4096,
+        "max_seconds": 30.0,
+        "clearance_mm": 0.5,
+        "endpoint_rule": "explicit_path_else_nearest_stage_interior_v1",
+        "objective": [
+          "unrelated_parts",
+          "fasteners",
+          "tool_changes",
+          "operations"
+        ]
+      },
+      "complete": true,
+      "optimal_within_scope": false,
+      "expanded_states": 2,
+      "elapsed_ms": 798.0557091068476,
+      "limits": {
+        "version": "planner_v1",
+        "max_expanded_states": 4096,
+        "max_seconds": 30.0,
+        "clearance_mm": 0.5,
+        "endpoint_rule": "explicit_path_else_nearest_stage_interior_v1",
+        "objective": [
+          "unrelated_parts",
+          "fasteners",
+          "tool_changes",
+          "operations"
+        ]
+      },
+      "unresolved_transition_count": 0,
+      "steps": [],
+      "rejections": [
+        {
+          "id": "77cd4539ae7b8a3a85959ce832df79b34ac5f5d9ad8208d88204b28355764297",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "base",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "board",
+            "bridge",
+            "cover",
+            "screw1",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "97fb54547adfc9445d955285fadff465450639c8fdbe337a0f4b428799dc4dac",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "board",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "bridge",
+            "cover",
+            "screw1",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "f126d503c1c1647cb3e3c8b829e16383b4f3fc5cfb62babcfa2907b84863774d",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "bridge",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "cover",
+            "screw1",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "fa3085ad2f047f737f5a0a70d7aa928f797a24323d1be876f986b4e1335fd96b",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw1",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "cover",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "no supported reusable screw annotation",
+          "category": "UNSUPPORTED_OPERATION",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "3b2746d872fedeb72f43a0353fb7bcf0a826d9176a2d3e0428ef65ae8edb043c",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw2",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "cover",
+            "screw1",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "no supported reusable screw annotation",
+          "category": "UNSUPPORTED_OPERATION",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "40e00738ebc01809a37ea52ae46e21a38c12c749bd23b082f15ac283997e5e12",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "spacer",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "cover",
+            "screw1",
+            "screw2",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "639b8f084baea91909a5984189ea0c9e6b1fe01047c00c9b56220ab5b3244f4d",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "removed_ids": [],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "target",
+            "axis": "Z+",
+            "distance_mm": 80.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "cover",
+            "screw1",
+            "screw2",
+            "spacer"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "Completed BRep common contains positive material volume",
+          "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+          "geometry_evidence_level": "actual_brep_witness",
+          "witness_certificate_ids": [
+            "d4726f41c306577f7ec6b91c271a4e58402e93737edbe9e2b60b21358ab978a7"
+          ],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "1bcd0bdd6f75ff1c41d0c1aba0aec32350d12d7e9022d0fd2c933790b8eb36b0",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "base",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "board",
+            "bridge",
+            "screw1",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "9fcb9054c120b11c0ebc82725b94de2fd4369804c879a8bda8b9c5785a28b99f",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "board",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "bridge",
+            "screw1",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "d2a32b21594ff2f26544a3eec1d0e16af4c64f36fc562b26fd2a6937da23a025",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "bridge",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "screw1",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "8a7c1ab1ad735cfb9e0be1afa0fee8a5faaf6ace7da79e23140d711b0b8cfc63",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw1",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "screw2",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "no supported reusable screw annotation",
+          "category": "UNSUPPORTED_OPERATION",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "79e8f868c14df5699dd9502d683ff2ac48aff29845d76a317dad2c76362058c2",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw2",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "screw1",
+            "spacer",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "no supported reusable screw annotation",
+          "category": "UNSUPPORTED_OPERATION",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "2d7256fed5a077cfcd70eb8fb05631ddfe81ee36516ec6406507f799aa40ce94",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "spacer",
+            "axis": "Z+",
+            "distance_mm": 1.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "screw1",
+            "screw2",
+            "target"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "fixed occurrence",
+          "category": "SEMANTICALLY_BLOCKED",
+          "geometry_evidence_level": "semantic",
+          "witness_certificate_ids": [],
+          "policy_version": "policy_v1"
+        },
+        {
+          "id": "ee89b62608d8c249a8ee2edeba11d26c935d495d88dc71ddf7d7a3762f7ba289",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "removed_ids": [
+            "cover"
+          ],
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "target",
+            "axis": "Z+",
+            "distance_mm": 80.0,
+            "tool_id": null
+          },
+          "remaining_obstacle_ids": [
+            "base",
+            "board",
+            "bridge",
+            "screw1",
+            "screw2",
+            "spacer"
+          ],
+          "constraint_ids": [
+            "target_path"
+          ],
+          "reason": "Completed BRep common contains positive material volume",
+          "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+          "geometry_evidence_level": "actual_brep_witness",
+          "witness_certificate_ids": [
+            "f392623c80fe57cdab3071ec4618435bf0d398ba9d78212dd6b3686ab8c45e5a"
+          ],
+          "policy_version": "policy_v1"
+        }
+      ],
+      "certificates": [
+        {
+          "id": "ad22f351ba48b7ca7c3fe7a9ed8968a07bb179ab30110df640256955dff947fa",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "input_hash": "026692a4f34c3067c6cb6a8f26df9b737ea6d44b77c08b1c83fb8c8b93f783fc",
+          "geometry_hash": "729c4ae4f24b68df1c8a8e105b99ac438fd723fbb9e9a36cd5b2026042590529",
+          "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+          "tool_hash": "f1e79f5a2486156b2f84d4fe60c025bc609d3b03789dd13fa4d6ddd059446ee6",
+          "policy_hash": "79d6192e9d1dae37a13e049f3b9465367ff27fc421af7c916d182546dc43e624",
+          "before_state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "cover",
+            "axis": "Z+",
+            "distance_mm": 50.019999999999996,
+            "tool_id": null
+          },
+          "mode": "removal",
+          "status": "clear",
+          "paths": [
+            {
+              "id": "10bb5dfded5600f72a122d80ed6ad15adab94f0af9672060b620120f21e90bf6",
+              "moving_occurrence": "cover",
+              "axis": "Z+",
+              "distance_mm": 50.019999999999996,
+              "status": "clear",
+              "policy_version": "policy_v1",
+              "geometry_hash": "691f8b48e655f57d87fdf74469cff0af22d45c70219c59440f7237565c351c04",
+              "input_hash": "1ebb8b0ce80323fafa6a2904aa1d4a271d742d25ba4dda01b7037e7017e069e1",
+              "clearance_mm": 0.5,
+              "representation": "server_validated_world_aabb_union",
+              "coverage_established": true,
+              "findings": [],
+              "contact_exemptions": [],
+              "clearance_lower_bound_mm": 0.5,
+              "explanation": "All nonexempt material proxy pairs remain separated for the entire analytic segment; contact pairs separate in opposing half spaces"
+            }
+          ],
+          "subchecks": [
+            "continuous_translation"
+          ],
+          "assumptions": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry"
+        },
+        {
+          "id": "d4726f41c306577f7ec6b91c271a4e58402e93737edbe9e2b60b21358ab978a7",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "input_hash": "026692a4f34c3067c6cb6a8f26df9b737ea6d44b77c08b1c83fb8c8b93f783fc",
+          "geometry_hash": "729c4ae4f24b68df1c8a8e105b99ac438fd723fbb9e9a36cd5b2026042590529",
+          "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+          "tool_hash": "f1e79f5a2486156b2f84d4fe60c025bc609d3b03789dd13fa4d6ddd059446ee6",
+          "policy_hash": "79d6192e9d1dae37a13e049f3b9465367ff27fc421af7c916d182546dc43e624",
+          "before_state_hash": "c5b772567b6c14e6f4f0c5fafc38ef5b5507c38f6728235ae477afc3b554de66",
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "target",
+            "axis": "Z+",
+            "distance_mm": 80.0,
+            "tool_id": null
+          },
+          "mode": "removal",
+          "status": "blocked",
+          "paths": [
+            {
+              "id": "fbf8bb65d987731644a36fde0420e4a79a516cab70750cb809ea337b48bac387",
+              "moving_occurrence": "target",
+              "axis": "Z+",
+              "distance_mm": 80.0,
+              "status": "blocked",
+              "policy_version": "policy_v1",
+              "geometry_hash": "34026aded41cd86ec9230732e2623fb11d807de78d911ca13122dfa370962922",
+              "input_hash": "61b8f2826c4d17dced8bef218ca8a3e3ce80b75afbda6726c908003b194c220f",
+              "clearance_mm": 0.5,
+              "representation": "server_validated_world_aabb_union",
+              "coverage_established": true,
+              "findings": [
+                {
+                  "status": "blocked",
+                  "kind": "positive_volume_intersection",
+                  "component_ids": [
+                    "target",
+                    "bridge"
+                  ],
+                  "explanation": "Completed BRep common contains positive material volume",
+                  "distance_mm": null,
+                  "intersection_volume_mm3": 639.9999999999999,
+                  "witness_mm": [
+                    3.5527136788005016e-16,
+                    -19.999999999999996,
+                    36.0
+                  ],
+                  "witness_travel_mm": 13.0
+                }
+              ],
+              "contact_exemptions": [],
+              "clearance_lower_bound_mm": null,
+              "explanation": "A BRep obstruction or insufficient-clearance witness rejects this segment"
+            }
+          ],
+          "subchecks": [
+            "continuous_translation"
+          ],
+          "assumptions": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry"
+        },
+        {
+          "id": "f392623c80fe57cdab3071ec4618435bf0d398ba9d78212dd6b3686ab8c45e5a",
+          "revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "input_hash": "026692a4f34c3067c6cb6a8f26df9b737ea6d44b77c08b1c83fb8c8b93f783fc",
+          "geometry_hash": "729c4ae4f24b68df1c8a8e105b99ac438fd723fbb9e9a36cd5b2026042590529",
+          "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+          "tool_hash": "f1e79f5a2486156b2f84d4fe60c025bc609d3b03789dd13fa4d6ddd059446ee6",
+          "policy_hash": "79d6192e9d1dae37a13e049f3b9465367ff27fc421af7c916d182546dc43e624",
+          "before_state_hash": "2453ce58018171e901ed87e896c9259415c6b0f95bc1d130bcb4dcf8a754dd07",
+          "action": {
+            "kind": "TRANSLATE_PART",
+            "component_id": "target",
+            "axis": "Z+",
+            "distance_mm": 80.0,
+            "tool_id": null
+          },
+          "mode": "removal",
+          "status": "blocked",
+          "paths": [
+            {
+              "id": "99a3dd514dfbb295a4920e84b3b64abed9ec7b3dfe8890227e0151a03e5ae3ae",
+              "moving_occurrence": "target",
+              "axis": "Z+",
+              "distance_mm": 80.0,
+              "status": "blocked",
+              "policy_version": "policy_v1",
+              "geometry_hash": "34026aded41cd86ec9230732e2623fb11d807de78d911ca13122dfa370962922",
+              "input_hash": "f84ffbdf86fc9197d57e3a193397730fac8204cbf5d4c517bd7f8289987ca2f5",
+              "clearance_mm": 0.5,
+              "representation": "server_validated_world_aabb_union",
+              "coverage_established": true,
+              "findings": [
+                {
+                  "status": "blocked",
+                  "kind": "positive_volume_intersection",
+                  "component_ids": [
+                    "target",
+                    "bridge"
+                  ],
+                  "explanation": "Completed BRep common contains positive material volume",
+                  "distance_mm": null,
+                  "intersection_volume_mm3": 639.9999999999999,
+                  "witness_mm": [
+                    3.5527136788005016e-16,
+                    -19.999999999999996,
+                    36.0
+                  ],
+                  "witness_travel_mm": 13.0
+                }
+              ],
+              "contact_exemptions": [],
+              "clearance_lower_bound_mm": null,
+              "explanation": "A BRep obstruction or insufficient-clearance witness rejects this segment"
+            }
+          ],
+          "subchecks": [
+            "continuous_translation"
+          ],
+          "assumptions": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry"
+        }
+      ],
+      "metrics": null,
+      "stats": {
+        "generated_actions": 15,
+        "admitted_transitions": 1,
+        "rejected_transitions": 14,
+        "unknown_transitions": 0,
+        "cache_hits": 0,
+        "cache_misses": 3,
+        "geometry_validation_calls": 3,
+        "peak_frontier": 1,
+        "frontier_size": 0,
+        "frontier_status": "exhausted",
+        "termination": "frontier_exhausted"
+      },
+      "replay": {
+        "status": "not_run",
+        "explanation": "No checked goal route",
+        "checked_steps": 0,
+        "certificates": [],
+        "final_removed_ids": [],
+        "geometric_insertion": "not_run",
+        "fastener_reinsertion": "not_run",
+        "tool_access": "not_run",
+        "connection_restoration": "not_run",
+        "elapsed_ms": 0.0
+      },
+      "reverse": {
+        "status": "not_run",
+        "explanation": "No checked goal route",
+        "checked_steps": 0,
+        "certificates": [],
+        "final_removed_ids": [],
+        "geometric_insertion": "not_run",
+        "fastener_reinsertion": "not_run",
+        "tool_access": "not_run",
+        "connection_restoration": "not_run",
+        "elapsed_ms": 0.0
+      },
+      "constraint_checks": [],
+      "static_verification_id": null,
+      "static_checks": [],
+      "replacement_verified": false,
+      "error": null,
+      "provenance": "computed",
+      "scope": "Finite rigid axis translations and annotated reusable screws; no physical repair or manufacturing certification"
+    },
+    "constructed": {
+      "22c41692c8b09e7333a180c9a07a0dfd1d2286e12c865ac960e840c4cc047da7": {
+        "ok": true,
+        "candidate": {
+          "id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+          "original_revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "manifest_hash": "ffa268991a0fad138af494322a87e61d7a302002ef0f72f3b7a3448a44f31113",
+          "original_geometry_hash": "729c4ae4f24b68df1c8a8e105b99ac438fd723fbb9e9a36cd5b2026042590529",
+          "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+          "bracket_id": "bridge",
+          "template_id": "T01",
+          "template_version": "1",
+          "parameters": {
+            "center_x_mm": -4.0,
+            "center_y_mm": -24.0,
+            "width_mm": 24.0,
+            "depth_mm": 8.0
+          },
+          "geometry_hash": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+          "policy": {
+            "version": "policy_v1",
+            "tolerance_mm": 0.01,
+            "clearance_mm": 0.5,
+            "volume_noise_mm3": 1e-09,
+            "algebraic_tolerance": 1e-09,
+            "contact_plane_noise_mm": 1e-09,
+            "contact_area_noise_mm2": 1e-09,
+            "max_faces": 30000,
+            "max_triangles": 200000,
+            "max_envelope_mm": 500,
+            "max_compressed_bytes": 26214400,
+            "max_expanded_bytes": 104857600
+          },
+          "engine_version": "0.1.0",
+          "modified_occurrence_id": "bridge",
+          "source_assembly_hash": "271a3162375a5ea5eb735fdb2a1b9d8891921a72983ef145d1fa14c817716963",
+          "created_at": "2026-10-30T01:57:48.044145+00:00",
+          "original_shape_ref": {
+            "file": "original.step",
+            "source_occurrence_path": "/0/5",
+            "geometry_hash": "8db90c447cc40d9a24ec838ba786d9a0871ff3a6425fa50c9f1b73f4aa8a2f7e"
+          },
+          "revised_shape_ref": {
+            "file": "changed_bracket.step",
+            "geometry_hash": "023e4811e0a42b78bc6016118283d507eaeb0c2738120ccaac9cf9974ba7b3b6"
+          }
+        },
+        "geometry_diff": {
+          "changed_component_id": "bridge",
+          "removed_volume_mm3": 768.0,
+          "added_volume_mm3": 0.0,
+          "region_min_mm": [
+            -16.0,
+            -28.0,
+            34.0
+          ],
+          "region_max_mm": [
+            8.0,
+            -20.0,
+            38.0
+          ]
+        },
+        "changed_volume_mm3": 768.0,
+        "construct_ms": 1294.883541064337,
+        "wall_ms": 5526.154334191233
+      },
+      "1c9c37ff6b77ab08f99239831bda72f3e69a2ad71187b6f2a45798328909e859": {
+        "ok": false,
+        "error": {
+          "error_code": "CONSTRAINT_VIOLATION",
+          "message": "minimum remaining web violated",
+          "retryable": false,
+          "field_errors": [],
+          "evidence_ids": [],
+          "run_id": null
+        },
+        "construct_ms": 656.480957986787,
+        "wall_ms": 3158.739416860044
+      },
+      "1de20743e8bcdc9a2e2c963aa6fa3e9f0ecd5c160d1921760b9dcba1d1803429": {
+        "ok": false,
+        "error": {
+          "error_code": "CONSTRAINT_VIOLATION",
+          "message": "minimum remaining web violated",
+          "retryable": false,
+          "field_errors": [],
+          "evidence_ids": [],
+          "run_id": null
+        },
+        "construct_ms": 351.9110828638077,
+        "wall_ms": 3767.3682500608265
+      }
+    },
+    "verified": {
+      "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29": {
+        "ok": true,
+        "candidate_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+        "static_report": {
+          "id": "d511aa372377afc1f3f4ba0d915518a8c3179691fb8f00ef60b0b5799a39dd51",
+          "candidate_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+          "original_revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "candidate_revision_id": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+          "input_hash": "328828b2b0fd7a9b146280bdd46fb55cf1861d0fba8b6c3bc09512bf8815bcad",
+          "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+          "engine_versions": {
+            "cadquery": "2.6.1",
+            "cadquery-ocp": "7.8.1.1.post1",
+            "pydantic": "2.12.3",
+            "unlock_engine": "0.1.0"
+          },
+          "generated_at": "2026-10-30T01:57:55.176988+00:00",
+          "status": "passed",
+          "checks": [
+            {
+              "constraint_id": "integrity",
+              "label": "integrity",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Revision, geometry, policy, parameters and full constraint metadata must match recorded hashes"
+            },
+            {
+              "constraint_id": "solid_validity",
+              "label": "solid_validity",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Every occurrence remains one valid closed positive-volume solid"
+            },
+            {
+              "constraint_id": "trusted_reconstruction",
+              "label": "trusted_reconstruction",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Independently regenerated trusted solid compared by two-way BRep material difference"
+            },
+            {
+              "constraint_id": "actual_change",
+              "label": "actual_change",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": 768.0,
+              "limit": "> 1e-9 mm3",
+              "units": "mm3",
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Actual two-way material difference"
+            },
+            {
+              "constraint_id": "editable_region",
+              "label": "editable_region",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": 0.0,
+              "limit": "",
+              "units": "mm3",
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Actual removed material must be wholly inside engineer-declared world editable region"
+            },
+            {
+              "constraint_id": "protected_interfaces",
+              "label": "protected_interfaces",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Complete feet and post selectors include hole voids; material added into protected holes also fails"
+            },
+            {
+              "constraint_id": "hole_geometry",
+              "label": "hole_geometry",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Actual cylindrical hole surfaces and complete surrounding protected regions agree"
+            },
+            {
+              "constraint_id": "fixed_components",
+              "label": "fixed_components",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Every unedited occurrence compared independently, including repeated shared-definition instances"
+            },
+            {
+              "constraint_id": "placements",
+              "label": "placements",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "STEP world placements must match the original occurrences exactly"
+            },
+            {
+              "constraint_id": "design_envelope",
+              "label": "design_envelope",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "All revised assembled solids must remain inside declared envelope with numerical guard"
+            },
+            {
+              "constraint_id": "keep_outs",
+              "label": "keep_outs",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Every assembled solid checked against each declared keep-out"
+            },
+            {
+              "constraint_id": "assembled_intersections",
+              "label": "assembled_intersections",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [
+                "c3264c8b541230076cb24d3d90317c91cb74571498cd17f77a3b73fe18b69404",
+                "668cbb2609036883215f27eb0f786d9626b15713486ad55c91404bef761cfaa2",
+                "0c54e00c786ec696879fac5a21bd4da2d21d2a664b30c0268ad57b0804b2ee0e",
+                "e59f785ef2b08bb952cc4b31939434206ebb5838aae21d4f1ed2eaf4f52228ad",
+                "90d1f732e7fc053dcb6bb70e9b272bcaedd82ab2003e4c48d00cc73676dc7022",
+                "4e7194e0f1c68dd5b4b42da61e17eff7de22119b616e738c76e80c5960a7f171",
+                "aabdedc7527d7ebe7bc413c1c3a3df0230f8c6ecdfd318371ea32ba6551db90d",
+                "431601030b8d37b8534bdad9c25898229a049268357b9d92d46d05772c8c8c0c",
+                "8dbd80a9d7983680203deef0ffceb9f1d0a8d6d6d7a4ac546f3bbc7d9ea8938c",
+                "34a93e3c5f2ecbdfdc0d21333d963683529dd46079e24397927aea9280ef16a8",
+                "abe89e9ed42266e0e8ac47a09db86c7eb02da43828b4b0d99b91f5a621b88f9c",
+                "b52e30d27a5a738c61869232bf0386121777eea25b089bd726f8b3df3af82b51",
+                "b7c6596dd9bbb7fa9fd40c05ea712ceb5139c1cab53d6f23030d8e70adbaef98",
+                "4cbe3502ff9436e85985daa2f13249ff60a9703864697d6f2c50fd468e2ed996",
+                "911ce2894c25c1ce5dca4e5692ea9785ddea68e563b4ce6a5aef2ef672109d3e",
+                "05ec49682e08c32365452e079be139f516e7aec2c9ed0ccf0d203a85d6a11363",
+                "7d97b2de3b4b09d6960a852a1bcfd22a1ed23acb4f01a1d26e87f1c3c3d99569",
+                "71600774a8f65de3c66f4d50b118d1e30ea5f5aed5f31d78cc0fc47503923b58",
+                "558e18292c585364ac324dcbd9c3b9fffef49316909a16d422a8fd9e92779e0e",
+                "715ec5252577a2461815af40b9e6767ee495dc495c9a5e59baad64121283cff6",
+                "9541ccfe34ee972b70ee34189b56a778b0b694cd7c0009f37ad0d0fbe51c925b",
+                "dbb00007f26d3dea2c2117057b8b4827575effe963f40cdace3a28097c8736ba",
+                "13957da0e9265ca731ee6ffd86ab384023e9137723a1fd3b0ed9bff307c51999",
+                "ce9df8271b36fee1136503c36059554cba99e58c0966cca61441c1e0162b5bd5",
+                "89cadf1b3e3a4ae0f2e324e87b3da1b380bebe374606b20a177e1dc809085f9c",
+                "5c00fdb29eccce2e82b74b43dd36bbbda3887d4ca9547497090b69659c092d32",
+                "10cb40b3d391c915a3ef63591cfff46de5e3481f720ae2626a3291f7fc100ced",
+                "ed74685fc8d13780fce024f19df614c5f57e6154e90718c46885edab55ca8d1c"
+              ],
+              "explanation": "All assembled occurrence pairs checked, with only independently validated planar contacts"
+            },
+            {
+              "constraint_id": "tool_access",
+              "label": "tool_access",
+              "result": "not_applicable",
+              "mandatory": false,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Deferred to independent state-aware plan replay and reverse validation"
+            }
+          ],
+          "path_certificates": [],
+          "unverified_properties": [
+            "Structural strength and fatigue",
+            "Electrical safety",
+            "Manufacturing feasibility",
+            "Restored product function",
+            "Complete replacement requires separate state-aware plan replay and inverse sequence certificates"
+          ],
+          "scope": "Static candidate constraints only; tools, removal and insertion must be checked by the planner"
+        },
+        "static_ms": 2157.6606249436736,
+        "plan": {
+          "id": "ad0287e5ee78cfae810f3f2fee83bf3eb7bc401f423176e256376a4315ed3f9e",
+          "status": "no_path_supported",
+          "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+          "original_revision_id": "57f436068519f0e308fb277c85c220d7efeedfd62acfc92c4bd4584eb6a29690",
+          "modified_occurrence_ids": [
+            "bridge"
+          ],
+          "target_id": "target",
+          "input_hash": "098d3bb307749f1613cfbe20eea1df3fff45da3b56d5f2b805d054532910a487",
+          "geometry_hash": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+          "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+          "comparison_hash": "baaca9eced804959af3b5e8cec6afbb5dabdbf36e5688241a9a3cac7d153ae3e",
+          "policy_version": "policy_v1",
+          "search_policy": {
+            "version": "planner_v1",
+            "max_expanded_states": 4096,
+            "max_seconds": 30.0,
+            "clearance_mm": 0.5,
+            "endpoint_rule": "explicit_path_else_nearest_stage_interior_v1",
+            "objective": [
+              "unrelated_parts",
+              "fasteners",
+              "tool_changes",
+              "operations"
+            ]
+          },
+          "complete": true,
+          "optimal_within_scope": false,
+          "expanded_states": 2,
+          "elapsed_ms": 867.684124968946,
+          "limits": {
+            "version": "planner_v1",
+            "max_expanded_states": 4096,
+            "max_seconds": 30.0,
+            "clearance_mm": 0.5,
+            "endpoint_rule": "explicit_path_else_nearest_stage_interior_v1",
+            "objective": [
+              "unrelated_parts",
+              "fasteners",
+              "tool_changes",
+              "operations"
+            ]
+          },
+          "unresolved_transition_count": 0,
+          "steps": [],
+          "rejections": [
+            {
+              "id": "59b64bffbb1bc088796d1cd1fc7b2fe1aa851c6b899cbb164a3c8cda15c362ac",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "base",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "board",
+                "bridge",
+                "cover",
+                "screw1",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "05f58e63ee386bb99e0e94d25606cb46536712d2a0a1ae51b5a4e789ccb7acd2",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "board",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "bridge",
+                "cover",
+                "screw1",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "a68e558ef07c5cae6257d985f127d14db9df0ec6519e8c264c43530bc65f18e7",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "bridge",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "cover",
+                "screw1",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "6cddbe106ce13fe37dae8a3f9c65c5eaca87b1b00bcde46b7ee43a01ce6b292f",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw1",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "cover",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "no supported reusable screw annotation",
+              "category": "UNSUPPORTED_OPERATION",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "46296b9b80b1d5b91ffdaf7d2b319e4e44a939fc183af5010c4b8f81747e4a46",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw2",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "cover",
+                "screw1",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "no supported reusable screw annotation",
+              "category": "UNSUPPORTED_OPERATION",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "aac121e69d11de164cc6118dbf9512d471d7a8f7f6bf0739010486a0394f832d",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "spacer",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "cover",
+                "screw1",
+                "screw2",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "48bf84a08a8a0292ac64f084acbaf20a5b5375107cce14920ae3b5d56eacca26",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "removed_ids": [],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "target",
+                "axis": "Z+",
+                "distance_mm": 80.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "cover",
+                "screw1",
+                "screw2",
+                "spacer"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "Completed BRep common contains positive material volume",
+              "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+              "geometry_evidence_level": "actual_brep_witness",
+              "witness_certificate_ids": [
+                "05b8d1882d3de02178f1630901137aaf0527489707c5481c8b4d8c6dcab53334"
+              ],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "6a16117cf572f5d0ff9a2e984eb2a40d38d8a0ae7ba15a658a50b5f2f470ac72",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "base",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "board",
+                "bridge",
+                "screw1",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "e0cd1e3d2322ec027fe713ba6e4efdc8a0c938b47e0a6d23c7e6474c339bd5b6",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "board",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "bridge",
+                "screw1",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "03d753b5816fdc96e4fb44673c484bbc0261c1f4abb13879cf1c5be45ff208cc",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "bridge",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "screw1",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "237363646b79db2ff706bd0ea3fbda354539db380cc8cefdd9bbb0769e1e2e81",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw1",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "screw2",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "no supported reusable screw annotation",
+              "category": "UNSUPPORTED_OPERATION",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "1c6578a34e4cf7e0fdeff99d606b1a92a7923e4120ced1b4d4f7cf530010507b",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw2",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "screw1",
+                "spacer",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "no supported reusable screw annotation",
+              "category": "UNSUPPORTED_OPERATION",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "c62ba7bef03c5ecd5bf19df85c5dbd5b588c23bca9ea98ad159cd58f3d086686",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "spacer",
+                "axis": "Z+",
+                "distance_mm": 1.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "screw1",
+                "screw2",
+                "target"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "fixed occurrence",
+              "category": "SEMANTICALLY_BLOCKED",
+              "geometry_evidence_level": "semantic",
+              "witness_certificate_ids": [],
+              "policy_version": "policy_v1"
+            },
+            {
+              "id": "6f485c45b58b9ab6831629eb00b592ccb4cf23b6291e99d9588724e38b48d028",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "removed_ids": [
+                "cover"
+              ],
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "target",
+                "axis": "Z+",
+                "distance_mm": 80.0,
+                "tool_id": null
+              },
+              "remaining_obstacle_ids": [
+                "base",
+                "board",
+                "bridge",
+                "screw1",
+                "screw2",
+                "spacer"
+              ],
+              "constraint_ids": [
+                "target_path"
+              ],
+              "reason": "Completed BRep common contains positive material volume",
+              "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+              "geometry_evidence_level": "actual_brep_witness",
+              "witness_certificate_ids": [
+                "abd040577a80cbb05a4e59b734d7b928894cc02b1e5935bd53a8cb936cc93b0e"
+              ],
+              "policy_version": "policy_v1"
+            }
+          ],
+          "certificates": [
+            {
+              "id": "05b8d1882d3de02178f1630901137aaf0527489707c5481c8b4d8c6dcab53334",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "input_hash": "098d3bb307749f1613cfbe20eea1df3fff45da3b56d5f2b805d054532910a487",
+              "geometry_hash": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+              "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+              "tool_hash": "f1e79f5a2486156b2f84d4fe60c025bc609d3b03789dd13fa4d6ddd059446ee6",
+              "policy_hash": "79d6192e9d1dae37a13e049f3b9465367ff27fc421af7c916d182546dc43e624",
+              "before_state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "target",
+                "axis": "Z+",
+                "distance_mm": 80.0,
+                "tool_id": null
+              },
+              "mode": "removal",
+              "status": "blocked",
+              "paths": [
+                {
+                  "id": "c31214892d89593f7296987704e944e6283a30a67c7da59e52fcd825ec761960",
+                  "moving_occurrence": "target",
+                  "axis": "Z+",
+                  "distance_mm": 80.0,
+                  "status": "blocked",
+                  "policy_version": "policy_v1",
+                  "geometry_hash": "34026aded41cd86ec9230732e2623fb11d807de78d911ca13122dfa370962922",
+                  "input_hash": "527423b704ab5710a180e133a6e0950743b98043274fbebc15e7b6a003029f54",
+                  "clearance_mm": 0.5,
+                  "representation": "server_validated_world_aabb_union",
+                  "coverage_established": true,
+                  "findings": [
+                    {
+                      "status": "blocked",
+                      "kind": "positive_volume_intersection",
+                      "component_ids": [
+                        "target",
+                        "bridge"
+                      ],
+                      "explanation": "Completed BRep common contains positive material volume",
+                      "distance_mm": null,
+                      "intersection_volume_mm3": 351.99999999999994,
+                      "witness_mm": [
+                        0.8181818181818185,
+                        -18.363636363636363,
+                        35.99999999999999
+                      ],
+                      "witness_travel_mm": 13.0
+                    }
+                  ],
+                  "contact_exemptions": [],
+                  "clearance_lower_bound_mm": null,
+                  "explanation": "A BRep obstruction or insufficient-clearance witness rejects this segment"
+                }
+              ],
+              "subchecks": [
+                "continuous_translation"
+              ],
+              "assumptions": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry"
+            },
+            {
+              "id": "abd040577a80cbb05a4e59b734d7b928894cc02b1e5935bd53a8cb936cc93b0e",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "input_hash": "098d3bb307749f1613cfbe20eea1df3fff45da3b56d5f2b805d054532910a487",
+              "geometry_hash": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+              "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+              "tool_hash": "f1e79f5a2486156b2f84d4fe60c025bc609d3b03789dd13fa4d6ddd059446ee6",
+              "policy_hash": "79d6192e9d1dae37a13e049f3b9465367ff27fc421af7c916d182546dc43e624",
+              "before_state_hash": "de2190a55fd6f2fe8c1a3eb18821d6258f00fb77715c0dcb692890153926fd13",
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "target",
+                "axis": "Z+",
+                "distance_mm": 80.0,
+                "tool_id": null
+              },
+              "mode": "removal",
+              "status": "blocked",
+              "paths": [
+                {
+                  "id": "fccbb4dac7de597ecffc530e8b5f80f9ed04a243bfe66408c48aef48076311f8",
+                  "moving_occurrence": "target",
+                  "axis": "Z+",
+                  "distance_mm": 80.0,
+                  "status": "blocked",
+                  "policy_version": "policy_v1",
+                  "geometry_hash": "34026aded41cd86ec9230732e2623fb11d807de78d911ca13122dfa370962922",
+                  "input_hash": "572131c832b5c7f284d5169f34a3518c5418c9fe730873635c72ef07149957b9",
+                  "clearance_mm": 0.5,
+                  "representation": "server_validated_world_aabb_union",
+                  "coverage_established": true,
+                  "findings": [
+                    {
+                      "status": "blocked",
+                      "kind": "positive_volume_intersection",
+                      "component_ids": [
+                        "target",
+                        "bridge"
+                      ],
+                      "explanation": "Completed BRep common contains positive material volume",
+                      "distance_mm": null,
+                      "intersection_volume_mm3": 351.99999999999994,
+                      "witness_mm": [
+                        0.8181818181818185,
+                        -18.363636363636363,
+                        35.99999999999999
+                      ],
+                      "witness_travel_mm": 13.0
+                    }
+                  ],
+                  "contact_exemptions": [],
+                  "clearance_lower_bound_mm": null,
+                  "explanation": "A BRep obstruction or insufficient-clearance witness rejects this segment"
+                }
+              ],
+              "subchecks": [
+                "continuous_translation"
+              ],
+              "assumptions": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry"
+            },
+            {
+              "id": "d9c31841b437c60d2be46f4c444491b63130f3be635b816efd2a4383a639fd86",
+              "revision_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+              "input_hash": "098d3bb307749f1613cfbe20eea1df3fff45da3b56d5f2b805d054532910a487",
+              "geometry_hash": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+              "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+              "tool_hash": "f1e79f5a2486156b2f84d4fe60c025bc609d3b03789dd13fa4d6ddd059446ee6",
+              "policy_hash": "79d6192e9d1dae37a13e049f3b9465367ff27fc421af7c916d182546dc43e624",
+              "before_state_hash": "836a8bb680c0f98c893eddc1f5c095766ab0f64b9f97ecb285600d7aa7f01f70",
+              "action": {
+                "kind": "TRANSLATE_PART",
+                "component_id": "cover",
+                "axis": "Z+",
+                "distance_mm": 50.019999999999996,
+                "tool_id": null
+              },
+              "mode": "removal",
+              "status": "clear",
+              "paths": [
+                {
+                  "id": "68d31b65bf7e1e1f43cce54f2071b8d5f12f864c4862395b4936732367f38a40",
+                  "moving_occurrence": "cover",
+                  "axis": "Z+",
+                  "distance_mm": 50.019999999999996,
+                  "status": "clear",
+                  "policy_version": "policy_v1",
+                  "geometry_hash": "691f8b48e655f57d87fdf74469cff0af22d45c70219c59440f7237565c351c04",
+                  "input_hash": "fb29009ec02650714bd0ec1f995db7db6ba193d4ad89000d24ef4074b6d4ddd0",
+                  "clearance_mm": 0.5,
+                  "representation": "server_validated_world_aabb_union",
+                  "coverage_established": true,
+                  "findings": [],
+                  "contact_exemptions": [],
+                  "clearance_lower_bound_mm": 0.5,
+                  "explanation": "All nonexempt material proxy pairs remain separated for the entire analytic segment; contact pairs separate in opposing half spaces"
+                }
+              ],
+              "subchecks": [
+                "continuous_translation"
+              ],
+              "assumptions": "Rigid original placements; reusable screw rotation and torque abstracted; identical replacement geometry"
+            }
+          ],
+          "metrics": null,
+          "stats": {
+            "generated_actions": 15,
+            "admitted_transitions": 1,
+            "rejected_transitions": 14,
+            "unknown_transitions": 0,
+            "cache_hits": 0,
+            "cache_misses": 3,
+            "geometry_validation_calls": 3,
+            "peak_frontier": 1,
+            "frontier_size": 0,
+            "frontier_status": "exhausted",
+            "termination": "frontier_exhausted"
+          },
+          "replay": {
+            "status": "not_run",
+            "explanation": "No checked goal route",
+            "checked_steps": 0,
+            "certificates": [],
+            "final_removed_ids": [],
+            "geometric_insertion": "not_run",
+            "fastener_reinsertion": "not_run",
+            "tool_access": "not_run",
+            "connection_restoration": "not_run",
+            "elapsed_ms": 0.0
+          },
+          "reverse": {
+            "status": "not_run",
+            "explanation": "No checked goal route",
+            "checked_steps": 0,
+            "certificates": [],
+            "final_removed_ids": [],
+            "geometric_insertion": "not_run",
+            "fastener_reinsertion": "not_run",
+            "tool_access": "not_run",
+            "connection_restoration": "not_run",
+            "elapsed_ms": 0.0
+          },
+          "constraint_checks": [],
+          "static_verification_id": "d511aa372377afc1f3f4ba0d915518a8c3179691fb8f00ef60b0b5799a39dd51",
+          "static_checks": [
+            {
+              "constraint_id": "integrity",
+              "label": "integrity",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Revision, geometry, policy, parameters and full constraint metadata must match recorded hashes"
+            },
+            {
+              "constraint_id": "solid_validity",
+              "label": "solid_validity",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Every occurrence remains one valid closed positive-volume solid"
+            },
+            {
+              "constraint_id": "trusted_reconstruction",
+              "label": "trusted_reconstruction",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Independently regenerated trusted solid compared by two-way BRep material difference"
+            },
+            {
+              "constraint_id": "actual_change",
+              "label": "actual_change",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": 768.0,
+              "limit": "> 1e-9 mm3",
+              "units": "mm3",
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Actual two-way material difference"
+            },
+            {
+              "constraint_id": "editable_region",
+              "label": "editable_region",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": 0.0,
+              "limit": "",
+              "units": "mm3",
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Actual removed material must be wholly inside engineer-declared world editable region"
+            },
+            {
+              "constraint_id": "protected_interfaces",
+              "label": "protected_interfaces",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Complete feet and post selectors include hole voids; material added into protected holes also fails"
+            },
+            {
+              "constraint_id": "hole_geometry",
+              "label": "hole_geometry",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Actual cylindrical hole surfaces and complete surrounding protected regions agree"
+            },
+            {
+              "constraint_id": "fixed_components",
+              "label": "fixed_components",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Every unedited occurrence compared independently, including repeated shared-definition instances"
+            },
+            {
+              "constraint_id": "placements",
+              "label": "placements",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "STEP world placements must match the original occurrences exactly"
+            },
+            {
+              "constraint_id": "design_envelope",
+              "label": "design_envelope",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "All revised assembled solids must remain inside declared envelope with numerical guard"
+            },
+            {
+              "constraint_id": "keep_outs",
+              "label": "keep_outs",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Every assembled solid checked against each declared keep-out"
+            },
+            {
+              "constraint_id": "assembled_intersections",
+              "label": "assembled_intersections",
+              "result": "pass",
+              "mandatory": true,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [
+                "c3264c8b541230076cb24d3d90317c91cb74571498cd17f77a3b73fe18b69404",
+                "668cbb2609036883215f27eb0f786d9626b15713486ad55c91404bef761cfaa2",
+                "0c54e00c786ec696879fac5a21bd4da2d21d2a664b30c0268ad57b0804b2ee0e",
+                "e59f785ef2b08bb952cc4b31939434206ebb5838aae21d4f1ed2eaf4f52228ad",
+                "90d1f732e7fc053dcb6bb70e9b272bcaedd82ab2003e4c48d00cc73676dc7022",
+                "4e7194e0f1c68dd5b4b42da61e17eff7de22119b616e738c76e80c5960a7f171",
+                "aabdedc7527d7ebe7bc413c1c3a3df0230f8c6ecdfd318371ea32ba6551db90d",
+                "431601030b8d37b8534bdad9c25898229a049268357b9d92d46d05772c8c8c0c",
+                "8dbd80a9d7983680203deef0ffceb9f1d0a8d6d6d7a4ac546f3bbc7d9ea8938c",
+                "34a93e3c5f2ecbdfdc0d21333d963683529dd46079e24397927aea9280ef16a8",
+                "abe89e9ed42266e0e8ac47a09db86c7eb02da43828b4b0d99b91f5a621b88f9c",
+                "b52e30d27a5a738c61869232bf0386121777eea25b089bd726f8b3df3af82b51",
+                "b7c6596dd9bbb7fa9fd40c05ea712ceb5139c1cab53d6f23030d8e70adbaef98",
+                "4cbe3502ff9436e85985daa2f13249ff60a9703864697d6f2c50fd468e2ed996",
+                "911ce2894c25c1ce5dca4e5692ea9785ddea68e563b4ce6a5aef2ef672109d3e",
+                "05ec49682e08c32365452e079be139f516e7aec2c9ed0ccf0d203a85d6a11363",
+                "7d97b2de3b4b09d6960a852a1bcfd22a1ed23acb4f01a1d26e87f1c3c3d99569",
+                "71600774a8f65de3c66f4d50b118d1e30ea5f5aed5f31d78cc0fc47503923b58",
+                "558e18292c585364ac324dcbd9c3b9fffef49316909a16d422a8fd9e92779e0e",
+                "715ec5252577a2461815af40b9e6767ee495dc495c9a5e59baad64121283cff6",
+                "9541ccfe34ee972b70ee34189b56a778b0b694cd7c0009f37ad0d0fbe51c925b",
+                "dbb00007f26d3dea2c2117057b8b4827575effe963f40cdace3a28097c8736ba",
+                "13957da0e9265ca731ee6ffd86ab384023e9137723a1fd3b0ed9bff307c51999",
+                "ce9df8271b36fee1136503c36059554cba99e58c0966cca61441c1e0162b5bd5",
+                "89cadf1b3e3a4ae0f2e324e87b3da1b380bebe374606b20a177e1dc809085f9c",
+                "5c00fdb29eccce2e82b74b43dd36bbbda3887d4ca9547497090b69659c092d32",
+                "10cb40b3d391c915a3ef63591cfff46de5e3481f720ae2626a3291f7fc100ced",
+                "ed74685fc8d13780fce024f19df614c5f57e6154e90718c46885edab55ca8d1c"
+              ],
+              "explanation": "All assembled occurrence pairs checked, with only independently validated planar contacts"
+            },
+            {
+              "constraint_id": "tool_access",
+              "label": "tool_access",
+              "result": "not_applicable",
+              "mandatory": false,
+              "measured_value": null,
+              "limit": "",
+              "units": null,
+              "component_ids": [],
+              "evidence_ids": [],
+              "explanation": "Deferred to independent state-aware plan replay and reverse validation"
+            }
+          ],
+          "replacement_verified": false,
+          "error": null,
+          "provenance": "computed",
+          "scope": "Finite rigid axis translations and annotated reusable screws; no physical repair or manufacturing certification"
+        },
+        "wall_ms": 8537.455042125657
+      }
+    },
+    "handle_index": {
+      "plan_72118c9d3133": {
+        "kind": "plan",
+        "id": "e058fd89f17592d2d1e17b06fd4726c526897ed61edd113ca328bcfcbc3de0ff"
+      },
+      "cand_42d468824640": {
+        "kind": "candidate",
+        "id": "22c41692c8b09e7333a180c9a07a0dfd1d2286e12c865ac960e840c4cc047da7"
+      },
+      "ev_f458b736ae02": {
+        "kind": "tool_result",
+        "id": "24ae0449722d41335983f926c4735c04a235d09353bc69c96fcdd28dcfe4a390"
+      },
+      "ver_3d29badb8620": {
+        "kind": "verification",
+        "id": "d511aa372377afc1f3f4ba0d915518a8c3179691fb8f00ef60b0b5799a39dd51"
+      },
+      "plan_eb2804637854": {
+        "kind": "plan",
+        "id": "ad0287e5ee78cfae810f3f2fee83bf3eb7bc401f423176e256376a4315ed3f9e"
+      },
+      "rej_e4bc3a096e84": {
+        "kind": "rejection",
+        "id": "48bf84a08a8a0292ac64f084acbaf20a5b5375107cce14920ae3b5d56eacca26"
+      },
+      "rej_5c40458df986": {
+        "kind": "rejection",
+        "id": "6f485c45b58b9ab6831629eb00b592ccb4cf23b6291e99d9588724e38b48d028"
+      },
+      "rej_8ed9e1c9a4b2": {
+        "kind": "rejection",
+        "id": "59b64bffbb1bc088796d1cd1fc7b2fe1aa851c6b899cbb164a3c8cda15c362ac"
+      },
+      "rej_5c479b48d9db": {
+        "kind": "rejection",
+        "id": "05f58e63ee386bb99e0e94d25606cb46536712d2a0a1ae51b5a4e789ccb7acd2"
+      },
+      "rej_c806e4b8d6f0": {
+        "kind": "rejection",
+        "id": "a68e558ef07c5cae6257d985f127d14db9df0ec6519e8c264c43530bc65f18e7"
+      },
+      "rej_4d51acf3b939": {
+        "kind": "rejection",
+        "id": "6cddbe106ce13fe37dae8a3f9c65c5eaca87b1b00bcde46b7ee43a01ce6b292f"
+      },
+      "rej_981b780564ef": {
+        "kind": "rejection",
+        "id": "46296b9b80b1d5b91ffdaf7d2b319e4e44a939fc183af5010c4b8f81747e4a46"
+      },
+      "rej_cfa54790222e": {
+        "kind": "rejection",
+        "id": "aac121e69d11de164cc6118dbf9512d471d7a8f7f6bf0739010486a0394f832d"
+      },
+      "rej_3939a0eca6e1": {
+        "kind": "rejection",
+        "id": "6a16117cf572f5d0ff9a2e984eb2a40d38d8a0ae7ba15a658a50b5f2f470ac72"
+      },
+      "rej_4787cfeb5ca2": {
+        "kind": "rejection",
+        "id": "e0cd1e3d2322ec027fe713ba6e4efdc8a0c938b47e0a6d23c7e6474c339bd5b6"
+      },
+      "rej_8ed4ee427da0": {
+        "kind": "rejection",
+        "id": "03d753b5816fdc96e4fb44673c484bbc0261c1f4abb13879cf1c5be45ff208cc"
+      },
+      "rej_84af54db0bf8": {
+        "kind": "rejection",
+        "id": "237363646b79db2ff706bd0ea3fbda354539db380cc8cefdd9bbb0769e1e2e81"
+      },
+      "rej_34ebe40d12b0": {
+        "kind": "rejection",
+        "id": "1c6578a34e4cf7e0fdeff99d606b1a92a7923e4120ced1b4d4f7cf530010507b"
+      },
+      "rej_6b267562ce7e": {
+        "kind": "rejection",
+        "id": "c62ba7bef03c5ecd5bf19df85c5dbd5b588c23bca9ea98ad159cd58f3d086686"
+      },
+      "cand_0b5e517e36cd": {
+        "kind": "candidate",
+        "id": "1c9c37ff6b77ab08f99239831bda72f3e69a2ad71187b6f2a45798328909e859"
+      },
+      "cand_39bb3e15efca": {
+        "kind": "candidate",
+        "id": "1de20743e8bcdc9a2e2c963aa6fa3e9f0ecd5c160d1921760b9dcba1d1803429"
+      }
+    },
+    "tool_results": [
+      {
+        "tool": "construct_candidate",
+        "call_id": "det-0-construct",
+        "request_id": "det-0-c",
+        "status": "ok",
+        "evidence_id": "ev_f458b736ae02",
+        "input_hash": "4c338bbb2c0f985862ffc92962dca0b93499903b11223ddc3c9d174b96660a4c",
+        "policy_version": "policy_v1",
+        "payload": {
+          "candidate_id": "cand_42d468824640",
+          "final_stage": "CONSTRUCTED",
+          "modified_occurrence_id": "bridge",
+          "changed_volume_mm3": 768.0,
+          "geometry_hash": "85a8b0c8a2aa03f3",
+          "note": "constructed geometry is not a verified improvement; call verify_candidate"
+        },
+        "feedback": null,
+        "cached": false,
+        "duration_ms": 5530.5
+      },
+      {
+        "tool": "verify_candidate",
+        "call_id": "det-0-verify",
+        "request_id": "det-0-v",
+        "status": "failed",
+        "evidence_id": null,
+        "input_hash": "8755ba209fb097a554b11d3cdb2e907b6125cb3575cb46f9b7cc22e24fd06d15",
+        "policy_version": "planner_v1",
+        "payload": {
+          "candidate_id": "cand_42d468824640",
+          "final_stage": "REJECTED",
+          "verification_id": "ver_3d29badb8620",
+          "static_status": "passed",
+          "checks_total": 13,
+          "checks_passed": 12,
+          "failed": [],
+          "unknown": [],
+          "unverified_properties": [
+            "Structural strength and fatigue",
+            "Electrical safety",
+            "Manufacturing feasibility",
+            "Restored product function",
+            "Complete replacement requires separate state-aware plan replay and inverse sequence certificates"
+          ],
+          "static_ms": 2157.6606,
+          "revised_plan": {
+            "plan_id": "plan_eb2804637854",
+            "status": "no_path_supported",
+            "complete": true,
+            "optimal_within_scope": false,
+            "expanded_states": 2,
+            "unresolved_transitions": 0,
+            "steps": [],
+            "metrics": null,
+            "replay": "not_run",
+            "reverse": "not_run",
+            "replacement_verified": false,
+            "constraint_checks": [],
+            "rejections": [
+              {
+                "rejection_id": "rej_e4bc3a096e84",
+                "kind": "TRANSLATE_PART",
+                "component_id": "target",
+                "axis": "Z+",
+                "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+                "evidence_level": "actual_brep_witness",
+                "obstacle_ids": [
+                  "base",
+                  "board",
+                  "bridge",
+                  "cover",
+                  "screw1",
+                  "screw2"
+                ],
+                "reason": "Completed BRep common contains positive material volume"
+              },
+              {
+                "rejection_id": "rej_5c40458df986",
+                "kind": "TRANSLATE_PART",
+                "component_id": "target",
+                "axis": "Z+",
+                "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+                "evidence_level": "actual_brep_witness",
+                "obstacle_ids": [
+                  "base",
+                  "board",
+                  "bridge",
+                  "screw1",
+                  "screw2",
+                  "spacer"
+                ],
+                "reason": "Completed BRep common contains positive material volume"
+              },
+              {
+                "rejection_id": "rej_8ed9e1c9a4b2",
+                "kind": "TRANSLATE_PART",
+                "component_id": "base",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_5c479b48d9db",
+                "kind": "TRANSLATE_PART",
+                "component_id": "board",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_c806e4b8d6f0",
+                "kind": "TRANSLATE_PART",
+                "component_id": "bridge",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_4d51acf3b939",
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw1",
+                "axis": "Z+",
+                "category": "UNSUPPORTED_OPERATION",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "no supported reusable screw annotation"
+              },
+              {
+                "rejection_id": "rej_981b780564ef",
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw2",
+                "axis": "Z+",
+                "category": "UNSUPPORTED_OPERATION",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "no supported reusable screw annotation"
+              },
+              {
+                "rejection_id": "rej_cfa54790222e",
+                "kind": "TRANSLATE_PART",
+                "component_id": "spacer",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_3939a0eca6e1",
+                "kind": "TRANSLATE_PART",
+                "component_id": "base",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_4787cfeb5ca2",
+                "kind": "TRANSLATE_PART",
+                "component_id": "board",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_8ed4ee427da0",
+                "kind": "TRANSLATE_PART",
+                "component_id": "bridge",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              },
+              {
+                "rejection_id": "rej_84af54db0bf8",
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw1",
+                "axis": "Z+",
+                "category": "UNSUPPORTED_OPERATION",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "no supported reusable screw annotation"
+              },
+              {
+                "rejection_id": "rej_34ebe40d12b0",
+                "kind": "REMOVE_FASTENER",
+                "component_id": "screw2",
+                "axis": "Z+",
+                "category": "UNSUPPORTED_OPERATION",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "no supported reusable screw annotation"
+              },
+              {
+                "rejection_id": "rej_6b267562ce7e",
+                "kind": "TRANSLATE_PART",
+                "component_id": "spacer",
+                "axis": "Z+",
+                "category": "SEMANTICALLY_BLOCKED",
+                "evidence_level": "semantic",
+                "obstacle_ids": [],
+                "reason": "fixed occurrence"
+              }
+            ],
+            "rejections_total": 14,
+            "error": null,
+            "scope": "Finite rigid axis translations and annotated reusable screws; no physical repair or manufacturing certification"
+          }
+        },
+        "feedback": {
+          "category": "NO_REPAIR_PATH",
+          "message": "revised design still has no supported removal route: target Z+ CONFIRMED_GEOMETRIC_OBSTRUCTION",
+          "candidate_id": "cand_42d468824640",
+          "constraint_id": null,
+          "parameter": null,
+          "measured": {
+            "obstacles": [
+              "base",
+              "board",
+              "bridge",
+              "cover"
+            ],
+            "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION"
+          },
+          "allowed": null,
+          "evidence_id": "plan_eb2804637854",
+          "retry_permitted": true
+        },
+        "cached": false,
+        "duration_ms": 8540.8
+      },
+      {
+        "tool": "construct_candidate",
+        "call_id": "det-1-construct",
+        "request_id": "det-1-c",
+        "status": "failed",
+        "evidence_id": null,
+        "input_hash": "04d19195906aced5d12b42613ca005259999df630095753703a5b90b1eadd27d",
+        "policy_version": "policy_v1",
+        "payload": {
+          "candidate_id": "cand_0b5e517e36cd",
+          "final_stage": "REJECTED"
+        },
+        "feedback": {
+          "category": "CONSTRUCTION_FAILED",
+          "message": "CONSTRAINT_VIOLATION: minimum remaining web violated",
+          "candidate_id": "cand_0b5e517e36cd",
+          "constraint_id": "template_bound.minimum_web_mm",
+          "parameter": "depth_mm",
+          "measured": {
+            "remaining_web_mm": 4.0,
+            "side": "y_min",
+            "source": "parameter arithmetic, constructor v1 local frame"
+          },
+          "allowed": {
+            "minimum_web_mm": 6.0
+          },
+          "evidence_id": null,
+          "retry_permitted": true
+        },
+        "cached": false,
+        "duration_ms": 3161.1
+      },
+      {
+        "tool": "construct_candidate",
+        "call_id": "det-2-construct",
+        "request_id": "det-2-c",
+        "status": "failed",
+        "evidence_id": null,
+        "input_hash": "49e9fee3056c7f011d8226a63ddcef9330cb8d4f405bd9dc78f2088b8492ed17",
+        "policy_version": "policy_v1",
+        "payload": {
+          "candidate_id": "cand_39bb3e15efca",
+          "final_stage": "REJECTED"
+        },
+        "feedback": {
+          "category": "CONSTRUCTION_FAILED",
+          "message": "CONSTRAINT_VIOLATION: minimum remaining web violated",
+          "candidate_id": "cand_39bb3e15efca",
+          "constraint_id": "template_bound.minimum_web_mm",
+          "parameter": "depth_mm",
+          "measured": {
+            "remaining_web_mm": 2.0,
+            "side": "y_min",
+            "source": "parameter arithmetic, constructor v1 local frame"
+          },
+          "allowed": {
+            "minimum_web_mm": 6.0
+          },
+          "evidence_id": null,
+          "retry_permitted": false
+        },
+        "cached": false,
+        "duration_ms": 3772.5
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "handle": "cand_42d468824640",
+      "attempt": 1,
+      "origin": "deterministic:stable_enumeration",
+      "request_id": "det-0-c",
+      "proposal": {
+        "candidate_request_id": "det-0",
+        "bracket_id": "bridge",
+        "template_id": "T01",
+        "parameters": {
+          "center_x_mm": -4.0,
+          "center_y_mm": -24.0,
+          "width_mm": 24.0,
+          "depth_mm": 8.0
+        },
+        "evidence_ids": [
+          "plan_72118c9d3133"
+        ],
+        "rationale": "stable_enumeration order position 0"
+      },
+      "final_stage": "REJECTED",
+      "stages": [
+        {
+          "stage": "PROPOSED",
+          "at_s": 9.259,
+          "detail": "schema-valid proposal within the server domain"
+        },
+        {
+          "stage": "CONSTRUCTED",
+          "at_s": 14.786,
+          "detail": "trusted constructor produced a valid solid; not yet verified"
+        },
+        {
+          "stage": "REJECTED",
+          "at_s": 23.33,
+          "detail": "revised design still has no supported removal route: target Z+ CONFIRMED_GEOMETRIC_OBSTRUCTION"
+        }
+      ],
+      "candidate_id": "925ae4bbc4619b9a8a64d921888b05d2c6fb7e5f335c4b6c7f68a0fdf23aad29",
+      "construction": {
+        "ok": true,
+        "geometry_hash": "85a8b0c8a2aa03f3e2179cd376cc336f3948a7aa5c0ece85e8adc97a1aec4a7d",
+        "modified_occurrence_id": "bridge",
+        "changed_volume_mm3": 768.0,
+        "constraint_hash": "6ae089e659619419573c82d43ba378fadfda034ffa9851bc2162e04385167bb4",
+        "template_version": "1",
+        "construct_ms": 1294.883541064337
+      },
+      "verification": {
+        "verification_id": "ver_3d29badb8620",
+        "static_status": "passed",
+        "checks_total": 13,
+        "checks_passed": 12,
+        "failed": [],
+        "unknown": [],
+        "unverified_properties": [
+          "Structural strength and fatigue",
+          "Electrical safety",
+          "Manufacturing feasibility",
+          "Restored product function",
+          "Complete replacement requires separate state-aware plan replay and inverse sequence certificates"
+        ],
+        "static_ms": 2157.6606249436736
+      },
+      "revised_plan": {
+        "plan_id": "ad0287e5ee78cfae810f3f2fee83bf3eb7bc401f423176e256376a4315ed3f9e",
+        "status": "no_path_supported",
+        "complete": true,
+        "optimal_within_scope": false,
+        "expanded_states": 2,
+        "unresolved_transitions": 0,
+        "steps": [],
+        "metrics": null,
+        "replay": "not_run",
+        "reverse": "not_run",
+        "replacement_verified": false,
+        "constraint_checks": [],
+        "rejections": [
+          {
+            "rejection_id": "48bf84a08a8a0292ac64f084acbaf20a5b5375107cce14920ae3b5d56eacca26",
+            "kind": "TRANSLATE_PART",
+            "component_id": "target",
+            "axis": "Z+",
+            "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+            "evidence_level": "actual_brep_witness",
+            "obstacle_ids": [
+              "base",
+              "board",
+              "bridge",
+              "cover",
+              "screw1",
+              "screw2"
+            ],
+            "reason": "Completed BRep common contains positive material volume"
+          },
+          {
+            "rejection_id": "6f485c45b58b9ab6831629eb00b592ccb4cf23b6291e99d9588724e38b48d028",
+            "kind": "TRANSLATE_PART",
+            "component_id": "target",
+            "axis": "Z+",
+            "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION",
+            "evidence_level": "actual_brep_witness",
+            "obstacle_ids": [
+              "base",
+              "board",
+              "bridge",
+              "screw1",
+              "screw2",
+              "spacer"
+            ],
+            "reason": "Completed BRep common contains positive material volume"
+          },
+          {
+            "rejection_id": "59b64bffbb1bc088796d1cd1fc7b2fe1aa851c6b899cbb164a3c8cda15c362ac",
+            "kind": "TRANSLATE_PART",
+            "component_id": "base",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "05f58e63ee386bb99e0e94d25606cb46536712d2a0a1ae51b5a4e789ccb7acd2",
+            "kind": "TRANSLATE_PART",
+            "component_id": "board",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "a68e558ef07c5cae6257d985f127d14db9df0ec6519e8c264c43530bc65f18e7",
+            "kind": "TRANSLATE_PART",
+            "component_id": "bridge",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "6cddbe106ce13fe37dae8a3f9c65c5eaca87b1b00bcde46b7ee43a01ce6b292f",
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw1",
+            "axis": "Z+",
+            "category": "UNSUPPORTED_OPERATION",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "no supported reusable screw annotation"
+          },
+          {
+            "rejection_id": "46296b9b80b1d5b91ffdaf7d2b319e4e44a939fc183af5010c4b8f81747e4a46",
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw2",
+            "axis": "Z+",
+            "category": "UNSUPPORTED_OPERATION",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "no supported reusable screw annotation"
+          },
+          {
+            "rejection_id": "aac121e69d11de164cc6118dbf9512d471d7a8f7f6bf0739010486a0394f832d",
+            "kind": "TRANSLATE_PART",
+            "component_id": "spacer",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "6a16117cf572f5d0ff9a2e984eb2a40d38d8a0ae7ba15a658a50b5f2f470ac72",
+            "kind": "TRANSLATE_PART",
+            "component_id": "base",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "e0cd1e3d2322ec027fe713ba6e4efdc8a0c938b47e0a6d23c7e6474c339bd5b6",
+            "kind": "TRANSLATE_PART",
+            "component_id": "board",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "03d753b5816fdc96e4fb44673c484bbc0261c1f4abb13879cf1c5be45ff208cc",
+            "kind": "TRANSLATE_PART",
+            "component_id": "bridge",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          },
+          {
+            "rejection_id": "237363646b79db2ff706bd0ea3fbda354539db380cc8cefdd9bbb0769e1e2e81",
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw1",
+            "axis": "Z+",
+            "category": "UNSUPPORTED_OPERATION",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "no supported reusable screw annotation"
+          },
+          {
+            "rejection_id": "1c6578a34e4cf7e0fdeff99d606b1a92a7923e4120ced1b4d4f7cf530010507b",
+            "kind": "REMOVE_FASTENER",
+            "component_id": "screw2",
+            "axis": "Z+",
+            "category": "UNSUPPORTED_OPERATION",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "no supported reusable screw annotation"
+          },
+          {
+            "rejection_id": "c62ba7bef03c5ecd5bf19df85c5dbd5b588c23bca9ea98ad159cd58f3d086686",
+            "kind": "TRANSLATE_PART",
+            "component_id": "spacer",
+            "axis": "Z+",
+            "category": "SEMANTICALLY_BLOCKED",
+            "evidence_level": "semantic",
+            "obstacle_ids": [],
+            "reason": "fixed occurrence"
+          }
+        ],
+        "rejections_total": 14,
+        "error": null,
+        "scope": "Finite rigid axis translations and annotated reusable screws; no physical repair or manufacturing certification"
+      },
+      "comparison": {
+        "original_plan_id": "e058fd89f17592d2d1e17b06fd4726c526897ed61edd113ca328bcfcbc3de0ff",
+        "revised_plan_id": "ad0287e5ee78cfae810f3f2fee83bf3eb7bc401f423176e256376a4315ed3f9e",
+        "original_status": "no_path_supported",
+        "revised_status": "no_path_supported",
+        "original_metrics": null,
+        "revised_metrics": null,
+        "verified_improvement": false,
+        "explanation": "No verified improvement",
+        "comparison_scope": "proven_supported_optima",
+        "original_complete": true,
+        "revised_complete": true,
+        "revised_replacement_verified": false
+      },
+      "feedback": {
+        "category": "NO_REPAIR_PATH",
+        "message": "revised design still has no supported removal route: target Z+ CONFIRMED_GEOMETRIC_OBSTRUCTION",
+        "candidate_id": "cand_42d468824640",
+        "measured": {
+          "obstacles": [
+            "base",
+            "board",
+            "bridge",
+            "cover"
+          ],
+          "category": "CONFIRMED_GEOMETRIC_OBSTRUCTION"
+        },
+        "evidence_id": "plan_eb2804637854",
+        "retry_permitted": true
+      }
+    },
+    {
+      "handle": "cand_0b5e517e36cd",
+      "attempt": 2,
+      "origin": "deterministic:stable_enumeration",
+      "request_id": "det-1-c",
+      "proposal": {
+        "candidate_request_id": "det-1",
+        "bracket_id": "bridge",
+        "template_id": "T01",
+        "parameters": {
+          "center_x_mm": -4.0,
+          "center_y_mm": -24.0,
+          "width_mm": 24.0,
+          "depth_mm": 12.0
+        },
+        "evidence_ids": [
+          "plan_72118c9d3133"
+        ],
+        "rationale": "stable_enumeration order position 1"
+      },
+      "final_stage": "REJECTED",
+      "stages": [
+        {
+          "stage": "PROPOSED",
+          "at_s": 23.332,
+          "detail": "schema-valid proposal within the server domain"
+        },
+        {
+          "stage": "REJECTED",
+          "at_s": 26.492,
+          "detail": "constructor refused: minimum remaining web violated"
+        }
+      ],
+      "candidate_id": null,
+      "construction": {
+        "ok": false,
+        "error": {
+          "error_code": "CONSTRAINT_VIOLATION",
+          "message": "minimum remaining web violated",
+          "retryable": false,
+          "field_errors": [],
+          "evidence_ids": [],
+          "run_id": null
+        }
+      },
+      "verification": null,
+      "revised_plan": null,
+      "comparison": null,
+      "feedback": {
+        "category": "CONSTRUCTION_FAILED",
+        "message": "CONSTRAINT_VIOLATION: minimum remaining web violated",
+        "candidate_id": "cand_0b5e517e36cd",
+        "constraint_id": "template_bound.minimum_web_mm",
+        "parameter": "depth_mm",
+        "measured": {
+          "remaining_web_mm": 4.0,
+          "side": "y_min",
+          "source": "parameter arithmetic, constructor v1 local frame"
+        },
+        "allowed": {
+          "minimum_web_mm": 6.0
+        },
+        "retry_permitted": true
+      }
+    },
+    {
+      "handle": "cand_39bb3e15efca",
+      "attempt": 3,
+      "origin": "deterministic:stable_enumeration",
+      "request_id": "det-2-c",
+      "proposal": {
+        "candidate_request_id": "det-2",
+        "bracket_id": "bridge",
+        "template_id": "T01",
+        "parameters": {
+          "center_x_mm": -4.0,
+          "center_y_mm": -24.0,
+          "width_mm": 24.0,
+          "depth_mm": 16.0
+        },
+        "evidence_ids": [
+          "plan_72118c9d3133"
+        ],
+        "rationale": "stable_enumeration order position 2"
+      },
+      "final_stage": "REJECTED",
+      "stages": [
+        {
+          "stage": "PROPOSED",
+          "at_s": 26.494,
+          "detail": "schema-valid proposal within the server domain"
+        },
+        {
+          "stage": "REJECTED",
+          "at_s": 30.262,
+          "detail": "constructor refused: minimum remaining web violated"
+        }
+      ],
+      "candidate_id": null,
+      "construction": {
+        "ok": false,
+        "error": {
+          "error_code": "CONSTRAINT_VIOLATION",
+          "message": "minimum remaining web violated",
+          "retryable": false,
+          "field_errors": [],
+          "evidence_ids": [],
+          "run_id": null
+        }
+      },
+      "verification": null,
+      "revised_plan": null,
+      "comparison": null,
+      "feedback": {
+        "category": "CONSTRUCTION_FAILED",
+        "message": "CONSTRAINT_VIOLATION: minimum remaining web violated",
+        "candidate_id": "cand_39bb3e15efca",
+        "constraint_id": "template_bound.minimum_web_mm",
+        "parameter": "depth_mm",
+        "measured": {
+          "remaining_web_mm": 2.0,
+          "side": "y_min",
+          "source": "parameter arithmetic, constructor v1 local frame"
+        },
+        "allowed": {
+          "minimum_web_mm": 6.0
+        },
+        "retry_permitted": false
+      }
+    }
+  ],
+  "selected_candidate": null,
+  "final_model_message": null,
+  "events": [
+    {
+      "sequence": 1,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:57:35.650510+00:00",
+      "kind": "stage",
+      "stage_label": "Loading frozen revision and running baseline analysis",
+      "project_id": "fixture_B02",
+      "revision_id": null,
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "started",
+      "detail": null,
+      "retryable": null,
+      "request_id": null,
+      "tool": null,
+      "tool_call_id": null,
+      "arguments": null,
+      "evidence_ids": [],
+      "failure": null,
+      "cached": false,
+      "duration_ms": null,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    },
+    {
+      "sequence": 2,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:57:44.907654+00:00",
+      "kind": "stage",
+      "stage_label": "Baseline removal analysis",
+      "project_id": "fixture_B02",
+      "revision_id": "rev_57f436068519f0e3",
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "no_path_supported",
+      "detail": "complete=True expanded_states=2",
+      "retryable": null,
+      "request_id": null,
+      "tool": null,
+      "tool_call_id": null,
+      "arguments": null,
+      "evidence_ids": [
+        "plan_72118c9d3133"
+      ],
+      "failure": null,
+      "cached": false,
+      "duration_ms": 2628.0,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    },
+    {
+      "sequence": 3,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:57:50.439576+00:00",
+      "kind": "tool_call",
+      "stage_label": "construct_candidate",
+      "project_id": "fixture_B02",
+      "revision_id": "rev_57f436068519f0e3",
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "ok",
+      "detail": null,
+      "retryable": null,
+      "request_id": "det-0-c",
+      "tool": "construct_candidate",
+      "tool_call_id": "det-0-construct",
+      "arguments": {
+        "project_id": "fixture_B02",
+        "revision_id": "rev_57f436068519f0e3",
+        "target_id": "target",
+        "request_id": "det-0-c",
+        "proposal": {
+          "candidate_request_id": "det-0",
+          "evidence_ids": [
+            "plan_72118c9d3133"
+          ],
+          "rationale": "stable_enumeration order position 0",
+          "bracket_id": "bridge",
+          "template_id": "T01",
+          "parameters": {
+            "center_x_mm": -4.0,
+            "center_y_mm": -24.0,
+            "width_mm": 24.0,
+            "depth_mm": 8.0
+          }
+        }
+      },
+      "evidence_ids": [
+        "ev_f458b736ae02",
+        "cand_42d468824640"
+      ],
+      "failure": null,
+      "cached": false,
+      "duration_ms": 5530.5,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    },
+    {
+      "sequence": 4,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:57:58.981080+00:00",
+      "kind": "tool_call",
+      "stage_label": "verify_candidate",
+      "project_id": "fixture_B02",
+      "revision_id": "rev_57f436068519f0e3",
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "failed",
+      "detail": null,
+      "retryable": null,
+      "request_id": "det-0-v",
+      "tool": "verify_candidate",
+      "tool_call_id": "det-0-verify",
+      "arguments": {
+        "project_id": "fixture_B02",
+        "revision_id": "rev_57f436068519f0e3",
+        "target_id": "target",
+        "request_id": "det-0-v",
+        "candidate_id": "cand_42d468824640"
+      },
+      "evidence_ids": [
+        "cand_42d468824640"
+      ],
+      "failure": "NO_REPAIR_PATH",
+      "cached": false,
+      "duration_ms": 8540.8,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    },
+    {
+      "sequence": 5,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:58:02.142425+00:00",
+      "kind": "tool_call",
+      "stage_label": "construct_candidate",
+      "project_id": "fixture_B02",
+      "revision_id": "rev_57f436068519f0e3",
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "failed",
+      "detail": null,
+      "retryable": null,
+      "request_id": "det-1-c",
+      "tool": "construct_candidate",
+      "tool_call_id": "det-1-construct",
+      "arguments": {
+        "project_id": "fixture_B02",
+        "revision_id": "rev_57f436068519f0e3",
+        "target_id": "target",
+        "request_id": "det-1-c",
+        "proposal": {
+          "candidate_request_id": "det-1",
+          "evidence_ids": [
+            "plan_72118c9d3133"
+          ],
+          "rationale": "stable_enumeration order position 1",
+          "bracket_id": "bridge",
+          "template_id": "T01",
+          "parameters": {
+            "center_x_mm": -4.0,
+            "center_y_mm": -24.0,
+            "width_mm": 24.0,
+            "depth_mm": 12.0
+          }
+        }
+      },
+      "evidence_ids": [
+        "cand_0b5e517e36cd"
+      ],
+      "failure": "CONSTRUCTION_FAILED",
+      "cached": false,
+      "duration_ms": 3161.1,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    },
+    {
+      "sequence": 6,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:58:05.915185+00:00",
+      "kind": "tool_call",
+      "stage_label": "construct_candidate",
+      "project_id": "fixture_B02",
+      "revision_id": "rev_57f436068519f0e3",
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "failed",
+      "detail": null,
+      "retryable": null,
+      "request_id": "det-2-c",
+      "tool": "construct_candidate",
+      "tool_call_id": "det-2-construct",
+      "arguments": {
+        "project_id": "fixture_B02",
+        "revision_id": "rev_57f436068519f0e3",
+        "target_id": "target",
+        "request_id": "det-2-c",
+        "proposal": {
+          "candidate_request_id": "det-2",
+          "evidence_ids": [
+            "plan_72118c9d3133"
+          ],
+          "rationale": "stable_enumeration order position 2",
+          "bracket_id": "bridge",
+          "template_id": "T01",
+          "parameters": {
+            "center_x_mm": -4.0,
+            "center_y_mm": -24.0,
+            "width_mm": 24.0,
+            "depth_mm": 16.0
+          }
+        }
+      },
+      "evidence_ids": [
+        "cand_39bb3e15efca"
+      ],
+      "failure": "CONSTRUCTION_FAILED",
+      "cached": false,
+      "duration_ms": 3772.5,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    },
+    {
+      "sequence": 7,
+      "run_id": "run_fb1d73e4dbd24c3d",
+      "at": "2026-10-30T01:58:05.927993+00:00",
+      "kind": "final",
+      "stage_label": "Run complete",
+      "project_id": "fixture_B02",
+      "revision_id": "rev_57f436068519f0e3",
+      "model_id": null,
+      "provider": null,
+      "reasoning_effort": null,
+      "origin": "deterministic:stable_enumeration",
+      "status": "NO_VERIFIED_IMPROVEMENT",
+      "detail": "3 candidate(s) attempted; none passed verification and the improvement rule (candidate_budget).",
+      "retryable": null,
+      "request_id": null,
+      "tool": null,
+      "tool_call_id": null,
+      "arguments": null,
+      "evidence_ids": [],
+      "failure": null,
+      "cached": false,
+      "duration_ms": null,
+      "usage": null,
+      "tool_calls": null,
+      "note": null
+    }
+  ],
+  "usage": {
+    "provider_requests": 0,
+    "output_budget_used": 0,
+    "uncertain_output_tokens": 0,
+    "turns": 0,
+    "retries": 0,
+    "tool_calls": 4,
+    "rejected_calls": 3,
+    "schema_errors": 0,
+    "candidates_constructed": 3,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "cached_input_tokens": 0,
+    "reasoning_tokens": 0,
+    "usage_reported_turns": 0,
+    "model_latency_ms": 0.0,
+    "geometry_ms": 20989.71704323776,
+    "source": "none",
+    "cost": {
+      "estimated_usd": null,
+      "reason": "no price table configured"
+    }
+  },
+  "budget": {
+    "max_candidates": 3,
+    "max_tool_calls": 12,
+    "max_turns": 6,
+    "max_output_tokens": 16000,
+    "max_seconds": 120.0,
+    "max_schema_repairs": 1,
+    "per_turn_output_tokens": 4096
+  },
+  "timings": {
+    "total_s": 30.278,
+    "stage_a": {
+      "import_ms": 6623.267832910642,
+      "baseline_ms": 2628.0477498658
+    }
+  },
+  "limitations": [
+    "Structural strength and fatigue",
+    "Electrical safety",
+    "Manufacturing feasibility",
+    "Restored product function",
+    "Geometry checks cover the listed constraints, supported axis translations and annotated reusable screws only",
+    "A verified improvement is a design-review result, not engineering or manufacturing release approval"
+  ],
+  "generated_at": "2026-10-30T01:58:05.928662+00:00"
+}

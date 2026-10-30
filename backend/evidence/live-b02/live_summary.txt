@@ -1,0 +1,8 @@
+UNLOCK AI run run_983d811a0f174f9a  [live_model]
+  outcome     VERIFIED_IMPROVEMENT_FOUND  (stop: model_final)
+  why         cand_eaafba557ae0 (T01 {'center_x_mm': 0.0, 'center_y_mm': -20.0, 'depth_mm': 16.0, 'width_mm': 40.0}) passed independent verification and the planner comparison: Original: No feasible route under supported operations. Revised: Feasible supported route.
+  target      target  revision rev_93eb0bd14037cfc6
+  baseline    no_path_supported complete=True geometric blocks=[('target', 'Z+', 'CONFIRMED_GEOMETRIC_OBSTRUCTION'), ('target', 'Z+', 'CONFIRMED_GEOMETRIC_OBSTRUCTION')]
+  candidate 1 T01 {'center_x_mm': 0.0, 'center_y_mm': -20.0, 'depth_mm': 16.0, 'width_mm': 40.0} -> VERIFIED_IMPROVEMENT  revised=feasible reverse=passed metrics=[0, 0, 0, 1]
+  usage       turns=6 tool_calls=6 candidates=1 tokens in/out=28272/2850 cost=None total=48.147s
+  limits      Structural strength and fatigue; Electrical safety; Manufacturing feasibility; Restored product function
