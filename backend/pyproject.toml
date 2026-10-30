@@ -17,5 +17,8 @@ unlock-engine = "unlock_engine.cli:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-ra -m 'not meta_live'"
-markers = ["meta_live: explicitly enabled paid tests against direct Meta Model API"]
+addopts = "-ra -m 'not meta_live and not browser'"
+markers = [
+    "meta_live: explicitly enabled paid tests against direct Meta Model API",
+    "browser: real-service browser acceptance (starts servers and installed Chrome)",
+]
