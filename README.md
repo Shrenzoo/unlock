@@ -1512,5 +1512,3 @@ Issues and PRs welcome — particularly around new server-owned templates (finit
   <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
   <img src="https://img.shields.io/badge/decision%20space-12%20numbers-74787c?style=flat-square&labelColor=151719" alt="The model's entire decision space is twelve numbers" />
 </p>
-
----
