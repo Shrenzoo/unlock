@@ -371,6 +371,14 @@ flowchart LR
     style X fill:#1d2023,stroke:#4f5357,color:#7d8287
 ```
 
+### Why the boundary is worth its cost
+
+The instinct is to treat all this ceremony as overhead. It is worth seeing what it buys, because the alternative is not a slower version of the same thing — it is a different product.
+
+<p align="center">
+  <img src="assets/readme/counterfactual.svg" width="100%" alt="The same model proposal with and without a verification boundary" />
+</p>
+
 ### The four rules that give it teeth
 
 **1. Every proposal must cite evidence the run itself issued.**
@@ -1294,3 +1302,58 @@ Three things. Every check carries provenance, and the frontend only paints green
 
 **"Does the model ever see the geometry?"**
 Never. It receives compact structured evidence — coordinates, rejection certificates, finite domains, measured bounds. Not a STEP file, not a mesh, not a tensor. This is partly a cost decision and partly a trust one: the model reasons about a *description* of the geometry, and the kernel reasons about the geometry. Keeping those two objects separate is what makes check 3, `trusted_reconstruction`, meaningful.
+
+---
+
+## Performance, measured
+
+Every number in this section comes from committed benchmark files under `backend/evidence/live-b02/`, run on a loaded machine rather than an idle one. We publish the load average because a benchmark that hides its conditions is a marketing slide.
+
+### The cost of OCCT, and what the warm worker does about it
+
+Native geometry operations pay an import cost. On a loaded machine (1-minute load ≈ 5), measured across repeated runs:
+
+| | Cold worker | Warm standby | Δ |
+|:--|--:|--:|--:|
+| Full run wall time | 46.12 s / 47.00 s | 29.52 s / 29.69 s | **−36%** |
+| Stage A (import + baseline) | 11.1 s / 10.2 s | 7.3 s / 7.0 s | −34% |
+| Mean native tool operation | 8.73 s / 9.20 s | 5.55 s / 5.68 s | −36% |
+
+The improvement is consistent rather than dramatic, which is the honest shape of it: the warm standby removes import overhead, not compute. Peak memory is unaffected because the standby takes exactly one request and exits, so only one CAD process exists at a time and a replacement starts only after the previous one has exited.
+
+### Where the warm worker does *not* help
+
+Worth showing, because it bounds the claim. Under the full policy benchmark, holding everything else constant:
+
+| Simulated model turn latency | Cold | Warm | Δ |
+|:--|--:|--:|--:|
+| 0 s (geometry-bound) | 59.16 s | 55.25 s | −6.6% |
+| 3.0 s (realistic) | 80.47 s | 60.03 s | **−25%** |
+
+When the model is slow, the geometry work overlaps with waiting, so the ceiling is set by inference either way. When the model is fast — the 0 s case — the run is geometry-bound and the standby buys almost nothing. **The warm worker optimises the part of the loop that is not the model, and it says so.**
+
+### The live run, end to end
+
+| Stage | Time | Share |
+|:--|--:|--:|
+| Import | 13.26 s | 27.5% |
+| Baseline search | 2.73 s | 5.7% |
+| Model inference (total) | 20.05 s | 41.6% |
+| Verification + comparison + the rest | 12.11 s | 25.2% |
+| **Wall clock** | **48.15 s** | budget: 120 s |
+
+Two things follow. First, the run used **40% of its wall-clock budget** — the 120 s ceiling was never a risk on this fixture. Second, **inference is the plurality but not the majority**: over half the run is geometry and verification, which is exactly the split this architecture argues for. If the model were the bottleneck, the verifier would be the wrong investment.
+
+### Limits, stated as limits
+
+| Property | Value |
+|:--|:--|
+| Components per assembly | 5–12 |
+| Maximum envelope | 500 mm |
+| Archive package | ≤ 25 MiB compressed |
+| Native operation wall limit | 30 s |
+| Parent run budget | 120 s |
+| Peak worker RSS on B02 | ~440 MiB |
+| Reported API rate limits | 3,000 req/min · 4,000,000 tok/min |
+
+These are deliberate. A 12-component ceiling keeps the removal search tractable; a 500 mm envelope keeps B-rep booleans within the 30 s native limit. Widening them is straightforward engineering. The constraints that *cannot* widen are the twelve-number decision space and the one-way dispatcher, and neither is a performance trade-off.
