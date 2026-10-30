@@ -79,7 +79,19 @@ See [DECISIONS.md](docs/DECISIONS.md) for document hashes, numerical policy, int
 
 ## Deployment and scope
 
-`Dockerfile` targets native CPU Linux. Docker/Podman was unavailable, so the image was **not built or executed**. Linux compatibility and base-image digest are not validated. Deploy using a verified immutable official Python 3.12 digest via `--build-arg PYTHON_IMAGE=python@sha256:...`, execute the suite inside it, record the digest and calibrate resource caps. Its default exact-version tag is a development convenience, not an immutable digest.
+The [Modal deployment checkpoint](docs/MODAL_DEPLOYMENT.md) prepares private,
+bounded CPU engineering jobs and a public read-only B02 evidence API, plus Vercel
+frontend configuration. A real Modal Linux B02 smoke test and fresh-container
+artifact recovery passed. Public deployment remains pending approval. The local
+interactive API and Meta adapter are retained; public anonymous compute is disabled.
+
+The separate `Dockerfile` targets native CPU Linux. Docker/Podman was unavailable,
+so that Docker image was **not built or executed**; its runtime and base-image
+digest remain unvalidated. This does not describe the separately tested Modal
+image above. For Docker deployment, use a verified immutable official Python 3.12
+digest via `--build-arg PYTHON_IMAGE=python@sha256:...`, execute the suite inside
+it, record the digest and calibrate resource caps. Its default exact-version tag
+is a development convenience, not an immutable digest.
 
 Supported limits: 5–12 rigid single-solid leaf occurrences, ≤500 mm actual assembly envelope, 25 MiB compressed / 100 MiB expanded, 30,000 faces and 200,000 preview triangles. Motion supports six world axes, isolated planar contacts and simplified annotated reusable screws. Edits support the known bridge constructor only. Conservative overlap and ambiguous mandatory evidence prevent a verified pass.
 
