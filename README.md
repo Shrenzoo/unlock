@@ -323,3 +323,75 @@ manifest  ──SHA-256──▶  revision  ──▶  plan  ──▶  candidat
 ```
 
 Numerical assumptions live in a single `contracts.Policy`. The full policy is part of the evidence identity, which means changing a tolerance invalidates every geometry and constraint hash derived under the old one. Stale evidence cannot masquerade as fresh evidence.
+
+---
+
+## The trust boundary
+
+This is the idea the whole project turns on, so it gets its own section rather than a footnote.
+
+**The model proposes. The kernel disposes. There is exactly one place they meet, and it is one-way.**
+
+```mermaid
+flowchart LR
+    subgraph MODEL["Muse Spark 1.3 — untrusted proposer"]
+        A[Reads structured evidence] --> B[Reasons about the obstruction]
+        B --> C[Chooses template + integers]
+        C --> D[Cites run-issued evidence handle]
+    end
+
+    subgraph BOUNDARY["The dispatcher — the only door"]
+        E{Schema valid?<br/>Identity frozen?<br/>Domain finite?<br/>Handle citable?}
+    end
+
+    subgraph KERNEL["OCCT kernel — trusted authority"]
+        F[Trusted constructor builds] --> G[Independent reconstruction]
+        G --> H[12 mandatory checks]
+        H --> I[Re-plan · replay · reverse]
+        I --> J[Comparison under frozen policy]
+    end
+
+    D --> E
+    E -->|"INVALID_PROPOSAL"| D
+    E -->|"accepted"| F
+    J --> K[Verification report]
+    E -.->|"model self-report"| X[(recorded, ignored)]
+
+    style MODEL fill:#1a2233,stroke:#3268f5,color:#e9e8e3
+    style BOUNDARY fill:#2a1a14,stroke:#e4602f,color:#e9e8e3
+    style KERNEL fill:#14211c,stroke:#34866b,color:#e9e8e3
+    style X fill:#1d2023,stroke:#4f5357,color:#7d8287
+```
+
+### The four rules that give it teeth
+
+**1. Every proposal must cite evidence the run itself issued.**
+Not a plausible-sounding identifier. Not the model's memory of an earlier turn. A `rej_`, `plan_` or `ver_` handle that this specific run handed out. A proposal citing anything else is refused *before construction starts*.
+
+<p align="center">
+  <img src="assets/readme/citation-rejection.svg" width="100%" alt="A proposal refused for citing only ev_ handles, then accepted on resubmission citing a rej_ handle" />
+</p>
+
+**2. Unknown is a distinct result from pass and from fail.**
+`clear`, `blocked` and `unknown` are kept as separate statuses and never merged. A mandatory check that is unknown, missing or stale **forbids a passing aggregate**. There is no partial-credit path to green.
+
+**3. Witness sampling may reject. It may never admit.**
+Only validated conservative coverage plus complete analytic sweep separation can admit a translation. This is the difference between a checker that is conservative by construction and one that is merely usually right.
+
+**4. The frontend never derives a status.**
+It renders what a report says. The single place in the UI that decides how a result is drawn — `ui/Evidence.tsx` — will only paint green when provenance is `live` or `computed_earlier`. An illustrative pass is drawn as an outline, never green.
+
+```tsx
+// frontend/src/ui/Evidence.tsx — the whole trust story in nine lines
+export function resultLabel(result: CheckResult, provenance: ProvenanceKind) {
+  const computed = provenance !== 'illustrative'
+  switch (result) {
+    case 'pass':
+      return { tone: computed ? 'verified' : 'pass-illustrative',
+               text: computed ? 'Passed' : 'Pass (illustrative)' }
+    // …
+  }
+}
+```
+
+Green is not a colour in this product. It is a claim about provenance.
