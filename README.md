@@ -471,3 +471,85 @@ response = client.chat.completions.create(
 ```
 
 `tool_choice="auto"`, `max_completion_tokens` rather than the deprecated `max_tokens`, SDK retries **off** — the controller owns bounded retries so there is exactly one retry policy in the system. No OpenAI-only response format, no sampling parameters, no log-probabilities, no agent-framework scaffolding.
+
+---
+
+## The live run
+
+Everything in this section is a real call to the Meta Model API against real CAD geometry. The report is committed to the repository as [`backend/evidence/live-b02/live_run.json`](backend/evidence/live-b02/live_run.json) (160 KB) alongside the constructed bracket as a real STEP file.
+
+<p align="center">
+  <img src="assets/readme/live-run-timeline.svg" width="100%" alt="Timeline of the live B02 redesign: six turns over 48.1 seconds" />
+</p>
+
+```text
+UNLOCK AI run run_983d811a0f174f9a  [live_model]
+  outcome     VERIFIED_IMPROVEMENT_FOUND  (stop: model_final)
+  why         cand_eaafba557ae0 (T01 40 × 16 mm) passed independent verification
+              and the planner comparison
+  baseline    no_path_supported  complete=True
+              geometric blocks ×2  CONFIRMED_GEOMETRIC_OBSTRUCTION
+  candidate 1 T01 {'center_x_mm': 0.0, 'center_y_mm': -20.0,
+                   'depth_mm': 16.0, 'width_mm': 40.0}
+              → VERIFIED_IMPROVEMENT   revised=feasible   reverse=passed
+  usage       turns=6  tool_calls=6  candidates=1
+              tokens in/out = 28,272 / 2,850   48.147 s
+```
+
+### The decision sequence, exactly as recorded
+
+| t (s) | Turn | Tool call | Result |
+|--:|:--|:--|:--|
+| 16.0 | — | Stage A baseline | `no_path_supported`, complete. Two confirmed obstructions with BRep witness |
+| 20.7 | 1 | `inspect_blocker` + `list_interventions` | Blocked witness at (0, −20, 36) mm; T01/T02 finite domains |
+| 25.4 | 2 | `construct_candidate` T01 **24 × 12**, citing two `ev_` handles | **Refused before construction** — `INVALID_PROPOSAL` |
+| 34.4 | 3 | `construct_candidate` T01 **40 × 16**, citing `rej_17a84dbaf811` | Built. 2,560 mm³ removed, all inside the editable web |
+| 44.5 | 4 | `verify_candidate` | Static checks passed, then independent replanning |
+| 46.1 | 5 | `compare_candidates` | `verified_improvement: true` |
+| 48.1 | 6 | Final JSON (`candidate_proposed`) | **Recorded as a model statement with no authority** |
+
+**Five of the eight tools were called live.** `inspect_assembly`, `inspect_constraints` and `analyze_removal` were not needed — the opening context already carried the baseline rejections. All eight remain covered offline in `tests/test_ai_toolbox.py`.
+
+**One proposal was refused by validation, live, in front of the model.** That is the moment worth watching in the demo video.
+
+### Verification of the result
+
+- **12/12 mandatory checks passed** — integrity, solid validity, trusted reconstruction, actual change (2,560 mm³), editable region (0 mm³ outside it), protected interfaces, hole geometry, fixed components, placements, envelope, keep-outs, assembled intersections.
+- **No failed, unknown, missing or stale checks.**
+- **Revised plan:** `feasible`, complete, optimal within scope — `target TRANSLATE Z+ 80 mm`, cost `(0,0,0,1)`, with a 0.5 mm non-contact clearance lower bound.
+- **Forward replay passed. Reverse insertion passed.**
+
+### The controls
+
+Two deterministic selectors were frozen and run **before** the live call, unmodified, on the same fixture under the same policy:
+
+| | Muse Spark 1.3 (live) | `geometry_ranked` | `stable_enumeration` (PRD C2) |
+|:--|:--|:--|:--|
+| Outcome | VERIFIED_IMPROVEMENT_FOUND | VERIFIED_IMPROVEMENT_FOUND | NO_VERIFIED_IMPROVEMENT |
+| Proposals / built | 2 / 1 (1 refused) | 1 / 1 | 3 / 3 (all failed) |
+| Verified design | T01 40 × 16, 2,560 mm³ | T01 24 × 12, 1,152 mm³ | — |
+| Revised route | target Z+ 80 mm | same | — |
+| Tool calls | 6 | 2 | 4 |
+| Runtime | 48.1 s | 24.1 s | 30.3 s |
+| Model cost | ≈ $0.030 | $0 | $0 |
+
+<p align="center">
+  <img src="assets/readme/selector-comparison.svg" width="100%" alt="Three-selector comparison on the same fixture" />
+</p>
+
+### Stated plainly, because our own evidence says it
+
+**Muse matched the geometry-ranked selector. It did not outperform it.** Its verified relief removes about 2.2× more material than the minimal verified relief; both give the same revised route and cost. It needed one more proposal, four more tool calls and roughly twice the runtime.
+
+One run on one synthetic fixture is a protocol check, not a statistical comparison. We publish this because the control group is the thing that makes the verification layer credible — a claim of model supremacy we could not support would undermine the entire argument.
+
+What the run *does* establish, unambiguously: **a frontier model drove a real CAD redesign loop, was caught by its own guardrails mid-run, recovered, and produced a physically real, independently verified improvement in 48 seconds.**
+
+### API usage
+
+| | Requests | Input tokens | Output tokens | Total | Latency |
+|:--|--:|--:|--:|--:|--:|
+| Tool-calling check (B01) | 2 | 2,903 | 411 (199 reasoning) | 3,314 | 5.77 s |
+| Full redesign (B02) | 6 | 28,272 (16,068 cached) | 2,850 (1,596 reasoning) | 31,122 | 20.0 s model / 48.1 s wall |
+
+Estimated **$0.0054** and **$0.0298** respectively at Meta's public Standard list price. Both figures are list-price estimates from [Meta's published pricing](https://dev.meta.ai/docs/pricing-rate-limits), not account-verified charges — the API reports no credit balance. Reported rate limits: 3,000 requests and 4,000,000 tokens per minute.
