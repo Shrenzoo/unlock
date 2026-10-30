@@ -312,6 +312,10 @@ Only then does comparison run — under the same target and the same frozen poli
 
 Every artefact carries a content hash, and every hash is checked:
 
+<p align="center">
+  <img src="assets/readme/evidence-chain.svg" width="100%" alt="Manifest hashes into revision, which feeds plan and candidate, all bound to the policy digest" />
+</p>
+
 ```text
 manifest  ──SHA-256──▶  revision  ──▶  plan  ──▶  candidate
     │                      │             │           │
@@ -511,6 +515,24 @@ UNLOCK AI run run_983d811a0f174f9a  [live_model]
 **Five of the eight tools were called live.** `inspect_assembly`, `inspect_constraints` and `analyze_removal` were not needed — the opening context already carried the baseline rejections. All eight remain covered offline in `tests/test_ai_toolbox.py`.
 
 **One proposal was refused by validation, live, in front of the model.** That is the moment worth watching in the demo video.
+
+### The field that settles the argument
+
+The run report stores the model's closing message alongside an explicit annotation of what it is worth:
+
+```json
+{
+  "decision": "candidate_proposed",
+  "candidate_ids": ["cand_eaafba557ae0"],
+  "summary": "T01 cut on bridge clears Z+ witness [0,-20,36]; verified feasible 1-step removal.",
+  "structured": true,
+  "authority": "none: model statement, not engineering evidence"
+}
+```
+
+That `authority` field is not a comment someone added later. It is written by the engine, on every run, at the moment the message is stored. The model's own summary of its success is retained in full — and the schema it is stored under declares, in the same breath, that it is not evidence and cannot be cited as such.
+
+It is the trust boundary, expressed as a data type.
 
 ### Verification of the result
 
@@ -953,6 +975,33 @@ Same workflow with the AI loop, explicitly offline. Produces identical candidate
 ### A note on how this was built
 
 The integration history is preserved as chronological commits with real validation counts at each milestone. No history was backdated or rewritten. Where a defect was found — and one was, during the live run — it is documented with the commit that fixed it and a regression test that fails on the previous code. See [the integration handoff](backend/docs/META_INTEGRATION_HANDOFF.md) for the full record.
+
+### Do not trust this README. Check it.
+
+Every substantive claim above is falsifiable from the repository alone, without a key, without network access, and without taking our word for anything. Here is the exact check for each one.
+
+| If this README says | Verify it with | What you should see |
+|:--|:--|:--|
+| 327 tests pass | `cd backend && .venv/bin/python -m pytest -q` | `327 passed, 17 deselected` |
+| The live run found a verified improvement | `jq -c '.outcome, .usage.turns' evidence/live-b02/live_run.json` | `"VERIFIED_IMPROVEMENT_FOUND"` then `6` |
+| One proposal was refused live | `jq -c '.engineering_evidence.tool_results[] \| select(.status=="rejected") \| .feedback' evidence/live-b02/live_run.json` | `"category":"INVALID_PROPOSAL"` |
+| The model cited a bad handle | `jq -r '.engineering_evidence.tool_results[] \| select(.status=="rejected") \| .feedback.message' evidence/live-b02/live_run.json` | `cite at least one rejection, plan or verification evidence ID` |
+| 12 of 12 mandatory checks passed | `jq -r '.engineering_evidence.verified[].static_report.checks[] \| "\(.constraint_id) \(.result) mand=\(.mandatory)"' evidence/live-b02/live_run.json` | twelve `pass mand=true`, then `tool_access not_applicable mand=false` |
+| Muse matched, did not beat, the control | `jq -c '.candidates[0].comparison \| {original_status, revised_status}' evidence/live-b02/live_run.json` | `"no_path_supported"` → `"feasible"` |
+| The model's own claim carried no authority | `jq -r '.final_model_message.authority' evidence/live-b02/live_run.json` | `none: model statement, not engineering evidence` |
+| The constructed bracket is real geometry | `file backend/evidence/live-b02/live_changed_bridge.step` | an AP214 STEP file — open it in any CAD tool |
+| Tool calling worked live | `jq -r '.checks[] \| "\(.name) \(.status)"' backend/evidence/meta-tool-smoke/live_report.json` | fifteen `pass`, ending `no_secret_in_report pass` |
+| The credentials never leak | `grep -c "$MODEL_API_KEY" backend/evidence/live-b02/live_run.json` | `0` |
+| The fixtures are real STEP, not stubs | `find backend -name '*.step' -size +10k` | multiple files, tens of KB each |
+| The twelve-number domain is the whole decision space | `sed -n '21,30p' backend/src/unlock_engine/templates.py` | `SERVER_DOMAINS`, twelve values |
+
+**The single most important one.** If you want to confirm that the verifier is genuinely independent of the model, run the offline demo and diff it against the live one:
+
+```sh
+.venv/bin/python -m unlock_engine.ai demo --offline --fixture B02 --output .work/offline
+```
+
+Same candidates, same outcomes, same check results — produced with no model in the loop at all. That equivalence is the proof that geometry, not the language model, is doing the verification. It is the one claim in this repository we would stake the project on, and it takes about a minute to falsify.
 
 ---
 
