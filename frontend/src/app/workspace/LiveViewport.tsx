@@ -56,6 +56,33 @@ function Part({ component, color, opacity, offset, visible, dispatch }: { compon
   </mesh>
 }
 
+/**
+ * Keeps the whole assembly in view for this canvas's aspect ratio. Narrow views
+ * (the side-by-side comparison on a laptop) need more distance than the default
+ * framing; the camera only ever moves further out, keeps its viewing direction,
+ * and the fitted pose becomes what Reset returns to.
+ */
+function FitCamera({ radius }: { radius: number }) {
+  const { camera, size, controls, invalidate } = useThree()
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera) || !size.width || !size.height) return
+    const vertical = THREE.MathUtils.degToRad(camera.fov)
+    const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * (size.width / size.height))
+    const needed = (radius * 1.08) / Math.sin(Math.min(vertical, horizontal) / 2)
+    const orbit = controls as unknown as OrbitControlsImpl | null
+    const target = orbit?.target ?? new THREE.Vector3()
+    const offset = camera.position.clone().sub(target)
+    if (offset.length() < needed) {
+      camera.position.copy(target).add(offset.setLength(needed))
+      camera.updateProjectionMatrix()
+      orbit?.update()
+    }
+    orbit?.saveState()
+    invalidate()
+  }, [camera, controls, invalidate, radius, size.width, size.height])
+  return null
+}
+
 function SyncControls({ links, index, busy }: { links: MutableRefObject<Array<Link | null>>; index: number; busy: MutableRefObject<boolean> }) {
   const { camera, invalidate } = useThree()
   const ref = useRef<OrbitControlsImpl>(null)
@@ -94,6 +121,11 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
     const size = Math.max(...e.max.map((x, i) => x - e.min[i])) * 0.001
     return [size * 1.8, size * 1.4, size * 1.8] as Vec3
   }, [revision])
+  // Bounding-sphere radius about the orbit target (the origin), in metres.
+  const radius = useMemo(() => {
+    const e = revision.manifest.envelope_mm
+    return Math.hypot(...[0, 1, 2].map((i) => Math.max(Math.abs(e.min[i]), Math.abs(e.max[i])))) * 0.001
+  }, [revision])
 
   const draw = (mesh: PreviewMesh | null, index: number, revisedSide: boolean) => {
     if (!mesh) return <p className="panel__empty">Loading actual CAD tessellation…</p>
@@ -118,6 +150,7 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
       </group>
       <Grid args={[1, 1]} cellSize={0.01} sectionSize={0.05} fadeDistance={1.5} position={[0, -0.015, 0]} />
       <SyncControls index={index} links={links} busy={syncing} />
+      <FitCamera radius={radius} />
     </Canvas>
   }
 

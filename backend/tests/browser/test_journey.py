@@ -77,9 +77,13 @@ def rendered(page, index=0, minimum=40):
     colours (not a blank clear), and identical across two consecutive frames."""
     previous = None
     for _ in range(60):
-        sized = page.locator("canvas").nth(index).evaluate(
-            "c => Math.abs(c.getBoundingClientRect().width"
-            " - c.closest('.vp__view').getBoundingClientRect().width) < 2"
+        sized = (
+            page.locator("canvas")
+            .nth(index)
+            .evaluate(
+                "c => Math.abs(c.getBoundingClientRect().width"
+                " - c.closest('.vp__view').getBoundingClientRect().width) < 2"
+            )
         )
         image = canvas_image(page, index)
         if sized and distinct_colours(image) >= minimum:
@@ -301,7 +305,10 @@ def test_b02_first_time_user_journey(browser, stack, evidence_dir):
         for step in ("4 Compare", "5 Export"):
             gate = page.get_by_role("button", name=step)
             assert gate.is_disabled()
-            assert gate.get_attribute("title") == "Choose a candidate whose checks completed"
+            assert (
+                gate.get_attribute("title")
+                == "Choose a candidate whose checks completed"
+            )
         cards.nth(run["candidates"].index(verified)).click()
 
     # G. Comparison: both models render; the revised one is the constructed candidate.
@@ -354,7 +361,9 @@ def test_b02_first_time_user_journey(browser, stack, evidence_dir):
     assert float(slider.input_value()) == 1.0, "the route cannot be overrun"
     page.mouse.move(2, 2)
     page.wait_for_timeout(250)
-    assert image_difference(frames[2], canvas_image(page, 1)) < 0.02, "end pose is stable"
+    assert image_difference(frames[2], canvas_image(page, 1)) < 0.02, (
+        "end pose is stable"
+    )
     shot(page, "08-verified-route")
     page.get_by_role("button", name="Reset").click()
     assert float(slider.input_value()) == 0.0
@@ -407,7 +416,9 @@ def test_b02_first_time_user_journey(browser, stack, evidence_dir):
     # Whole journey: no console errors, failed requests or HTTP errors; one redesign.
     # The download link's navigation ends as ERR_ABORTED once it becomes a download;
     # its bytes were verified above, so it is the one named exception.
-    download_url = f"{stack.api}/v1/artifacts/{run['export']['artifact_id']} net::ERR_ABORTED"
+    download_url = (
+        f"{stack.api}/v1/artifacts/{run['export']['artifact_id']} net::ERR_ABORTED"
+    )
     problems = monitor.problems(allow_failed=(download_url,))
     assert problems == dict(console=[], page=[], failed=[], http=[]), problems
     report["measurements"]["superseded_fetches"] = monitor.superseded
