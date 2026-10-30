@@ -75,6 +75,7 @@ class MetaProvider:
         timeout_s,
         tool_choice="auto",
         cancel_event=None,
+        parallel_tool_calls: bool | None = None,
     ):
         if not self.config.has_credentials:
             raise ProviderError(
@@ -94,11 +95,15 @@ class MetaProvider:
         body = dict(
             model=self.model,
             messages=list(messages),
-            max_tokens=int(max_output_tokens),
+            # Meta documents max_tokens as deprecated; this limit covers reasoning
+            # plus visible output, so it must leave room for a complete tool call.
+            max_completion_tokens=int(max_output_tokens),
             reasoning_effort=self.reasoning_effort,
         )
         if tools:
             body.update(tools=list(tools), tool_choice="auto")
+            if parallel_tool_calls is not None:
+                body["parallel_tool_calls"] = bool(parallel_tool_calls)
         return asyncio.run(self._complete(body, timeout_s, cancel_event))
 
     async def _complete(self, body, timeout_s, cancel_event):
