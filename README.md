@@ -202,3 +202,54 @@ This could not have been built as *"AI for our workflow."* There is no workflow 
 > A frontier model can be dropped into a safety-relevant engineering loop with *zero* trust, given *bounded* authority, and still reach a correct, verified, physically real outcome — because every claim it makes is resolved by a kernel that does not care what it said.
 
 That is a transferable result. It applies to robotics motion planning, to materials substitution, to any domain where the cost of a confident wrong answer is high. UNLOCK is the worked example.
+
+---
+
+## Why nothing like this exists
+
+It is worth being blunt about why this corner of the map was empty, because the obstacles were not technical fashion. They were real, and each one has a specific name.
+
+<table>
+<tr>
+<th width="28%">The obstacle</th>
+<th>Why it stopped everyone else</th>
+<th>How UNLOCK gets past it</th>
+</tr>
+<tr>
+<td><strong>"Just let the LLM write the CAD script."</strong></td>
+<td>The model emits Python that builds a solid. It runs. It produces a plausible shape. Nobody — including the author — can say whether that shape preserves a mounting interface until someone builds a fixture and measures it.</td>
+<td>The model never writes code and never emits geometry. It chooses integers from a server-owned finite grid: <code>width_mm ∈ {24, 40, 46, 52}</code>. A trusted constructor builds it. There is no code path from model output to unbounded behaviour.</td>
+</tr>
+<tr>
+<td><strong>"Verification is too slow to be practical."</strong></td>
+<td>Real B-rep boolean checks are expensive. Cold-starting OCCT costs 4–6 s per native operation. A naive loop spends its whole budget importing libraries.</td>
+<td>A warm, single-use standby worker absorbs the import cost, overlapping the model's thinking time. Peak memory stays at the cold path (~440 MiB RSS). The documented run completed in <strong>48.1 s</strong> against a hard 120 s ceiling.</td>
+</tr>
+<tr>
+<td><strong>"The model will hallucinate a pass."</strong></td>
+<td>It will. A language model asked "is this safe?" will say yes, fluently, with confidence, and be wrong.</td>
+<td>Model-supplied pass flags are <strong>never accepted</strong>. The verifier reconstructs the candidate from frozen parameters in a separate process and inspects actual material and voids. The model's final <code>"safe": true</code> is recorded, and then ignored.</td>
+</tr>
+<tr>
+<td><strong>"You can't reason about physical motion with an LLM."</strong></td>
+<td>Correct — alone. Collision-free extraction is a sweep problem over six axes with tool-approach constraints, not a text problem.</td>
+<td>The planner does the motion. It demands validated conservative coverage plus complete analytic sweep separation to admit a translation. Witness sampling may <em>reject</em> or leave <em>unknown</em> — it can never admit.</td>
+</tr>
+<tr>
+<td><strong>"One demo, no reliability."</strong></td>
+<td>The most common failure at this scale: a single golden path, presented as a product.</td>
+<td>Two deterministic selectors were frozen and run <em>before</em> the live call, as controls. One matched the model, one failed entirely. The comparison is published, including the fact that the model did <em>not</em> beat the deterministic selector. See <a href="#the-live-run">the live run</a>.</td>
+</tr>
+</table>
+
+### The specific design decision that made it possible
+
+Almost every "AI for CAD" project makes the same early choice: **trust the model's self-report.** It is the natural choice, because building an independent verifier is most of the work, and the model's self-report is right often enough to feel like proof.
+
+UNLOCK's core decision was to treat that instinct as the bug it is. The model is given bounded, read-mostly tools; every proposal must cite run-issued evidence handles; a proposal citing only weak handles is **refused before construction ever starts**; and the resulting claim is resolved by a kernel that shares no state with the model.
+
+The cost of that decision is roughly a doubling of implementation effort. The benefit is that the word *verified* in the output means something a third party can check.
+
+<p align="center">
+  <img src="assets/readme/model-no-authority.svg" width="100%" alt="The model's own safety claim, struck through, and the four actual authorities" />
+</p>
