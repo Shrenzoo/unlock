@@ -86,3 +86,43 @@ Fixing the shape requires someone to reason about geometry, motion, tool access 
 </p>
 
 <sub><code>fixture B02</code> — the baseline search returns <code>no_path_supported</code> with two confirmed geometric obstructions and an actual BRep witness. After the relief, the route is a single verified translation. Both halves of this diagram are computed, not illustrated.</sub>
+
+---
+
+## What UNLOCK does
+
+You point it at a mechanical assembly and name the part that failed. UNLOCK then runs a seven-stage loop:
+
+```text
+ 01  inspect      ── parse the STEP assembly, measure real bounds, freeze a revision
+ 02  baseline     ── search for a supported removal path for the failed part
+ 03  obstruction  ── find what is actually in the way, with BRep evidence
+ 04  interventions── list the finite redesigns the server will allow
+ 05  construct    ── build the proposed edit with a trusted CAD constructor
+ 06  verify       ── independently reconstruct and check twelve mandatory constraints
+ 07  compare      ── original versus revised, under one frozen policy
+```
+
+Stages 01–05 are where **Muse Spark 1.3** earns its keep: it reads the obstruction evidence, chooses which component to modify and by how much, and iterates on its own proposals.
+
+Stages 06–07 are where the model is deliberately, structurally powerless. Nothing it says is accepted as true. A CAD kernel rebuilds the geometry from frozen parameters and decides for itself.
+
+The output is not an opinion. It is a **verification report** — a specific, machine-checkable claim that under a named numerical policy, on a named revision, with named evidence handles, this part can now be removed along a stated axis in a stated number of millimetres.
+
+### One sentence
+
+> UNLOCK asks an AI to redesign a product so its broken part can actually be replaced — then proves the redesign is safe before anyone cuts metal.
+
+### What it refuses to claim
+
+This matters as much as what it does. A passing report is a geometry result for one target under one stated policy. UNLOCK states plainly, in the product itself, what has **not** been assessed:
+
+<ul>
+<li>Strength, stiffness and fatigue</li>
+<li>Electrical safety and shielding</li>
+<li>Manufacturing feasibility</li>
+<li>Restored product function</li>
+<li>Torque, forces, cables, clips and adhesives</li>
+</ul>
+
+An engineering tool that overstates its own certainty is more dangerous than no tool at all. Every number in UNLOCK is either computed, or explicitly labelled as not computed.
