@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="100%" role="img"
+     aria-label="Waterfall of the 48.1 second live run: import, baseline, model inference, then verification and comparison">
+  <defs>
+    <style>
+      .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+      @keyframes grow{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+      @keyframes fadein{0%{opacity:0}100%{opacity:1}}
+      @keyframes budget{0%,100%{stroke-opacity:.35}50%{stroke-opacity:.9}}
+      @keyframes tick{0%{opacity:0;transform:translateY(-4px)}100%{opacity:1;transform:translateY(0)}}
+      .bar{transform-origin:left center;animation:grow 1s cubic-bezier(.2,.8,.2,1) both}
+      .lbl{animation:fadein .6s ease-out both}
+      .bg{animation:budget 3s ease-in-out infinite}
+      .tk{animation:tick .4s ease-out both}
+    </style>
+  </defs>
+  <rect width="960" height="300" fill="#151719"/>
+  <text x="40" y="38" class="mono" font-size="13" fill="#3268f5">live run run_983d811a0f174f9a · 48.15 s of a 120 s budget</text>
+
+  <!-- scale: 48.15s across 820px => 17.03 px/s -->
+  <!-- gridlines every 10s -->
+  <g class="mono" font-size="9.5" fill="#4f5357">
+    <line x1="40"  y1="62" x2="40"  y2="196" stroke="#272b2f"/>
+    <line x1="210" y1="62" x2="210" y2="196" stroke="#272b2f"/><text x="210" y="212" text-anchor="middle">10s</text>
+    <line x1="380" y1="62" x2="380" y2="196" stroke="#272b2f"/><text x="380" y="212" text-anchor="middle">20s</text>
+    <line x1="550" y1="62" x2="550" y2="196" stroke="#272b2f"/><text x="550" y="212" text-anchor="middle">30s</text>
+    <line x1="720" y1="62" x2="720" y2="196" stroke="#272b2f"/><text x="720" y="212" text-anchor="middle">40s</text>
+    <text x="40" y="212" text-anchor="middle">0</text>
+    <text x="860" y="212" text-anchor="middle">48.15s</text>
+  </g>
+
+  <!-- 1 import: 0 -> 13.26s (225.9px) -->
+  <g class="lbl">
+    <rect class="bar" x="40" y="72" width="226" height="26" rx="4" fill="#4f5357" style="animation-delay:.1s"/>
+    <text x="48" y="90" class="mono" font-size="10.5" fill="#f2f1ed">import</text>
+    <text x="278" y="90" class="mono" font-size="10" fill="#a5a9ad">13.26 s · 27.5%</text>
+  </g>
+
+  <!-- 2 baseline: 13.26 -> 15.99 (46.5px) -->
+  <g class="lbl">
+    <rect class="bar" x="266" y="106" width="47" height="26" rx="4" fill="#7d8287" style="animation-delay:.3s"/>
+    <text x="325" y="124" class="mono" font-size="10" fill="#a5a9ad">baseline 2.73 s</text>
+  </g>
+
+  <!-- 3 model inference: 15.99 -> 36.04 (341.5px) -->
+  <g class="lbl">
+    <rect class="bar" x="313" y="140" width="342" height="26" rx="4" fill="#3268f5" style="animation-delay:.5s"/>
+    <text x="321" y="158" class="mono" font-size="10.5" fill="#f2f1ed">model inference · 6 turns · 31,122 tokens</text>
+    <text x="667" y="158" class="mono" font-size="10" fill="#a5a9ad">20.05 s · 41.6%</text>
+  </g>
+
+  <!-- 4 verify+compare+rest: 36.04 -> 48.15 (206.3px) -->
+  <g class="lbl">
+    <rect class="bar" x="655" y="174" width="205" height="26" rx="4" fill="#34866b" style="animation-delay:.7s"/>
+    <text x="663" y="192" class="mono" font-size="10.5" fill="#f2f1ed">verify + compare</text>
+    <text x="872" y="192" class="mono" font-size="10" fill="#a5a9ad" text-anchor="end">12.11 s · 25.2%</text>
+  </g>
+
+  <!-- the 120s budget ceiling, compressed: note it explicitly -->
+  <line class="bg" x1="900" y1="62" x2="900" y2="196" stroke="#e4602f" stroke-width="1.5" stroke-dasharray="4 5"/>
+  <text x="908" y="70" class="mono" font-size="9" fill="#e4602f">120s</text>
+  <text x="908" y="82" class="mono" font-size="9" fill="#e4602f">ceiling</text>
+
+  <!-- summary -->
+  <rect x="40" y="234" width="820" height="50" rx="9" fill="#1d2023" stroke="#33383d"/>
+  <text x="58" y="256" class="mono" font-size="11" fill="#e9e8e3">inference is the <tspan fill="#3268f5">plurality, not the majority</tspan> — over half the run is geometry and verification</text>
+  <text x="58" y="274" class="mono" font-size="10" fill="#7d8287">40% of the wall-clock budget was used · if the model were the bottleneck, the verifier would be the wrong investment</text>
+</svg>

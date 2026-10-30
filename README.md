@@ -1310,6 +1310,10 @@ When the model is slow, the geometry work overlaps with waiting, so the ceiling 
 
 ### The live run, end to end
 
+<p align="center">
+  <img src="assets/readme/run-waterfall.svg" width="100%" alt="Waterfall of the 48.15 second live run by stage" />
+</p>
+
 | Stage | Time | Share |
 |:--|--:|--:|
 | Import | 13.26 s | 27.5% |
