@@ -126,3 +126,79 @@ This matters as much as what it does. A passing report is a geometry result for 
 </ul>
 
 An engineering tool that overstates its own certainty is more dangerous than no tool at all. Every number in UNLOCK is either computed, or explicitly labelled as not computed.
+
+---
+
+## Why this pushes the frontier
+
+> **Push the Frontier** — Use Meta's models to tackle challenges in software, robotics, manufacturing, energy, materials and beyond. Give a machine a new capability, accelerate a scientific experiment, or unlock a better way to understand and control a physical system. Show us what becomes possible when these models meet the real world.
+
+That track asks for a specific thing: *what becomes possible when these models meet the real world.* Not what becomes faster. Not what becomes cheaper. **Possible.**
+
+Here is the honest answer for this project.
+
+### Before: a question no software could answer
+
+Take a real enclosure with a dead fan behind a bracket. Ask the entire existing toolchain:
+
+> *"Can this part be removed, and if not, what is the smallest change to the housing that makes it removable?"*
+
+- **The CAD system** cannot answer. It will model whatever you draw. It has no opinion about whether a shape is removable.
+- **The PLM system** cannot answer. It knows the part numbers and the change history, not the geometry of motion.
+- **The simulation package** cannot answer. It can tell you if a part collides, given a path you supply. It cannot invent the path, and it certainly cannot redesign the obstruction.
+- **A search heuristic** answers badly. Your own `stable_enumeration` selector — deliberately included as a control — tried three candidates and returned **`NO_VERIFIED_IMPROVEMENT`**.
+
+The question was genuinely unanswerable. Not unanswerable *quickly*. Unanswerable.
+
+### After: a machine that answers it, and shows its work
+
+A language model reads the BRep witness that pins the obstruction to coordinates `(0, −20, 36)` mm, reasons that the bracket's web is the only material in the removal envelope, picks a relief window from a finite server-side domain, proposes `T01 · 40 × 16 mm`, gets told its first attempt was rejected for an uncitable claim, resubmits correctly, and arrives at a design that a CAD kernel independently confirms:
+
+```text
+original   no_path_supported        ← no feasible route under supported operations
+revised    feasible                 ← target TRANSLATE Z+ 80 mm, cost (0,0,0,1)
+checks     12/12 mandatory passed   ← reconstruction, envelope, keep-outs, intersections…
+material   2,560 mm³ removed        ← 0 mm³ outside the declared editable web
+replay     forward ✓  reverse ✓     ← the path is executable in both directions
+```
+
+**A part that could not be serviced can now be serviced.** That is not a faster version of something that existed. It is a capability that did not exist, expressed in millimetres and verified against a B-rep.
+
+<p align="center">
+  <img src="assets/readme/positioning-map.svg" width="100%" alt="Positioning map: model autonomy against independent proof, with UNLOCK in the previously empty corner" />
+</p>
+
+### The capability, stated precisely
+
+What UNLOCK gives a machine that it did not have before:
+
+<table>
+<tr>
+<th width="33%">A new capability</th>
+<th>What that makes possible</th>
+</tr>
+<tr>
+<td><strong>Geometric reasoning over real B-reps</strong></td>
+<td>A model reasons about solids it cannot see, in millimetres, against measured bounds — and its reasoning is checked against the actual topology rather than its description of it.</td>
+</tr>
+<tr>
+<td><strong>Closed-loop redesign under constraint</strong></td>
+<td>The model may only choose from finite, server-owned parameter grids. It cannot emit arbitrary geometry, so it cannot emit arbitrary risk.</td>
+</tr>
+<tr>
+<td><strong>Self-correction driven by measured feedback</strong></td>
+<td>When a proposal fails, the model receives the measurement — not a vibe. It then adjusts the design against real numbers.</td>
+</tr>
+<tr>
+<td><strong>Machine-checkable engineering claims</strong></td>
+<td>Every "this is safe" resolves to a named policy, a geometry hash, and twelve checked constraints. A third party can re-run it.</td>
+</tr>
+</table>
+
+### Why it had to be a frontier project, not a product project
+
+This could not have been built as *"AI for our workflow."* There is no workflow where a human feeds a STEP file to a language model and trusts the answer — because the human cannot verify the answer either, which is the entire problem. The frontier being pushed here is not model capability. It is **the interface between probabilistic reasoning and deterministic proof**, and the specific finding is:
+
+> A frontier model can be dropped into a safety-relevant engineering loop with *zero* trust, given *bounded* authority, and still reach a correct, verified, physically real outcome — because every claim it makes is resolved by a kernel that does not care what it said.
+
+That is a transferable result. It applies to robotics motion planning, to materials substitution, to any domain where the cost of a confident wrong answer is high. UNLOCK is the worked example.
