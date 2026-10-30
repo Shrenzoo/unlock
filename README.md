@@ -253,3 +253,73 @@ The cost of that decision is roughly a doubling of implementation effort. The be
 <p align="center">
   <img src="assets/readme/model-no-authority.svg" width="100%" alt="The model's own safety claim, struck through, and the four actual authorities" />
 </p>
+
+---
+
+## How it works
+
+<p align="center">
+  <img src="assets/readme/pipeline-trust-boundary.svg" width="100%" alt="Seven-stage pipeline with an explicit trust boundary between the model and the kernel" />
+</p>
+
+### Stage 01–02 — Inspect and baseline
+
+A package is accepted only as a flat `assembly.step` (AP214 or AP242, explicit uniform millimetre units), a `manifest.json`, and an optional `attribution.txt`. Inputs are bounded *before* any native parsing: scripts, external references, symlinks, encrypted archives and arbitrary archive paths are rejected outright.
+
+The import runs in an isolated native worker and produces an immutable revision. Frozen constraints, keep-outs and envelope are hashed into that revision's identity — so a later check against stale inputs cannot silently pass.
+
+The baseline planner then searches for a supported removal path for the frozen target. On B02 it returns `no_path_supported`, **complete**, with two `CONFIRMED_GEOMETRIC_OBSTRUCTION` rejections carrying an actual BRep witness. Note what it refuses to do: it does not invent an operation count for an infeasible baseline, so no percentage improvement against a zero can ever be reported later.
+
+### Stage 03–05 — Obstruction, intervention, construction
+
+The model receives compact structured evidence — never a STEP file, never raw geometry. It is shown the witness position, the rejection certificate, and the finite domains the server will allow:
+
+```python
+# backend/src/unlock_engine/templates.py — the model's entire decision space
+SERVER_DOMAINS = {
+    "T01": dict(
+        center_x_mm=(-4.0, 0.0, 4.0),
+        center_y_mm=(-28.0, -20.0, -12.0, -4.0),
+        width_mm=(24.0, 40.0, 46.0, 52.0),
+        depth_mm=(8.0, 12.0, 16.0, 20.0),
+    ),
+    "T02": dict(offset_y_mm=(-12.0, 12.0, 24.0, 36.0)),
+}
+```
+
+Twelve numbers. That is the model's entire authority over physical geometry. It cannot widen the domain, cannot add a template, and cannot construct anything outside it — arguments carrying extra fields, invalid IDs, unsupported templates or out-of-domain parameters are rejected before any native process starts.
+
+Construction happens in an isolated worker and returns a candidate with a real changed solid. **Construction is not verification** — the tool description says so in as many words.
+
+### Stage 06–07 — Verify and compare
+
+The verifier does not receive the candidate the model saw. It reconstructs the bracket *from the frozen parameters*, in a separate process, and compares the result against the original by two-way B-rep difference. Then it runs the twelve mandatory checks, re-plans the removal, replays the path forward, and inserts it in reverse.
+
+Only then does comparison run — under the same target and the same frozen policy, so the two sides of the table are genuinely comparable.
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  the model                    the boundary        the kernel         │
+│  ─────────                    ────────────        ─────────          │
+│  reads evidence      ───▶      accepts only       rebuilds from      │
+│  picks integers       ───▶      bounded args       frozen params     │
+│  cites handles        ───▶      rej_/plan_/ver_    real B-rep ops    │
+│  claims "safe"        ───▶      recorded, ignored  decides the pass  │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### The evidence chain
+
+Every artefact carries a content hash, and every hash is checked:
+
+```text
+manifest  ──SHA-256──▶  revision  ──▶  plan  ──▶  candidate
+    │                      │             │           │
+    └── geometry hash ─────┴── constraint hash ──────┘
+                              │
+                              ▼
+                    verification report
+                    (policy digest included in identity)
+```
+
+Numerical assumptions live in a single `contracts.Policy`. The full policy is part of the evidence identity, which means changing a tolerance invalidates every geometry and constraint hash derived under the old one. Stale evidence cannot masquerade as fresh evidence.
