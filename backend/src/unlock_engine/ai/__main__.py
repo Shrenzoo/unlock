@@ -55,13 +55,37 @@ def summary_text(report: dict) -> str:
     return "\n".join(lines)
 
 
+def tool_smoke_text(report: dict) -> str:
+    lines = [f"UNLOCK Meta tool-calling smoke: {report['status'].upper()}"]
+    if report.get("reason"):
+        lines.append(f"  reason   {report['reason']}")
+    for c in report["checks"]:
+        lines.append(f"  [{c['result']}] {c['name']}  {c['detail'][:110]}")
+    if "usage" in report:
+        u = report["usage"]
+        lines.append(
+            f"  requests {u['requests_sent']}  tokens in {u['input_tokens']} out "
+            f"{u['output_tokens']} total {u['total_tokens']} ({u['source']})"
+        )
+        lines.append(f"  cost     {report['cost']}")
+    return "\n".join(lines)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m unlock_engine.ai")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser(
+    smoke = sub.add_parser(
         "smoke",
         help="live provider smoke test (needs MODEL_API_KEY and RUN_META_LIVE_TESTS=1)",
-    ).add_argument("--output", type=Path)
+    )
+    smoke.add_argument("--output", type=Path)
+    smoke.add_argument(
+        "--tool",
+        choices=["inspect_assembly"],
+        help="instead of arithmetic, let Muse call this read-only engineering tool "
+        "(two live requests at most)",
+    )
+    smoke.add_argument("--fixture", default="B01", choices=["B01", "B02", "B03"])
     demo = sub.add_parser("demo", help="end-to-end redesign run on a synthetic fixture")
     demo.add_argument("--fixture", default="B02", choices=["B01", "B02", "B03"])
     demo.add_argument("--target", default="target")
@@ -90,10 +114,15 @@ def main(argv=None):
     from .config import load_config, live_tests_enabled
 
     if args.command == "smoke":
-        from .smoke import run_smoke
+        from .smoke import run_smoke, run_tool_smoke
 
-        report = run_smoke(load_config())
-        print(json.dumps(report, indent=2))
+        if args.tool:
+            report = run_tool_smoke(load_config(), fixture_code=args.fixture)
+            print(json.dumps(report, indent=2, default=str))
+            print(tool_smoke_text(report), file=sys.stderr)
+        else:
+            report = run_smoke(load_config())
+            print(json.dumps(report, indent=2))
         if args.output:
             _write(args.output, report)
         return 0 if report["status"] in ("passed", "skipped") else 2

@@ -89,12 +89,13 @@ def test_sdk_native_multiple_calls_and_continuation():
         "messages",
         "tools",
         "tool_choice",
-        "max_tokens",
+        "max_completion_tokens",
         "reasoning_effort",
     }
     assert (
         requests[0]["tool_choice"] == "auto"
         and requests[0]["reasoning_effort"] == "medium"
+        and requests[0]["max_completion_tokens"] == 400
     )
 
 
@@ -267,3 +268,24 @@ def test_smoke_nonobject_arguments_are_a_failed_report():
     report = run_smoke(p.config, env={"RUN_META_LIVE_TESTS": "1"}, provider=p)
     assert report["status"] == "failed" and count == 2
     assert report["error"]["kind"] == "BAD_RESPONSE"
+
+
+def test_parallel_tool_calls_is_explicit_and_only_sent_with_tools():
+    bodies = []
+
+    def handler(request):
+        bodies.append(json.loads(request.content))
+        return httpx.Response(200, json=payload())
+
+    p = provider(handler)
+    tool = dict(type="function", function=dict(name="inspect_assembly"))
+    msgs = [dict(role="user", content="hi")]
+    p.complete(
+        msgs, [tool], max_output_tokens=64, timeout_s=2, parallel_tool_calls=False
+    )
+    p.complete(msgs, [tool], max_output_tokens=64, timeout_s=2)
+    p.complete(msgs, [], max_output_tokens=64, timeout_s=2, parallel_tool_calls=False)
+    assert bodies[0]["parallel_tool_calls"] is False
+    assert "parallel_tool_calls" not in bodies[1]
+    assert "parallel_tool_calls" not in bodies[2] and "tools" not in bodies[2]
+    assert all("max_tokens" not in b for b in bodies)

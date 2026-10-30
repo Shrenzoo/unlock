@@ -1,0 +1,18 @@
+UNLOCK Meta tool-calling smoke: PASSED
+  [pass] configured_model  muse-spark-1.3
+  [pass] configured_base_url  https://api.meta.ai/v1
+  [pass] fixture_loaded  B01: 1 declared replaceable component(s)
+  [pass] tool_definition  inspect_assembly only, closed object schema
+  [pass] initial_request  model=muse-spark-1.3 finish_reason=tool_calls
+  [pass] structured_tool_call  1 tool call(s)
+  [pass] tool_name_allowed  ['inspect_assembly']
+  [pass] tool_arguments_parse  
+  [pass] tool_arguments_valid  schema, identity and component IDs accepted
+  [pass] tool_executed  5 component record(s) from the real engine
+  [pass] tool_result_correlation  assistant tool-call message preserved; one tool message per provider id
+  [pass] continuation_request  finish_reason=stop
+  [pass] final_answer_grounded  matches the inspect_assembly result
+  [pass] no_geometry_mutation  input STEP/manifest hashes unchanged; no candidate constructed or verified
+  [pass] no_secret_in_report  credential absent from every recorded field
+  requests 2  tokens in 2903 out 411 total 3314 (provider_reported)
+  cost     {'estimated_usd': 0.005376, 'price_source': 'https://dev.meta.ai/docs/pricing-rate-limits (muse-spark-1.3 Standard list price, not account-verified)', 'price_retrieved_at': '2026-10-29'}

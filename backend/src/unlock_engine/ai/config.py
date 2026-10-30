@@ -64,6 +64,14 @@ class PriceTable:
 PRD_CITED_FIREWORKS_PRICES = PriceTable(
     1.25, 0.15, 4.25, "Fireworks listing cited in PRD (not re-verified)", "2026-10-27"
 )
+# Public Standard-mode list price; used only to label smoke-test estimates.
+META_LIST_PRICES = PriceTable(
+    1.25,
+    0.15,
+    4.25,
+    "https://dev.meta.ai/docs/pricing-rate-limits (muse-spark-1.3 Standard list price, not account-verified)",
+    "2026-10-29",
+)
 
 
 @dataclass(frozen=True)
