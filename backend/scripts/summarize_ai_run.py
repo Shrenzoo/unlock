@@ -13,7 +13,7 @@ import argparse
 import json
 from pathlib import Path
 
-from unlock_engine.ai.config import META_LIST_PRICES
+from unlock_engine.ai.config import list_prices_for
 from unlock_engine.ai.controller import estimate_cost
 from unlock_engine.ai.toolbox import Counters
 from unlock_engine.contracts import digest
@@ -61,6 +61,34 @@ def candidate(report: dict, c: dict) -> dict:
         comparison=c["comparison"],
         feedback=c["feedback"],
     )
+
+
+def cost_estimate(report: dict) -> dict:
+    """The run's configured price, else the exact provider/model list price."""
+    if not report["live_model"]:
+        return dict(estimated_usd=None, reason="no live model usage in this run")
+    configured = report["usage"].get("cost") or {}
+    if configured.get("estimated_usd") is not None:
+        return dict(configured, basis="price table configured for the run")
+    model = report.get("model") or {}
+    provider, model_id = model.get("provider"), model.get("model_id")
+    prices = list_prices_for(provider, model_id)
+    if prices is None:
+        return dict(
+            estimated_usd=None, reason=f"no price table for {provider}/{model_id}"
+        )
+    u = report["usage"]
+    estimate = estimate_cost(
+        Counters(
+            provider_requests=u["provider_requests"],
+            usage_reported_turns=u["usage_reported_turns"],
+            input_tokens=u["input_tokens"],
+            output_tokens=u["output_tokens"],
+            cached_input_tokens=u["cached_input_tokens"],
+        ),
+        prices,
+    )
+    return dict(estimate, basis=f"public list price for {provider}/{model_id}")
 
 
 def summarize(report: dict) -> dict:
@@ -144,18 +172,7 @@ def summarize(report: dict) -> dict:
                 "source",
             )
         },
-        cost_estimate=estimate_cost(
-            Counters(
-                provider_requests=u["provider_requests"],
-                usage_reported_turns=u["usage_reported_turns"],
-                input_tokens=u["input_tokens"],
-                output_tokens=u["output_tokens"],
-                cached_input_tokens=u["cached_input_tokens"],
-            ),
-            META_LIST_PRICES,
-        )
-        if report["live_model"]
-        else None,
+        cost_estimate=cost_estimate(report),
         timings=report["timings"],
         budget=report["budget"],
         limitations=report["limitations"],

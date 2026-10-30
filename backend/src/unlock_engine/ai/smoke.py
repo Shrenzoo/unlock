@@ -21,8 +21,8 @@ from pathlib import Path
 
 from ..contracts import EngineError
 from .config import (
-    META_LIST_PRICES,
     ProviderConfig,
+    list_prices_for,
     live_tests_enabled,
     load_environment,
 )
@@ -478,7 +478,7 @@ def run_tool_smoke(
                         output_tokens=u["output_tokens"],
                         cached_input_tokens=u["cached_input_tokens"],
                     ),
-                    config.prices or META_LIST_PRICES,
+                    config.prices or list_prices_for(config.provider, config.model),
                 )
             report["latency_ms"] = dict(
                 model=round(
