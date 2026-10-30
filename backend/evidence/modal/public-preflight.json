@@ -1,0 +1,71 @@
+{
+  "reviewed_at": "2026-10-30T23:38:19Z",
+  "source_commit": "aa7f295280d4b16627a0ddcc31c8b88023ae4f2d",
+  "branch": "codex/modal-deployment",
+  "disposition": "blocked_no_publication",
+  "fixture_rights": "pending_author_approval_in_source_and_actual_cloud_snapshot",
+  "vercel_hobby_eligibility": "unconfirmed_for_this_project_purpose",
+  "local_security_preflight": {
+    "result": "passed",
+    "blocked_write_requests": 42,
+    "successful_read_routes": 15,
+    "hash_checked_artifact_downloads": 14,
+    "scan_payload_count": 388,
+    "nested_zip_scans": 3,
+    "known_credentials_and_canaries_checked": true,
+    "credential_values_logged": false,
+    "credential_findings": [],
+    "frontend_source_maps": false,
+    "gateway_imported_cad_or_worker": false,
+    "exact_origin_and_host_checks": "passed",
+    "private_path_and_unknown_artifact_checks": "passed",
+    "rate_limit_120_then_429": "passed"
+  },
+  "account": {
+    "workspace": "shreyas-pabbathi",
+    "plan": "Starter",
+    "usage_limit_usd": 30,
+    "spend_limit_usd": 0,
+    "displayed_credits_usd": 30,
+    "displayed_total_spend_usd": 0,
+    "exact_remaining_credits": null,
+    "billing_settings_changed": false
+  },
+  "billing_summary_2026_10": {
+    "metered_cost": "0.00005184",
+    "billed_cost": "0E-8",
+    "adjustments": {
+      "free_storage": "-0E-8",
+      "credits": "-0E-8",
+      "network_egress_allowance": "-0.00005184",
+      "reservation_adjustment": "-0E-8",
+      "plan_cost": "0E-8"
+    },
+    "metered_cost_breakdown": {
+      "llm_tokens": "0E-8",
+      "network_egress": "0.00005184",
+      "volumes": "0E-8",
+      "ephemeral_apps": "0.00248979"
+    }
+  },
+  "resource_report": [
+    {"app_id": "ap-XVxxSaKn0e1IY7kYVfliw5", "resource": "CPU", "cost_usd": "0.00208921"},
+    {"app_id": "ap-XVxxSaKn0e1IY7kYVfliw5", "resource": "Memory", "cost_usd": "0.00038853"},
+    {"app_id": "ap-XVxxSaKn0e1IY7kYVfliw5", "resource": "Network Egress", "cost_usd": "0.00005184"},
+    {"app_id": "ap-lrkmTfKC0S7lt4aTm3mhCt", "resource": "CPU", "cost_usd": "0.00000982"},
+    {"app_id": "ap-lrkmTfKC0S7lt4aTm3mhCt", "resource": "Memory", "cost_usd": "0.00000222"}
+  ],
+  "running_containers": 0,
+  "existing_ephemeral_apps_stopped": true,
+  "new_cloud_compute_started": false,
+  "public_deployment": false,
+  "vercel_project_created": false,
+  "production_browser_tests": "not_run_publication_blocked",
+  "limitations": [
+    "Local ASGI TestClient and static-build review; no production endpoint exists.",
+    "Billing data may lag and dashboard credits are rounded.",
+    "Summary top-level metered_cost does not include its ephemeral_apps breakdown; no exact remaining credit balance inferred.",
+    "Per-container limiter resets on cold restart.",
+    "All selected B02 artifacts require explicit redistribution permission before publication."
+  ]
+}

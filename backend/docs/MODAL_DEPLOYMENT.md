@@ -173,7 +173,12 @@ Private uploads pass a bounded `files={"assembly.step": step_bytes,
 "manifest.json": manifest_bytes}` and `target_id`. They are never selected as a
 public demo. Public compute authentication is intentionally not introduced.
 
-**Wait for the account holder's public-deployment approval before these steps:**
+**2026-10-30 preflight:** the account holder authorized a public read-only B02
+deployment conditional on passing the rights, cost, security and Vercel Hobby
+checks. The [public deployment preflight](PUBLIC_DEPLOYMENT_PREFLIGHT.md) records
+the results: local security checks passed and billing protection remains in place,
+but fixture redistribution permission and Hobby eligibility remain unresolved.
+No public service was deployed. Resolve these gates before the following steps:
 
 1. Select/create a Vercel **Hobby** project with repository root `frontend` and
    determine its free production `.vercel.app` origin, without a domain purchase.
