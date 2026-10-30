@@ -395,3 +395,79 @@ export function resultLabel(result: CheckResult, provenance: ProvenanceKind) {
 ```
 
 Green is not a colour in this product. It is a claim about provenance.
+
+---
+
+## The eight tools
+
+UNLOCK exposes **exactly eight tools** to Muse Spark 1.3 through the Meta Model API. There is no shell tool, no Python tool, no URL tool, no filesystem tool, no acceptance tool, no release tool. If a capability is not on this list, the model physically cannot invoke it — an unexposed tool returns a typed `TOOL_NOT_ALLOWED` and is never dispatched.
+
+| Tool | What it actually runs | Access |
+|:--|:--|:--:|
+| `inspect_assembly` | Validated manifest + measured native inventory | read |
+| `inspect_constraints` | Frozen constraints, regions, keep-outs, envelope | read |
+| `analyze_removal` | Deterministic Stage A `PlanResult` | read |
+| `inspect_blocker` | Rejection certificates + actual BRep findings | read |
+| `list_interventions` | Server template domains ∩ manifest | read |
+| `construct_candidate` | Trusted T01/T02 constructor in an isolated worker | **write** |
+| `verify_candidate` | Fresh reconstruction, 12 checks, re-planning, replay, reverse insertion | read |
+| `compare_candidates` | Planner comparison, same target, same frozen policy | read |
+
+One tool can change geometry. Everything else is inspection.
+
+```python
+# backend/src/unlock_engine/ai/schemas.py — verbatim production descriptions
+TOOL_DESCRIPTIONS = {
+    "inspect_assembly":     "Declared roles, retaining relations, movement axes and measured bounds for up to 12 components.",
+    "inspect_constraints":  "Frozen constraints, protected/editable regions, keep-outs and envelope (empty list = all). Read only.",
+    "analyze_removal":      "Authoritative baseline removal search for the frozen target. Returns status, steps and rejection IDs.",
+    "inspect_blocker":      "Details of one rejected action: obstacles, evidence classification and BRep witness when available.",
+    "list_interventions":   "Server-owned templates enabled for a bracket, with the exact finite parameter values allowed.",
+    "construct_candidate":  "Ask the trusted CAD constructor to build one bounded template edit. evidence_ids must include a "
+                            "rej_, plan_ or ver_ ID. Construction is not verification.",
+    "verify_candidate":     "Independent reconstruction, mandatory constraint checks, removal replanning and reverse insertion.",
+    "compare_candidates":   "Authoritative original-versus-candidate comparison under the PRD improvement rule.",
+}
+```
+
+Note the last sentence of `construct_candidate`. It is in the tool description the model reads, every single turn: *construction is not verification.* The model is told, in its own interface, that building a thing is not the same as proving it.
+
+### What the dispatcher enforces on every call
+
+Arguments reject **extra properties**, invalid or stale IDs, unsupported templates, and out-of-domain parameter values. Imported metadata is treated as untrusted. Project, revision and target identity are checked against the frozen run — a foreign project ID or a stale revision returns `STALE_EVIDENCE` rather than executing.
+
+```python
+# every call, without exception
+if call.name not in TOOL_ARGS:
+    return ToolResult(status="error", error_code="TOOL_NOT_ALLOWED", …)   # never dispatched
+model = TOOL_ARGS[call.name]
+args = model.model_validate(call.arguments)        # additionalProperties: false
+```
+
+### Controller budgets — fixed, not tunable at runtime
+
+| Budget | Limit | Why it is this number |
+|:--|:--:|:--|
+| Candidates | **3** | Bounds native work per run |
+| Tool calls | **12** | Bounds the interaction surface |
+| Model turns | **6** | Bounds conversation drift |
+| Billed output tokens | **16,000** | Reserved **before every attempt**, retained on failure |
+| Wall clock | **120 s** | Native operations each carry a 30 s limit |
+| Schema repairs | **1** | A second malformed response is a failure, not a negotiation |
+
+Output tokens are reserved before *every* attempt and retained even when the request fails or is never reported — so the budget cannot be gamed by dropping a response. Plain text that establishes no outcome gets exactly one bounded clarification; it never becomes a fabricated tool call.
+
+### The protocol, exactly as Meta documents it
+
+```python
+response = client.chat.completions.create(
+    model="muse-spark-1.3",
+    messages=history,                      # original assistant tool_calls + tool results
+    tools=tool_definitions,                # derived from production TOOL_ARGS schemas
+    tool_choice="auto",                    # never forced
+    reasoning_effort="medium",             # no higher effort chosen automatically
+    max_completion_tokens=16_000,          # not the deprecated max_tokens
+)
+```
+
+`tool_choice="auto"`, `max_completion_tokens` rather than the deprecated `max_tokens`, SDK retries **off** — the controller owns bounded retries so there is exactly one retry policy in the system. No OpenAI-only response format, no sampling parameters, no log-probabilities, no agent-framework scaffolding.
