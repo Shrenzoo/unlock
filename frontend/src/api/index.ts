@@ -7,4 +7,10 @@ const base = import.meta.env.VITE_UNLOCK_MODE === 'fixture' ? undefined : (impor
 /** Connect locally by default. Illustrative mode requires VITE_UNLOCK_MODE=fixture. */
 export const api: UnlockApi = base ? createHttpApi(base) : fixtureApi
 
+/**
+ * The sample assembly the landing page opens: the bundled illustrative record in
+ * fixture mode, otherwise the coordinator's computed B02 fixture (its manifest id).
+ */
+export const SAMPLE_PROJECT_PATH = `/projects/${api.mode === 'fixture' ? 'prj_b02' : 'fixture_B02'}`
+
 export * from './client'
