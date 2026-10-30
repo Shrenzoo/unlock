@@ -49,7 +49,9 @@ function Part({ component, color, opacity, offset, visible, dispatch }: { compon
     return g
   }, [component])
   useEffect(() => () => geometry.dispose(), [geometry])
-  return <mesh geometry={geometry} visible={visible} position={offset} onClick={(e) => { e.stopPropagation(); dispatch({ type: 'select', id: component.occurrence_id }) }} onPointerOver={(e) => { e.stopPropagation(); dispatch({ type: 'hover', id: component.occurrence_id }) }} onPointerOut={() => dispatch({ type: 'hover', id: null })}>
+  // e.delta is the pointer travel in px since pointerdown: a drag orbits the camera
+  // and must not also select whatever part the pointer happens to be released over.
+  return <mesh geometry={geometry} visible={visible} position={offset} onClick={(e) => { e.stopPropagation(); if (e.delta > 4) return; dispatch({ type: 'select', id: component.occurrence_id }) }} onPointerOver={(e) => { e.stopPropagation(); dispatch({ type: 'hover', id: component.occurrence_id }) }} onPointerOut={() => dispatch({ type: 'hover', id: null })}>
     <meshStandardMaterial color={color} metalness={0.35} roughness={0.45} transparent={opacity < 1} opacity={opacity} depthWrite={opacity >= 1} />
   </mesh>
 }
