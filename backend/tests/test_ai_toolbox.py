@@ -313,3 +313,35 @@ def test_live_regression_uncited_obstruction_is_refused_but_resubmittable(tb, se
     assert (
         "rej_" in SYSTEM_PROMPT and "rej_" in TOOL_DESCRIPTIONS["construct_candidate"]
     )
+
+
+@pytest.mark.parametrize("exhausted", [False, True])
+def test_pre_construction_refusals_offer_retry_only_within_budget(
+    tb, session, exhausted
+):
+    rej = rejection_handle(tb, session)
+    blocker = run(
+        tb, "inspect_blocker", base(session, "ib", target_id="target", rejection_id=rej)
+    )[0]
+    if exhausted:
+        tb.counters.candidates_constructed = tb.budget.max_candidates
+
+    def construct(rid, params, evidence):
+        return run(
+            tb,
+            "construct_candidate",
+            dict(
+                base(session, rid),
+                target_id="target",
+                proposal=proposal(rid, params, evidence),
+            ),
+        )[0].feedback
+
+    uncited = construct("cite", relief(0, -20, 24, 12), [blocker.evidence_id])
+    off_domain = construct("dom", relief(0, -20, 25, 12), [rej])
+    for feedback in (uncited, off_domain):
+        assert feedback.category == "INVALID_PROPOSAL"
+        assert feedback.retry_permitted is (not exhausted)
+        assert ("resubmit" in feedback.message) is (not exhausted)
+        assert ("no further construction" in feedback.message) is exhausted
+    assert not tb.candidates

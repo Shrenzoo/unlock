@@ -744,6 +744,12 @@ class Toolbox:
             and self.deadline.remaining() > 10
         )
 
+    def _retry_note(self, invitation: str) -> tuple[str, bool]:
+        """Invite a corrected resubmission only while a construction can still run."""
+        if self._retry_permitted():
+            return invitation, True
+        return "no further construction can run in this run's remaining budget", False
+
     def tool_construct_candidate(self, args):
         p = args.proposal
         s = self.session
@@ -773,6 +779,9 @@ class Toolbox:
             self.handles[e][0] in ("rejection", "plan", "verification")
             for e in p.evidence_ids
         ):
+            note, retry = self._retry_note(
+                "correct the citations and resubmit, the same parameters are allowed"
+            )
             return (
                 "rejected",
                 {},
@@ -781,10 +790,9 @@ class Toolbox:
                     message=(
                         "construction did not start: evidence_ids must include at "
                         "least one rejection (rej_), plan (plan_) or verification "
-                        "(ver_) ID; correct the citations and resubmit, the same "
-                        "parameters are allowed"
+                        f"(ver_) ID; {note}"
                     ),
-                    retry_permitted=True,
+                    retry_permitted=retry,
                 ),
                 False,
             )
@@ -805,16 +813,17 @@ class Toolbox:
                 set(SERVER_DOMAINS[p.template_id][k]) & set(spec.domain.get(k, ()))
             )
             if v not in allowed:
+                note, retry = self._retry_note("choose a listed value and resubmit")
                 return (
                     "rejected",
                     {},
                     Feedback(
                         category="INVALID_PROPOSAL",
-                        message=f"{k}={v} is outside the server domain; construction did not start",
+                        message=f"{k}={v} is outside the server domain; construction did not start; {note}",
                         parameter=k,
                         measured=v,
                         allowed=allowed,
-                        retry_permitted=True,
+                        retry_permitted=retry,
                     ),
                     False,
                 )
