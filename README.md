@@ -505,7 +505,7 @@ response = client.chat.completions.create(
 
 ## The live run
 
-Everything in this section is a real call to the Meta Model API against real CAD geometry. The report is committed to the repository as [`backend/evidence/live-b02/live_run.json`](backend/evidence/live-b02/live_run.json) (160 KB) alongside the constructed bracket as a real STEP file.
+Everything in this section is a real call to the Meta Model API against real CAD geometry. The report is committed to the repository as [`backend/evidence/live-b02/live_run.json`](backend/evidence/live-b02/live_run.json) (158 KB) alongside the constructed bracket as a real STEP file.
 
 <p align="center">
   <img src="assets/readme/live-run-timeline.svg" width="100%" alt="Timeline of the live B02 redesign: six turns over 48.1 seconds" />
@@ -982,12 +982,16 @@ Claims in this README are backed by committed artefacts. Nothing here is a scree
 
 ### What is in the repository
 
+<p align="center">
+  <img src="assets/readme/evidence-catalogue.svg" width="100%" alt="The committed evidence tree: live run, tool smoke, frozen validation record and browser acceptance" />
+</p>
+
 ```text
 backend/evidence/
 ├── live-b02/                          the live Meta redesign run
-│   ├── live_run.json                  160 KB · full AIRunReport: every tool
+│   ├── live_run.json                  158 KB · full AIRunReport: every tool
 │   │                                  response, plan, certificate, hash
-│   ├── live_changed_bridge.step       92 KB · the actual constructed bracket
+│   ├── live_changed_bridge.step       91 KB · the actual constructed bracket
 │   ├── live_engineering_summary.json  derived by scripts/summarize_ai_run.py
 │   ├── selector_geometry_ranked.json  the deterministic control
 │   ├── selector_stable_enumeration.json  the blind control
@@ -998,7 +1002,7 @@ backend/evidence/
 │   ├── final-pytest.txt               267 passed at freeze time
 │   ├── browser-compare.png            real browser, real backend
 │   ├── browser-export.png             real browser, real backend
-│   ├── checked-export.zip             155 KB · reimported and re-verified
+│   ├── checked-export.zip             152 KB · reimported and re-verified
 │   ├── SHA256.json                    every artifact, content-addressed
 │   └── validation.json                exact commands and counts
 └── browser-acceptance/
