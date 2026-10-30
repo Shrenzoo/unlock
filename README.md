@@ -814,3 +814,55 @@ uv pip install --python .venv/bin/python --no-deps --no-build-isolation -e .
 ```
 
 Verified working on macOS ARM64 with Python 3.12.16, CadQuery 2.6.1, cadquery-ocp 7.8.1.1.post1, Pydantic 2.12.3, pytest 8.4.2.
+
+---
+
+## The API surface
+
+Interactive documentation is served at **http://127.0.0.1:8000/docs**. Artifacts are immutable SHA-256 identifiers rather than caller-supplied filesystem paths — nothing can be smuggled in through a filename.
+
+| Method | Path | Purpose |
+|:--|:--|:--|
+| `GET` | `/health` | Provider, model, credential state — **never the key** |
+| `GET` | `/v1/projects` | Fixture and imported projects |
+| `GET` | `/v1/projects/{id}` | Project detail and revision list |
+| `POST` | `/v1/projects/{id}/imports` | Upload a validated package → job |
+| `GET` | `/v1/revisions/{id}` | Manifest, inventory, readiness |
+| `POST` | `/v1/revisions/{id}/runs` | Start a frozen-target baseline run |
+| `POST` | `/v1/runs/{id}/redesign` | Bounded model loop + independent verification |
+| `GET` | `/v1/runs/{id}` | Full run record with candidates and metrics |
+| `GET` | `/v1/jobs/{id}/events` | **Ordered, resumable SSE** stage stream |
+| `POST` | `/v1/jobs/{id}/cancel` | Cooperative cancellation |
+| `GET` | `/v1/candidates/{id}` | Candidate evidence and verification report |
+| `POST` | `/v1/candidates/{id}/decision` | Append-only accept / reject |
+| `POST` | `/v1/candidates/{id}/exports` | Checked STEP export bundle |
+| `GET` | `/v1/artifacts/{id}` | Content-addressed download |
+
+### Errors are typed, not stringly
+
+```json
+{
+  "error_code": "CONSTRAINT_VIOLATION",
+  "message": "editable_region: 41.2 mm³ removed outside the declared region",
+  "retryable": false,
+  "field_errors": [],
+  "evidence_ids": ["ver_8c1a…", "rej_17a84dbaf811"],
+  "run_id": "run_983d811a0f174f9a"
+}
+```
+
+Fifteen error codes cover the real failure surface — `INVALID_PACKAGE`, `UNSUPPORTED_SEMANTICS`, `STALE_REVISION`, `VERIFICATION_UNKNOWN`, `MODEL_SCHEMA_ERROR`, `CANCELLED` and the rest. Every envelope carries the evidence IDs and run ID needed to trace it back to the exact computation that produced it.
+
+### SSE that survives a disconnect
+
+Stage events are ordered and **resumable**. If the stream drops mid-run, the run continues on the server; reconnecting resumes from the last delivered sequence number rather than restarting the analysis. The client tells you this explicitly:
+
+> *"Event stream interrupted. The run continues on the server; reconnect to resume."*
+
+### Idempotency
+
+Every state-changing POST accepts an `Idempotency-Key` header. Retrying a redesign request after a network blip returns the original job rather than burning another 31,000 tokens.
+
+### The coordinator is deliberately not a platform
+
+One serial queue, loopback clients, trusted hosts, explicit CORS origins. It is a local engineering tool with real concurrency limits, not a public multi-user scheduler — and the README says so rather than pretending otherwise. Public hosting, authentication and project ownership are separate deployment work, deliberately out of scope.
