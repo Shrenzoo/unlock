@@ -1,4 +1,4 @@
-import type { Dispatch, ReactNode } from 'react'
+import { useEffect, useRef, type Dispatch, type ReactNode } from 'react'
 import type { Axis, Candidate, CheckRecord, Component, PlanResult, Revision, RunRecord, StageEvent } from '@/domain/types'
 import { CheckResultTag, Glyph, ProvenanceTag } from '@/ui/Evidence'
 import type { PartId } from '@/three/ModuleAssembly'
@@ -50,6 +50,9 @@ function templateName(t: { id: string; label: string }) {
 
 export function EvidencePanel(props: PanelProps) {
   const { state, dispatch } = props
+  const scroller = useRef<HTMLDivElement>(null)
+  // Each workflow step starts at the top of its own evidence, not mid-way down the last one.
+  useEffect(() => { scroller.current?.scrollTo({ top: 0 }) }, [state.mode])
   return (
     <aside className="panel" aria-label="Evidence">
       {state.notice && (
@@ -63,7 +66,7 @@ export function EvidencePanel(props: PanelProps) {
           </button>
         </div>
       )}
-      <div className="panel__scroll">
+      <div className="panel__scroll" ref={scroller}>
         {state.mode === 'inspect' && <InspectPanel {...props} />}
         {state.mode === 'analyze' && <AnalyzePanel {...props} />}
         {state.mode === 'redesign' && <RedesignPanel {...props} />}
@@ -122,9 +125,9 @@ function EventList({ events, running }: { events: StageEvent[]; running: boolean
             <span className="events__glyph">
               <Glyph kind={e.state === 'failed' ? 'fail' : live ? 'running' : e.state === 'started' ? 'pending' : 'pass'} />
             </span>
-            <span className="events__stage">{STAGE_LABEL[e.stage]}</span>
+            <span className="events__stage">{e.message === 'Model turn' ? 'Decision step' : STAGE_LABEL[e.stage]}</span>
             <span className="events__t mono">{(e.t_ms / 1000).toFixed(1)} s</span>
-            <span className="events__msg">{e.message}</span>
+            <span className="events__msg">{e.message === 'Model turn' ? 'The decision policy requested its next engineering tool' : e.message}</span>
             {e.tool && (
               <span className="events__tool mono">
                 {e.tool.name}({e.tool.args})
