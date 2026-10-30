@@ -22,6 +22,7 @@ from .geometry import (
     volume,
 )
 from .preview import preview_meshes
+from .fixture_license import b02_license_files
 from .service import Candidate, Revision, shapes_hash
 from .verification import UNVERIFIED, verify_candidate
 
@@ -201,6 +202,8 @@ def export_bundle(revision: Revision, candidate: Candidate, output_root: Path):
             "attribution.txt",
             json.dumps(revision.manifest.provenance.model_dump(), indent=2).encode(),
         )
+        for name, data in b02_license_files(revision.manifest.provenance).items():
+            save(name, data)
     record = dict(
         status="full_assembly" if full else "changed_part_only",
         candidate_id=candidate.id,

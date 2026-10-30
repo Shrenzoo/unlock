@@ -133,6 +133,14 @@ def test_full_assembly_export_round_trip_and_artifacts(revision, candidate, tmp_
             "removed_volume_mm3"
         ] == pytest.approx(2560)
         assert json.loads(z.read("preview.json"))["authoritative"] is False
+        provenance = json.loads(z.read("manifest.json"))["provenance"]
+        assert provenance["license"] == "CC-BY-4.0"
+        assert "UNLOCK team" in provenance["author"]
+        assert (
+            "https://creativecommons.org/licenses/by/4.0/"
+            in z.read("LICENSE-B02.txt").decode()
+        )
+        assert "CadQuery 2.6.1" in z.read("THIRD_PARTY_NOTICES.txt").decode()
 
 
 def test_assembly_writer_failure_truthfully_falls_back(

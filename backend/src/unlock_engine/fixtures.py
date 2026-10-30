@@ -8,6 +8,7 @@ import cadquery as cq
 from .assembly import import_step
 from .contracts import Binding, Manifest
 from .geometry import bounds
+from .fixture_license import B02_PROVENANCE
 from .templates import SERVER_DOMAINS, construct
 
 
@@ -193,7 +194,9 @@ def generate_fixture(directory: Path, code="B02", *, held_out=False):
             dict(id="above", bounds_mm=dict(min=[-100, -100, 70], max=[100, 100, 160]))
         ],
         unsupported_assumptions=[],
-        provenance=dict(
+        provenance=dict(B02_PROVENANCE)
+        if code == "B02" and not held_out
+        else dict(
             author="UNLOCK synthetic constructor",
             license="Redistribution license pending author approval; local engineering fixture",
             source=f"unlock_engine.fixtures.generate_fixture({code}, held_out={held_out}); deterministic seed 0",
