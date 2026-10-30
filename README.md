@@ -1512,3 +1512,25 @@ Issues and PRs welcome — particularly around new server-owned templates (finit
   <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
   <img src="https://img.shields.io/badge/decision%20space-12%20numbers-74787c?style=flat-square&labelColor=151719" alt="The model's entire decision space is twelve numbers" />
 </p>
+
+---
+
+## What would change our mind
+
+A project built on verified claims should say what would *disprove* it. These are the specific findings that would make us rewrite the argument rather than patch the code.
+
+**If the offline demo diverges from the live one.** The claim that geometry rather than the model does the verification rests on `--offline` and live runs producing identical candidates and outcomes. If a fixture ever produces different geometry under the two providers, the verifier is reading something it should not be, and the independence argument is gone. This is the single most load-bearing test in the repository.
+
+**If a proposal could reach construction without citable evidence.** The citation gate is the project's central security property. A constructed candidate whose `evidence_ids` contain no `rej_`, `plan_` or `ver_` handle from the current run would falsify it outright — and would be a one-line test to write.
+
+**If a mandatory `unknown` could produce a passing aggregate.** Any code path that coerces `unknown` into `pass`, or drops an unchecked mandatory constraint from the total, invalidates the aggregation rule and with it every green check in the product.
+
+**If the verifier agreed with the constructor by shared code.** Check 3, `trusted_reconstruction`, is only meaningful if the reconstruction path is genuinely independent. If both were found to read a common parameter interpretation or cached solid, the check would pass on shapes it was built to catch.
+
+**If a mutated original survived a run.** The immutability guarantee is that original B-reps are deep-copied at every mutation boundary. A test showing an original shape changed after a candidate was built would mean the baseline comparison is against a moving target.
+
+**If a stale policy pass could be replayed.** The policy digest is bound into evidence identity precisely so a pass computed under one tolerance cannot be presented against another. Reproducing that bypass would make every reported number unverifiable across time.
+
+**If a deterministic selector beat the model across a fixture suite.** We already report that `geometry_ranked` matched Muse on B02. If a broader suite showed it matching or winning consistently, the honest conclusion is that the model does not belong in this loop for template-shaped problems — and the interesting work becomes identifying the task classes where it does.
+
+Each of these is cheap to test and expensive to discover late. The first three are single test cases; we would rather a reviewer write them than take our word.
