@@ -1058,3 +1058,94 @@ A signed, portable bundle: policy digest, geometry hashes, check results, eviden
 
 **Always — the boundary stays one-way.**
 Every item above widens what the *kernel* can do. None of them widen what the *model* can decide. That asymmetry is the product.
+
+---
+
+## The whole thing in ninety seconds
+
+If you read nothing above, read this.
+
+```text
+YOU          point UNLOCK at an assembly, name the dead part
+  │
+  ▼
+PLANNER      searches for a way out. Finds none.
+             no_path_supported · two confirmed obstructions · BRep witness at (0, −20, 36) mm
+  │
+  ▼
+MUSE         reads the evidence, picks a relief from a twelve-number domain.
+             Proposes T01 24 × 12. Cites two ev_ handles.
+  │
+  ▼
+DISPATCHER   REFUSES IT. Construction never starts.
+             "cite a rej_, plan_ or ver_ handle"
+  │
+  ▼
+MUSE         resubmits T01 40 × 16, citing rej_17a84dbaf811.
+  │
+  ▼
+KERNEL       builds it. Rebuilds it again from scratch, in its own process.
+             Runs twelve mandatory checks. 12/12. Replans. Replays. Reverses.
+  │
+  ▼
+COMPARISON   original vs revised, same target, same frozen policy.
+             VERIFIED_IMPROVEMENT. Route: target TRANSLATE Z+ 80 mm. Cost (0,0,0,1).
+  │
+  ▼
+YOU          accept it. Export a checked STEP bundle that is reimported
+             and re-verified before anyone calls it a file.
+
+48.1 seconds. 31,122 tokens. About three cents.
+The model's own final "safe": true was recorded — and then ignored.
+```
+
+The part that could not be serviced can now be serviced. That is the whole project.
+
+---
+
+## Credits
+
+Built by **[@Shrenzoo](https://github.com/Shrenzoo)** and contributors, with [@maanas-pab](https://github.com/maanas-pab), for the **Meta Global AI Developer Hackathon 2026** — Cerebral Valley batch, **Push the Frontier** track.
+
+**The model:** [Muse Spark 1.3](https://dev.meta.ai) via the Meta Model API. It was chosen because it supports native tool calling with the exact protocol shape this architecture needs — `tool_choice`, `max_completion_tokens`, structured tool results — and because the alternative, a model that had to be trusted, would have made the project impossible.
+
+Everything else is open source, and this project stands on it:
+
+| | |
+|:--|:--|
+| [OCCT](https://dev.opencascade.org/) / [CadQuery](https://github.com/CadQuery/cadquery) | The B-rep kernel. Twelve checks mean nothing without real topology. |
+| [Pydantic](https://docs.pydantic.dev/) | Typed contracts at every boundary — `additionalProperties: false` is doing real security work here. |
+| [FastAPI](https://fastapi.tiangolo.com/) | The coordinator, including the SSE plumbing the resumable event stream rides on. |
+| [React 19](https://react.dev/) · [Three.js](https://threejs.org/) · [R3F](https://docs.pmnd.rs/react-three-fiber) | The workspace and the viewport. |
+| [Vite](https://vite.dev/) · [TypeScript](https://www.typescriptlang.org/) | The frontend toolchain. |
+
+Design system: **Instrument Sans** and **IBM Plex Mono**, on a graphite-and-paper palette. All diagrams in this README are hand-drawn SVG animations built from the same tokens as the product.
+
+### Contribute
+
+Issues and PRs welcome — particularly around new server-owned templates (finite grids and geometric preconditions only, please) and additional invariant checks. If you find a defect, the bar for a good report is the one this project sets for itself: reproduction, evidence, and a specific claim about what should have happened instead.
+
+---
+
+<p align="center">
+  <img src="assets/readme/logo-mark.svg" width="54" height="54" alt="UNLOCK mark" />
+</p>
+
+<h3 align="center">UNLOCK</h3>
+
+<p align="center">
+  <em>Design for the day it breaks.</em>
+</p>
+
+<p align="center">
+  The model proposes. The kernel disposes. There is exactly one door between them,<br/>
+  and it only opens for evidence this run issued itself.
+</p>
+
+<p align="center">
+  <a href="https://dev.meta.ai/docs/models"><img src="https://img.shields.io/badge/Muse-Spark%201.3-3268f5?style=flat-square&labelColor=151719" alt="Muse Spark 1.3" /></a>
+  <img src="https://img.shields.io/badge/tests-327%20passing-34866b?style=flat-square&labelColor=151719" alt="327 tests passing" />
+  <img src="https://img.shields.io/badge/checks-12%2F12-34866b?style=flat-square&labelColor=151719" alt="12 of 12 checks" />
+  <img src="https://img.shields.io/badge/live%20run-48.1s-e4602f?style=flat-square&labelColor=151719" alt="Live run 48.1 seconds" />
+  <img src="https://img.shields.io/badge/license-see%20repo-74787c?style=flat-square&labelColor=151719" alt="License: see repo" />
+</p>
