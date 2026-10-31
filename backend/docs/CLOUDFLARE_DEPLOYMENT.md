@@ -1,8 +1,19 @@
 # Cloudflare and Modal read-only launch
 
+Live and tested on 2026-10-30 (final checks finished 2026-10-31 04:01 UTC):
+
+- Website: <https://unlock-demo.shreyas-pabbathi.workers.dev>
+- Read-only API: <https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run>
+- Cloudflare `unlock-demo`, static-only version `6eea0e24`, Free plan.
+- Modal `unlock-demo`, app `ap-Bd07OyUGaRj7dMS0iNo4Nd`, Starter plan.
+
 This follows merged PR #7 (`7ae322f`) on the new, unmerged
 `codex/cloudflare-deployment` branch. The clean managed worktree was reused;
-other checkouts and uncommitted work were preserved.
+other checkouts and uncommitted work were preserved. A final fetch found main
+at `51b22b1`; its intervening changes concern README artwork and documentation,
+with no overlap in the engineering or deployed frontend changes. The PR's
+three-dot diff preserves that work. PR #7's merged state was rechecked through
+GitHub. No new PR was merged.
 
 ## Rights and regenerated evidence
 
@@ -39,7 +50,7 @@ pending-license snapshot without importing CAD or private compute modules.
 ## Free hosting review
 
 Native browser control confirmed that Cloudflare's current Workers plan is Free,
-with no existing applications and a `shreyas-pabbathi.workers.dev` subdomain.
+initially with no applications and a `shreyas-pabbathi.workers.dev` subdomain.
 The chosen workflow is **Workers Static Assets**, with no Worker script, function,
 database, storage binding, paid feature or purchased domain. Direct upload avoids
 a new GitHub integration. The selected project name is `unlock-demo`.
@@ -69,8 +80,8 @@ illustrative fixture mode. Both builds run TypeScript and preserve notices for
 69 installed production dependencies, in addition to upstream legal comments.
 
 Vite embeds `VITE_UNLOCK_API` at build time. A Cloudflare runtime variable cannot
-change an already uploaded bundle. Replace the placeholder draft with a build
-using the actual Modal origin before publication. Public builds reject absent,
+change an already uploaded bundle. The published build uses the actual Modal
+origin above; the placeholder draft was discarded unpublished. Public builds reject absent,
 local, non-Modal or credential-bearing URLs, and illustrative fixture mode.
 
 `frontend/wrangler.jsonc` records the equivalent assets-only CLI configuration.
@@ -78,6 +89,12 @@ The dashboard upload uses only built `dist` contents, Worker name `unlock-demo`,
 assets directory `/`, HTML handling `auto-trailing-slash`, and not-found handling
 `single-page-application`. `_headers` supplies `nosniff`, a referrer policy, frame
 denial and disabled camera/microphone/location permissions.
+
+**For every dashboard update upload, expand Advanced settings and explicitly
+select Not found handling → single-page-application.** The update form defaults
+to `none` rather than retaining the previous version's SPA selection. Verify
+`/projects` and `/projects/fixture_B02` return the application after deployment.
+The checked-in Wrangler configuration already selects this fallback for CLI use.
 
 Modal retains the working bounded integration. `modal_web.py` mounts only the
 selected job subdirectory read-only, attaches no secret, and allows the exact
@@ -104,5 +121,118 @@ and mobile navigation, actual WebGL original/revised models, comparison and path
 playback, verification evidence, disabled mutations, deep-link reloads and a ZIP
 download matched against its outer and member hashes. Server-side mutations and
 private paths are also checked. Screenshots and the browser report must come
-from actual execution before success is reported. A draft upload or successful
-build is not a live deployment or production acceptance pass.
+from actual execution before success is reported.
+
+## Final production acceptance
+
+All **3 production cases passed**, zero failures/errors, in 47.22 seconds, against
+the real URLs above, using installed Chrome 156 in headless mode. The tested
+application commit is `e114bd9`; the public byte inventory independently identifies
+the actual version. No local backend or frontend was started for these tests.
+
+- Desktop 1600×1000 and mobile 390×844: homepage, original CAD mesh, eight-part
+  tree, camera orbit/reset, baseline obstruction, offline proposal provenance,
+  revised mesh, comparison and checked disassembly route playback.
+- Evidence accurately distinguishes an original `no_path_supported` result from
+  a revised `feasible` route, with 27 mandatory checks passed and physical safety
+  and manufacturing limitations visible. Acceptance and recomputation remain disabled.
+- Browser ZIP downloads match the recorded outer SHA-256 and all 16 inventory
+  member hashes. The full-assembly STEP round trip is passed; attribution,
+  licensing and dependency notices are in the package.
+- Both project deep-link reloads and navigation back to the project list work.
+  No horizontal page overflow or overlapping mobile comparison canvases remains.
+  All browser API calls were GETs, with no localhost requests, console errors,
+  JavaScript errors or failed HTTP requests in the final runs.
+- Seven public mutation routes return 403. Private paths return 403/404 or the
+  static HTML shell, never private file contents. All 18 served assets match the
+  upload byte-for-byte, with security headers. All 14 public artifact blobs were
+  independently downloaded and hash-checked again.
+- The final served release and artifact payloads were compared against known
+  local Meta/API and Modal credentials without printing or storing their values;
+  zero credential findings. No private input CAD, Python source, source maps,
+  local engineering database or credential file is in the static upload.
+
+Full offline regression: **337 passed**, 18 deselected, 731.37 seconds. Licensing
+and real export tests: **14 passed**. Local read-only browser test against the
+new cloud snapshot: **1 passed**. Public TypeScript/build, four invalid public
+configuration rejection cases, Ruff and formatting passed. The production test
+warnings concern dependency/Pillow deprecations; they did not fail checks. No
+standalone frontend lint script or hosted CI pipeline is configured. Tests were
+executed locally and against production as stated, not claimed as hosted CI.
+
+Raw browser outcomes: [production-browser.json](../evidence/cloudflare/production-browser.json).
+Final byte/hash checks: [static-assets.json](../evidence/cloudflare/static-assets.json).
+Consolidated results: [validation.json](../evidence/cloudflare/validation.json).
+
+![Production desktop comparison](../evidence/cloudflare/production-desktop-comparison.png)
+![Production mobile comparison and evidence](../evidence/cloudflare/production-mobile-full-comparison.png)
+
+## Actual usage and cost protections
+
+Final authenticated billing capture: 2026-10-31 approximately 04:01 UTC, October
+cycle, including earlier smoke runs and failed startup attempts. It is a point
+in time report; usage can continue and billing can lag.
+
+| Resource | Actual reported amount |
+| --- | --- |
+| Ephemeral compute, including earlier UNLOCK runs | $0.00354567 |
+| Deployed gateway compute, including failed startup deployment | $0.00081187 |
+| Total of those compute breakdowns | **$0.00435754** |
+| New licensed B02 run alone, CPU + memory report rows | $0.00105588 |
+| Network egress | $0.00005184, fully offset by allowance |
+| Volume storage billed | $0 |
+| LLM tokens billed | $0 |
+| Actual billed cost | **$0** |
+| Dashboard remaining credits | **$30.00 displayed, rounded** |
+| Usage limit / spend limit | **$30 / $0**, unchanged after reload |
+| Retained Volume data | 3,585,371 bytes, 32 files, two job directories |
+| Cloudflare upload | 1,592,424 bytes, 19 files; largest 704,237 bytes |
+
+The new B02 workflow took **53.402 seconds** and recorded **1,793,898 artifact
+bytes**. These are observed workflow values, not a CPU-time estimate. The report
+provides resource costs rather than exact CPU seconds or peak measured memory.
+The private worker remains CPU-only, maximum one container, one CPU and 4 GiB
+hard memory, bounded by 420 seconds. The public gateway allows at most one
+container, 0.5 CPU and 512 MiB hard limits, eight concurrent reads, 30-second
+request timeout and no warm containers, with a two-second scale-down window.
+No private job remains running; the selected B02 Volume subdirectory is mounted
+read-only by the public app and no Modal Secret is attached.
+
+The CLI's top-level `metered_cost` is $0.00005184 and omits the compute amounts
+shown separately in `metered_cost_breakdown`. Raw summary/report JSON is preserved
+without forcing those fields to reconcile. Summing rounded resource rows can
+differ by $0.00000001. The dashboard supplies only rounded remaining credits;
+an exact remaining-credit ledger was not available. No hackathon promotional
+grant was observed; these are Starter's monthly included credits.
+
+Cloudflare confirms static-only requests are served at no charge and does not
+provide request metrics for this configuration. There is no Worker script,
+binding, queue or purchased domain. Retained Modal storage is far below the
+published free allowance. No payment method, plan, billing limit or paid feature
+was changed. See [raw billing summary](../evidence/cloudflare/modal-billing-summary.json)
+and [hourly resource report](../evidence/cloudflare/modal-billing-report.json).
+
+## Resolved problems and ongoing limits
+
+Modal initially rejected an image environment layer after a non-copied source
+mount. Function environment settings resolved this. Remote startup then lacked
+the helper import and selected job environment; explicitly packaging `modal_app`
+and passing job/CORS settings fixed it. The unhealthy deployment was stopped;
+its small startup costs are included above. The replacement API passed actual
+health and browser requests.
+
+Production tests found a run-recovery navigation race, fixed by honoring an
+explicit workflow choice, and Cloudflare's reset SPA setting, corrected on each
+upload. Visual review then found mobile canvas overflow that functional pixel
+checks alone missed. Bounded grid rows/canvases and new containment assertions
+fixed it; the entire production suite passed again on the final release. The
+landing footer now scopes illustrative claims to marketing geometry.
+
+The demo stays limited to rights-cleared synthetic B02. Private engineering
+compute requires authenticated Modal SDK access. No public CAD uploads, live
+Meta inference or unrestricted engineering computation is enabled. The request
+limiter is per container and resets on cold start; account limits are the outer
+cost controls. The mobile layout stacks models and evidence, while dense editing
+is intended for a larger screen. Geometry checks are not a manufacturing or
+physical safety release. Future new inputs, AI inference or paid features need
+separate authorization and cost/security review.

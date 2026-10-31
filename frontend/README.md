@@ -2,6 +2,12 @@
 
 React 19 + TypeScript + Vite, with Three.js through React Three Fiber and Drei. GSAP drives the hero reveal and the scroll story; Lenis smooths landing-page scrolling. Everything else is CSS.
 
+Public read-only B02 demonstration: <https://unlock-demo.shreyas-pabbathi.workers.dev>.
+Its Modal API serves recorded CAD results from an offline scripted decision policy.
+Uploads, live AI inference and engineering mutations are disabled. See the
+[launch report](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) for licensing, usage,
+production browser evidence and deployment settings.
+
 ```bash
 npm install
 npm run dev        # http://localhost:5183
@@ -55,6 +61,21 @@ The landing page's hero and story (`three/ModuleAssembly`, `fixtures/b02.ts`) ar
 presentation geometry and say so. In fixture mode every number, check and event
 comes from `fixtures/b02.ts`; import, review decisions and export throw
 `ServiceNotConnected`, and the UI says so.
+
+## Cloudflare static deployment
+
+Build from this directory with the actual backend origin:
+
+```bash
+VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run npm run build:public
+```
+
+Upload only `dist/` to the existing `unlock-demo` Workers Static Assets project.
+For **each** dashboard upload, select Advanced settings → Not found handling →
+single-page-application; the update form defaults to `none`. `wrangler.jsonc`
+records the equivalent CLI configuration. No Worker script or runtime secrets
+are needed. All public builds reject localhost, missing/credential-bearing API
+URLs and illustrative fixture mode. The build preserves dependency notices.
 
 ## Browser acceptance
 
