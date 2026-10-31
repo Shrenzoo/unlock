@@ -972,7 +972,13 @@ Every state-changing POST accepts an `Idempotency-Key` header. Retrying a redesi
 
 ### The coordinator is deliberately not a platform
 
-One serial queue, loopback clients, trusted hosts, explicit CORS origins. It is a local engineering tool with real concurrency limits, not a public multi-user scheduler — and the README says so rather than pretending otherwise. Public hosting, authentication and project ownership are separate deployment work, deliberately out of scope.
+One serial queue, loopback clients, trusted hosts, explicit CORS origins. It is a local engineering tool with real concurrency limits, not a public multi-user scheduler.
+
+Read-only deployment scaffolding does exist — `unlock_engine/deployment/` provides bounded Modal jobs and read-only engineering snapshots, with a `modal_app.py` / `modal_web.py` entry point and a Vercel config for the frontend. A preflight review was run against it on 30 October 2026 and its disposition was **blocked**: no public Modal endpoint and no Vercel deployment were actually created.
+
+The blocker was not technical. It was rights and billing: the B02 fixture is generated deterministically by `fixtures.py`, and both its source and the exported snapshot carry the annotation *"Redistribution license pending author approval; local engineering fixture."* A commit author is not a redistribution licence, so publication waits on the authors agreeing terms. Billing safeguards were verified in the same review — a $30 workspace limit with a $0 spend limit and $0.00 usage to date.
+
+The local interactive application is unaffected and remains the supported way to run UNLOCK. See [the preflight record](backend/docs/PUBLIC_DEPLOYMENT_PREFLIGHT.md) and [the deployment checkpoint](backend/docs/MODAL_DEPLOYMENT.md) for the full findings.
 
 ---
 
@@ -1118,7 +1124,7 @@ A project about verified claims should make verified claims about itself. Here i
 | **Torque, cables, clips, adhesives or wiring** | Disassembly is modelled as rigid-body extraction. Soft and electrical systems are not represented. |
 | **Restored product function** | A relief that frees a fan does not guarantee the repaired machine works. Nothing here claims otherwise. |
 | **Manufacturability** | A verified relief is geometrically valid. Whether it can be cast, machined or moulded is not assessed. |
-| **A hosted, multi-user product** | The coordinator is a local, single-queue engineering tool. Auth, ownership and public hosting are separate deployment work. |
+| **A hosted, multi-user product** | Not yet, and deliberately. Read-only cloud scaffolding exists, but a preflight review blocked publication pending fixture redistribution rights. Auth and ownership remain open work. |
 | **A benchmark** | One fixture, one live run. The two deterministic controls make it a protocol check, not a leaderboard entry. |
 
 ### The honest headline
@@ -1296,7 +1302,9 @@ Revisions are immutable, and frozen constraints, keep-outs and envelope are hash
 
 ### What we are explicitly *not* claiming
 
-This is a **local, single-queue engineering tool**, not a hardened multi-tenant service. The coordinator binds to loopback with trusted hosts and explicit CORS origins. There is no authentication, no project ownership, no rate limiting per user, and no sandboxing beyond the subprocess boundaries described above. **Do not expose it to the public internet in its current form.** Public hosting, auth and ownership are real deployment work, deliberately out of scope for this project — and pretending otherwise would be exactly the kind of unverified claim this system is built to refuse.
+This is a **local, single-queue engineering tool**, not a hardened multi-tenant service. The coordinator binds to loopback with trusted hosts and explicit CORS origins. There is no authentication, no project ownership, no rate limiting per user, and no sandboxing beyond the subprocess boundaries described above. **Do not expose it to the public internet in its current form.**
+
+Read-only cloud scaffolding has been written and reviewed, and the review concluded it should not be published yet — see [the public deployment preflight](backend/docs/PUBLIC_DEPLOYMENT_PREFLIGHT.md). The grounds were fixture redistribution rights and billing safeguards, not a security defect, and no public endpoint was created. Auth, ownership and multi-tenant rate limiting remain open work.
 
 ## Performance, measured
 
