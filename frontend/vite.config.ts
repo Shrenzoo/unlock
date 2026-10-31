@@ -4,8 +4,17 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  if (process.env.VERCEL && (!env.VITE_UNLOCK_API?.startsWith('https://') || /localhost|127\.0\.0\.1/.test(env.VITE_UNLOCK_API))) {
-    throw new Error('Set VITE_UNLOCK_API to the HTTPS Modal read-only API URL before deploying to Vercel.')
+  if (process.env.VERCEL || process.env.CF_PAGES || mode === 'public') {
+    let api: URL
+    try { api = new URL(env.VITE_UNLOCK_API) } catch {
+      throw new Error('Set VITE_UNLOCK_API to the HTTPS Modal read-only API origin before publishing.')
+    }
+    if (api.protocol !== 'https:' || !api.hostname.endsWith('.modal.run') || api.username || api.password || api.search || api.hash || api.pathname !== '/') {
+      throw new Error('VITE_UNLOCK_API must be a Modal HTTPS origin without credentials, path, query or fragment.')
+    }
+    if (env.VITE_UNLOCK_MODE === 'fixture') {
+      throw new Error('Public builds must use the real read-only engineering API, not illustrative fixture mode.')
+    }
   }
   return {
     plugins: [react()],

@@ -1,0 +1,156 @@
+{
+  "checked_at": "2026-10-31T04:03:11.318870+00:00",
+  "deployment": {
+    "web": "https://unlock-demo.shreyas-pabbathi.workers.dev",
+    "api": "https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run",
+    "cloudflare_project": "unlock-demo",
+    "cloudflare_version": "6eea0e24",
+    "modal_app": "ap-Bd07OyUGaRj7dMS0iNo4Nd",
+    "mode": "read_only",
+    "worker_script": false,
+    "paid_features": false,
+    "live_model": false
+  },
+  "licensing": {
+    "license": "CC-BY-4.0",
+    "scope": "Original B02 geometry and generated demonstration assets only",
+    "authorization": "Account holder attested both his own grant and his brother\u2019s agreement",
+    "old_snapshot_unchanged": true
+  },
+  "modal_billing": {
+    "cycle": "2026-10",
+    "report_start": "2026-10-30",
+    "report_end_exclusive": "2026-11-01",
+    "plan": "Starter",
+    "usage_limit_usd": 30,
+    "spend_limit_usd": 0,
+    "displayed_remaining_credits_usd": "30.00",
+    "display_precision": "Rounded to cents; not an exact remaining-credit ledger",
+    "displayed_total_spend_usd": "0.00",
+    "reported_compute_breakdown_total_usd": "0.00435754",
+    "billed_cost_usd": "0E-8",
+    "raw_top_level_metered_cost_usd": "0.00005184",
+    "per_app_resource_costs_usd": {
+      "ap-M2J9qeqBqQew9zawXaxmKx": {
+        "description": "unlock-engineering",
+        "resources": {
+          "CPU": "0.00078943",
+          "Memory": "0.00026645"
+        }
+      },
+      "ap-XVxxSaKn0e1IY7kYVfliw5": {
+        "description": "unlock-engineering",
+        "resources": {
+          "CPU": "0.00208921",
+          "Network Egress": "0.00005184",
+          "Memory": "0.00038853"
+        }
+      },
+      "ap-lrkmTfKC0S7lt4aTm3mhCt": {
+        "description": "unlock-engineering",
+        "resources": {
+          "CPU": "0.00000982",
+          "Memory": "0.00000222"
+        }
+      },
+      "ap-Sw3V81VPLym8IYE7GHnEMb": {
+        "description": "unlock-demo",
+        "resources": {
+          "CPU": "0.00003938",
+          "Memory": "0.00000889"
+        }
+      },
+      "ap-Bd07OyUGaRj7dMS0iNo4Nd": {
+        "description": "unlock-demo",
+        "resources": {
+          "CPU": "0.00058265",
+          "Memory": "0.00018095"
+        }
+      }
+    },
+    "storage": {
+      "files": 32,
+      "bytes": 3585371,
+      "job_directories": [
+        "6a2d843e1bf5462b93d0d6b12affa6ea",
+        "9ad44594b93d4d0b860e8efda623b2d6"
+      ]
+    },
+    "notes": [
+      "Billing may lag and the public service can incur further metered usage after this snapshot.",
+      "The CLI top-level metered_cost excludes compute shown in metered_cost_breakdown here; raw responses are preserved without rewriting or pretending they reconcile.",
+      "Included credits are monthly. No hackathon promotional credit grant was observed.",
+      "Stopped failed startup deployment ap-Sw3V81VPLym8IYE7GHnEMb is included in reported costs. Storage is well below the free allowance."
+    ]
+  },
+  "cloudflare_resources": {
+    "plan": "Free",
+    "uploaded_files": 19,
+    "static_bytes": 1592424,
+    "largest_file_bytes": 704237,
+    "served_files": 18,
+    "bindings": 0,
+    "queues": 0,
+    "worker_scripts": 0,
+    "requests_metric": null,
+    "metric_note": "Dashboard does not provide request metrics for static-only Workers and states these requests are served at no charge."
+  },
+  "tests": {
+    "offline_backend_passed": 337,
+    "licensing_export_passed": 14,
+    "local_readonly_browser_passed": 1,
+    "production": {
+      "passed": 3,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 47.218,
+      "viewports": [
+        [
+          1600,
+          1000
+        ],
+        [
+          390,
+          844
+        ]
+      ],
+      "mobile_canvas_containment": true
+    },
+    "public_build_negative_cases": 4,
+    "typescript": "passed",
+    "ruff": "passed",
+    "security_payload_scans": 406,
+    "security_preflight_mutations_denied": 42,
+    "public_mutation_routes_denied": 7,
+    "all_published_blob_hashes_checked": 14,
+    "served_asset_integrity": "all 18 files matched; security headers passed",
+    "known_credential_findings": 0
+  },
+  "resolved_issues": [
+    "Modal rejected an image environment layer after a non-copied source mount; moved deployment configuration to the function environment.",
+    "Remote gateway helper import and selected job configuration were missing; explicitly packaged modal_app and provided job/CORS environment. Stopped unhealthy deployment and redeployed.",
+    "Late run recovery overrode explicit workflow navigation; user selection now takes precedence.",
+    "Cloudflare dashboard update uploads reset Not found handling to none; reselected single-page-application for each release and tested direct reloads.",
+    "Mobile canvas intrinsic sizing overflowed comparison rows into evidence; bounded grid rows and canvases and added production containment assertions.",
+    "Corrected landing footer to distinguish illustrative marketing geometry from recorded computed workspace results."
+  ],
+  "remaining_limits": [
+    "Only synthetic B02 is public. Uploads, engineering mutations and live inference are disabled.",
+    "The offline scripted decision policy is identified; this public demo does not execute live Meta inference.",
+    "Geometric verification is not a manufacturing or physical safety release.",
+    "The in-process request limiter resets on cold starts; workspace usage/spend limits provide the outer cost controls.",
+    "Mobile adapts the engineering workspace into stacked views; dense editing remains intended for a large screen.",
+    "No hosted CI workflow is configured for these production tests. They were executed locally against the real public endpoints."
+  ],
+  "commits_before_report": [
+    "ce9d148",
+    "ce919b8",
+    "639f89e",
+    "3449408",
+    "3ecfca1",
+    "3af5d64",
+    "26af8d8",
+    "7ce5dbb",
+    "e114bd9"
+  ]
+}

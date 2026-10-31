@@ -28,6 +28,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
   const [state, dispatch] = useReducer(reducer, initialState)
   const jobs = useRef<{ controller: AbortController; id: string | null } | null>(null)
   const generation = useRef(0)
+  const choseMode = useRef(false)
 
   const stopActive = useCallback(() => {
     generation.current += 1
@@ -39,6 +40,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
 
   useEffect(() => {
     let live = true
+    choseMode.current = false
     setRevision(null)
     setError(null)
     api.latestRevisionId(projectId).then((id) => api.getRevision(id)).then((r) => { if (live) setRevision(r) })
@@ -82,7 +84,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
         const accepted = restored.candidates.find((c) => c.review_decision === 'accept')
         dispatch({ type: 'candidate', id: accepted?.id ?? restored.selected_candidate_id })
       }
-      dispatch({ type: 'mode', mode: redesigned ? 'redesign' : 'analyze' })
+      if (!choseMode.current) dispatch({ type: 'mode', mode: redesigned ? 'redesign' : 'analyze' })
       if (restored.state === 'queued' || restored.state === 'running') {
         dispatch({ type: 'notice', notice: { tone: 'info', text: 'A job for this run was still in progress when the page loaded. Reload again shortly to see its persisted result.' } })
       }
@@ -218,7 +220,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
                     aria-current={state.mode === m ? 'step' : undefined}
                     disabled={!avail.ok}
                     title={avail.ok ? undefined : avail.why}
-                    onClick={() => dispatch({ type: 'mode', mode: m })}
+                    onClick={() => { choseMode.current = true; dispatch({ type: 'mode', mode: m }) }}
                   >
                     <span className="mono">{i + 1}</span>
                     {MODE_LABEL[m]}

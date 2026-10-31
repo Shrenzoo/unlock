@@ -1,0 +1,20 @@
+{
+  "licensing": {
+    "tests": "14",
+    "failures": "0",
+    "errors": "0",
+    "time": "28.279"
+  },
+  "cloudflare-regression": {
+    "tests": "337",
+    "failures": "0",
+    "errors": "0",
+    "time": "731.365"
+  },
+  "cloudflare-readonly-browser": {
+    "tests": "1",
+    "failures": "0",
+    "errors": "0",
+    "time": "12.458"
+  }
+}

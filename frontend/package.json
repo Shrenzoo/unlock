@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/generate-notices.mjs && tsc -b && vite build",
+    "build:public": "node scripts/generate-notices.mjs && tsc -b && vite build --mode public",
     "typecheck": "tsc -b --pretty",
     "preview": "vite preview"
   },
