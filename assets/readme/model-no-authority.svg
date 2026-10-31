@@ -22,7 +22,7 @@
     <text x="58" y="84" class="mono" font-size="10.5" fill="#7d8287">FINAL MODEL STATEMENT · turn 6</text>
     <text x="58" y="106" class="mono" font-size="11.5" fill="#e9e8e3">{"candidate_proposed": true,</text>
     <text x="58" y="122" class="mono" font-size="11.5" fill="#e9e8e3"> "safe": true, "ready": true}</text>
-    <path class="sk" d="M56 96 H420 M56 112 H420" stroke="#e4602f" stroke-width="2"/>
+    <path class="sk" d="M56 102 H420 M56 118 H420" stroke="#e4602f" stroke-width="2"/>
   </g>
 
   <!-- arrow -->
