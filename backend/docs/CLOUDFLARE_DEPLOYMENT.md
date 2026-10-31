@@ -1,7 +1,9 @@
 # Cloudflare and Modal read-only launch
 
-Current frontend release: [connected wave refinement](../../frontend/docs/WAVE_REFINEMENT.md)
-records static version `97a79a61`, preserved layout and production acceptance.
+Current frontend release: [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
+records static version `78201c9c`, preserved layout and production acceptance.
+The [prior wave refinement](../../frontend/docs/WAVE_REFINEMENT.md) records version
+`97a79a61`.
 The earlier [spacious reference design](../../frontend/docs/REFERENCE_DESIGN.md)
 records version `0131c15a`. The earlier [UI presentation update](../../frontend/docs/UI_POLISH.md)
 records version `47b955c6`. The original launch evidence below is preserved.

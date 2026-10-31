@@ -1,0 +1,46 @@
+{
+  "method": "Reduced-motion screenshot with foreground opacity temporarily set to zero for measurement only; the product is not modified.",
+  "definitions": {
+    "white_fraction": "min(R,G,B) > 215",
+    "bright_blue_fraction": "B > 130 and B-R > 60",
+    "dark_fraction": "0.2126R + 0.7152G + 0.0722B < 35"
+  },
+  "measurements": {
+    "screenshot": {
+      "hero": {
+        "white_fraction": 0.6917427802216636,
+        "bright_blue_fraction": 0.22381536006055758,
+        "dark_fraction": 0.0
+      },
+      "story": {
+        "white_fraction": 0.0,
+        "bright_blue_fraction": 0.056120654564670934,
+        "dark_fraction": 0.8301330231661335
+      }
+    },
+    "desktop": {
+      "hero": {
+        "white_fraction": 0.6884770833333334,
+        "bright_blue_fraction": 0.22751180555555556,
+        "dark_fraction": 0.0
+      },
+      "story": {
+        "white_fraction": 0.0,
+        "bright_blue_fraction": 0.056,
+        "dark_fraction": 0.8304194444444445
+      }
+    },
+    "mobile": {
+      "hero": {
+        "white_fraction": 0.6283418398347308,
+        "bright_blue_fraction": 0.30846093085429577,
+        "dark_fraction": 0.0
+      },
+      "story": {
+        "white_fraction": 0.0,
+        "bright_blue_fraction": 0.10209016891481347,
+        "dark_fraction": 0.7093358852837526
+      }
+    }
+  }
+}

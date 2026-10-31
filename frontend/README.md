@@ -10,8 +10,9 @@ production browser evidence and deployment settings.
 The [initial UI presentation update](docs/UI_POLISH.md) records the noise field
 and matching favicon. The current [spacious reference design](docs/REFERENCE_DESIGN.md)
 records larger sections, continuously visible idle motion and CAD framing.
-The latest [wave refinement](docs/WAVE_REFINEMENT.md) improves connected blue
-lighting and grain while verifying that every measured layout position is unchanged.
+The latest [atmospheric lighting correction](docs/ATMOSPHERIC_LIGHTING.md) replaces
+ribbons with irregular cloud lighting while verifying that every measured layout
+position and the existing CAD interactions are preserved.
 
 ```bash
 npm install

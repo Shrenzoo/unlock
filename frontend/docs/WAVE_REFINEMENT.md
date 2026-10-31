@@ -1,6 +1,10 @@
 # Connected waves with the existing layout
 
-Live at <https://unlock-demo.shreyas-pabbathi.workers.dev>, Cloudflare static
+The later [atmospheric lighting correction](ATMOSPHERIC_LIGHTING.md) replaces this
+ribbon treatment and records current static version `78201c9c`. This report
+preserves the preceding evidence.
+
+Originally published at <https://unlock-demo.shreyas-pabbathi.workers.dev>, Cloudflare static
 version `97a79a61`, application commit `5b071bb`, checked 2026-10-31.
 This refines the atmosphere of the prior reference design while preserving its
 section heights, typography, spacing, navigation, controls and CAD presentation.

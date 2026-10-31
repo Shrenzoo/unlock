@@ -1,0 +1,765 @@
+{
+  "checked_at": "2026-10-31T15:23:53.739843+00:00",
+  "before_application_commit": "5b071bb",
+  "before_layout_artifact": "../wave-refinement/layout-comparison.json",
+  "before_layout_key": "after",
+  "after_application_commit": "1dc3e97",
+  "after_cloudflare_version": "78201c9c",
+  "after_origin": "https://unlock-demo.shreyas-pabbathi.workers.dev",
+  "reduced_motion_for_stable_measurement": true,
+  "rectangles_compared": 120,
+  "maximum_difference_px": 0,
+  "all_rectangles_identical": true,
+  "after": {
+    "screenshot": {
+      "viewport": [
+        2048,
+        1094
+      ],
+      "hero": {
+        ".hero": {
+          "x": 0,
+          "y": 0,
+          "width": 2048,
+          "height": 1094
+        },
+        ".hero__title": {
+          "x": 44.171875,
+          "y": 365.40625,
+          "width": 638.484375,
+          "height": 259.171875
+        },
+        ".hero__lede": {
+          "x": 48,
+          "y": 648.578125,
+          "width": 412.90625,
+          "height": 56
+        },
+        ".hero__ctas": {
+          "x": 48,
+          "y": 728.578125,
+          "width": 634.65625,
+          "height": 48
+        },
+        ".hero__ctas .btn--primary": {
+          "x": 48,
+          "y": 728.578125,
+          "width": 186.953125,
+          "height": 48
+        },
+        ".hero__ctas .btn--quiet": {
+          "x": 246.953125,
+          "y": 728.578125,
+          "width": 163.3125,
+          "height": 48
+        },
+        ".hero__stage": {
+          "x": 706.65625,
+          "y": 112,
+          "width": 964,
+          "height": 918
+        },
+        ".hero__stage canvas": {
+          "x": 706.65625,
+          "y": 112,
+          "width": 964,
+          "height": 918
+        },
+        ".titleblock": {
+          "x": 1660,
+          "y": 853.234375,
+          "width": 340,
+          "height": 176.765625
+        },
+        ".nav": {
+          "x": 0,
+          "y": 0,
+          "width": 2048,
+          "height": 64
+        },
+        ".nav__links": {
+          "x": 1036,
+          "y": 15.5,
+          "width": 634.65625,
+          "height": 33
+        },
+        ".nav__cta": {
+          "x": 1945.515625,
+          "y": 15.5,
+          "width": 54.484375,
+          "height": 33
+        },
+        "#story": {
+          "x": 0,
+          "y": 1094,
+          "width": 2048,
+          "height": 6782.796875
+        },
+        ".story__stage": {
+          "x": 0,
+          "y": 1094,
+          "width": 2048,
+          "height": 1094
+        },
+        ".story__canvas": {
+          "x": 706.65625,
+          "y": 1198,
+          "width": 964,
+          "height": 926
+        },
+        ".story__copy": {
+          "x": 48,
+          "y": 1533.625,
+          "width": 634.65625,
+          "height": 254.75
+        },
+        ".story__rail": {
+          "x": 1875.203125,
+          "y": 1527,
+          "width": 124.796875,
+          "height": 228
+        },
+        "#workspace": {
+          "x": 0,
+          "y": 7876.796875,
+          "width": 2048,
+          "height": 845
+        },
+        "#scope": {
+          "x": 0,
+          "y": 8721.796875,
+          "width": 2048,
+          "height": 715.5
+        },
+        ".footer": {
+          "x": 0,
+          "y": 9437.296875,
+          "width": 2048,
+          "height": 504.671875
+        }
+      },
+      "story": {
+        ".hero": {
+          "x": 0,
+          "y": -1322,
+          "width": 2048,
+          "height": 1094
+        },
+        ".hero__title": {
+          "x": 44.171875,
+          "y": -956.59375,
+          "width": 638.484375,
+          "height": 259.171875
+        },
+        ".hero__lede": {
+          "x": 48,
+          "y": -673.421875,
+          "width": 412.90625,
+          "height": 56
+        },
+        ".hero__ctas": {
+          "x": 48,
+          "y": -593.421875,
+          "width": 634.65625,
+          "height": 48
+        },
+        ".hero__ctas .btn--primary": {
+          "x": 48,
+          "y": -593.421875,
+          "width": 186.953125,
+          "height": 48
+        },
+        ".hero__ctas .btn--quiet": {
+          "x": 246.953125,
+          "y": -593.421875,
+          "width": 163.3125,
+          "height": 48
+        },
+        ".hero__stage": {
+          "x": 706.65625,
+          "y": -1210,
+          "width": 964,
+          "height": 918
+        },
+        ".hero__stage canvas": {
+          "x": 706.65625,
+          "y": -1210,
+          "width": 964,
+          "height": 918
+        },
+        ".titleblock": {
+          "x": 1660,
+          "y": -468.765625,
+          "width": 340,
+          "height": 176.765625
+        },
+        ".nav": {
+          "x": 0,
+          "y": 0,
+          "width": 2048,
+          "height": 64
+        },
+        ".nav__links": {
+          "x": 1036,
+          "y": 15.5,
+          "width": 634.65625,
+          "height": 33
+        },
+        ".nav__cta": {
+          "x": 1945.515625,
+          "y": 15.5,
+          "width": 54.484375,
+          "height": 33
+        },
+        "#story": {
+          "x": 0,
+          "y": -228,
+          "width": 2048,
+          "height": 6782.796875
+        },
+        ".story__stage": {
+          "x": 0,
+          "y": 0,
+          "width": 2048,
+          "height": 1094
+        },
+        ".story__canvas": {
+          "x": 706.65625,
+          "y": 104,
+          "width": 964,
+          "height": 926
+        },
+        ".story__copy": {
+          "x": 48,
+          "y": 439.625,
+          "width": 634.65625,
+          "height": 254.75
+        },
+        ".story__rail": {
+          "x": 1875.203125,
+          "y": 433,
+          "width": 124.796875,
+          "height": 228
+        },
+        "#workspace": {
+          "x": 0,
+          "y": 6554.796875,
+          "width": 2048,
+          "height": 845
+        },
+        "#scope": {
+          "x": 0,
+          "y": 7399.796875,
+          "width": 2048,
+          "height": 715.5
+        },
+        ".footer": {
+          "x": 0,
+          "y": 8115.296875,
+          "width": 2048,
+          "height": 504.671875
+        }
+      }
+    },
+    "desktop": {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "hero": {
+        ".hero": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000
+        },
+        ".hero__title": {
+          "x": 36,
+          "y": 350.796875,
+          "width": 440.953125,
+          "height": 194.390625
+        },
+        ".hero__lede": {
+          "x": 38.875,
+          "y": 569.1875,
+          "width": 412.90625,
+          "height": 56
+        },
+        ".hero__ctas": {
+          "x": 38.875,
+          "y": 649.1875,
+          "width": 438.078125,
+          "height": 48
+        },
+        ".hero__ctas .btn--primary": {
+          "x": 38.875,
+          "y": 649.1875,
+          "width": 186.953125,
+          "height": 48
+        },
+        ".hero__ctas .btn--quiet": {
+          "x": 237.828125,
+          "y": 649.1875,
+          "width": 163.3125,
+          "height": 48
+        },
+        ".hero__stage": {
+          "x": 500.953125,
+          "y": 112,
+          "width": 669.125,
+          "height": 824
+        },
+        ".hero__stage canvas": {
+          "x": 500.953125,
+          "y": 112,
+          "width": 669.125,
+          "height": 824
+        },
+        ".titleblock": {
+          "x": 1121.125,
+          "y": 744.390625,
+          "width": 280,
+          "height": 191.609375
+        },
+        ".nav": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 64
+        },
+        ".nav__links": {
+          "x": 732,
+          "y": 15.5,
+          "width": 438.078125,
+          "height": 33
+        },
+        ".nav__cta": {
+          "x": 1346.640625,
+          "y": 15.5,
+          "width": 54.484375,
+          "height": 33
+        },
+        "#story": {
+          "x": 0,
+          "y": 1000,
+          "width": 1440,
+          "height": 6200
+        },
+        ".story__stage": {
+          "x": 0,
+          "y": 1000,
+          "width": 1440,
+          "height": 1000
+        },
+        ".story__canvas": {
+          "x": 500.953125,
+          "y": 1104,
+          "width": 669.125,
+          "height": 832
+        },
+        ".story__copy": {
+          "x": 38.875,
+          "y": 1387.28125,
+          "width": 438.078125,
+          "height": 265.4375
+        },
+        ".story__rail": {
+          "x": 1276.328125,
+          "y": 1386,
+          "width": 124.796875,
+          "height": 228
+        },
+        "#workspace": {
+          "x": 0,
+          "y": 7200,
+          "width": 1440,
+          "height": 845
+        },
+        "#scope": {
+          "x": 0,
+          "y": 8045,
+          "width": 1440,
+          "height": 715.5
+        },
+        ".footer": {
+          "x": 0,
+          "y": 8760.5,
+          "width": 1440,
+          "height": 513.203125
+        }
+      },
+      "story": {
+        ".hero": {
+          "x": 0,
+          "y": -1208,
+          "width": 1440,
+          "height": 1000
+        },
+        ".hero__title": {
+          "x": 36,
+          "y": -857.203125,
+          "width": 440.953125,
+          "height": 194.390625
+        },
+        ".hero__lede": {
+          "x": 38.875,
+          "y": -638.8125,
+          "width": 412.90625,
+          "height": 56
+        },
+        ".hero__ctas": {
+          "x": 38.875,
+          "y": -558.8125,
+          "width": 438.078125,
+          "height": 48
+        },
+        ".hero__ctas .btn--primary": {
+          "x": 38.875,
+          "y": -558.8125,
+          "width": 186.953125,
+          "height": 48
+        },
+        ".hero__ctas .btn--quiet": {
+          "x": 237.828125,
+          "y": -558.8125,
+          "width": 163.3125,
+          "height": 48
+        },
+        ".hero__stage": {
+          "x": 500.953125,
+          "y": -1096,
+          "width": 669.125,
+          "height": 824
+        },
+        ".hero__stage canvas": {
+          "x": 500.953125,
+          "y": -1096,
+          "width": 669.125,
+          "height": 824
+        },
+        ".titleblock": {
+          "x": 1121.125,
+          "y": -463.609375,
+          "width": 280,
+          "height": 191.609375
+        },
+        ".nav": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 64
+        },
+        ".nav__links": {
+          "x": 732,
+          "y": 15.5,
+          "width": 438.078125,
+          "height": 33
+        },
+        ".nav__cta": {
+          "x": 1346.640625,
+          "y": 15.5,
+          "width": 54.484375,
+          "height": 33
+        },
+        "#story": {
+          "x": 0,
+          "y": -208,
+          "width": 1440,
+          "height": 6200
+        },
+        ".story__stage": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000
+        },
+        ".story__canvas": {
+          "x": 500.953125,
+          "y": 104,
+          "width": 669.125,
+          "height": 832
+        },
+        ".story__copy": {
+          "x": 38.875,
+          "y": 387.28125,
+          "width": 438.078125,
+          "height": 265.4375
+        },
+        ".story__rail": {
+          "x": 1276.328125,
+          "y": 386,
+          "width": 124.796875,
+          "height": 228
+        },
+        "#workspace": {
+          "x": 0,
+          "y": 5992,
+          "width": 1440,
+          "height": 845
+        },
+        "#scope": {
+          "x": 0,
+          "y": 6837,
+          "width": 1440,
+          "height": 715.5
+        },
+        ".footer": {
+          "x": 0,
+          "y": 7552.5,
+          "width": 1440,
+          "height": 513.203125
+        }
+      }
+    },
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "hero": {
+        ".hero": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1153.9375
+        },
+        ".hero__title": {
+          "x": 17.765625,
+          "y": 96,
+          "width": 352.234375,
+          "height": 151.171875
+        },
+        ".hero__lede": {
+          "x": 20,
+          "y": 271.171875,
+          "width": 350,
+          "height": 56
+        },
+        ".hero__ctas": {
+          "x": 20,
+          "y": 351.171875,
+          "width": 350,
+          "height": 108
+        },
+        ".hero__ctas .btn--primary": {
+          "x": 20,
+          "y": 351.171875,
+          "width": 186.953125,
+          "height": 48
+        },
+        ".hero__ctas .btn--quiet": {
+          "x": 20,
+          "y": 411.171875,
+          "width": 163.3125,
+          "height": 48
+        },
+        ".hero__stage": {
+          "x": 20,
+          "y": 483.171875,
+          "width": 350,
+          "height": 422
+        },
+        ".hero__stage canvas": {
+          "x": 20,
+          "y": 483.171875,
+          "width": 350,
+          "height": 422
+        },
+        ".titleblock": {
+          "x": 20,
+          "y": 929.171875,
+          "width": 350,
+          "height": 176.765625
+        },
+        ".nav": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 64
+        },
+        ".nav__links": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        ".nav__cta": {
+          "x": 315.515625,
+          "y": 15.5,
+          "width": 54.484375,
+          "height": 33
+        },
+        "#story": {
+          "x": 0,
+          "y": 1153.9375,
+          "width": 390,
+          "height": 5232.796875
+        },
+        ".story__stage": {
+          "x": 0,
+          "y": 1153.9375,
+          "width": 390,
+          "height": 844
+        },
+        ".story__canvas": {
+          "x": 20,
+          "y": 1229.9375,
+          "width": 350,
+          "height": 459.8125
+        },
+        ".story__copy": {
+          "x": 20,
+          "y": 1703.75,
+          "width": 350,
+          "height": 214
+        },
+        ".story__rail": {
+          "x": 20,
+          "y": 1931.75,
+          "width": 350,
+          "height": 50.1875
+        },
+        "#workspace": {
+          "x": 0,
+          "y": 6386.734375,
+          "width": 390,
+          "height": 1579.859375
+        },
+        "#scope": {
+          "x": 0,
+          "y": 7966.59375,
+          "width": 390,
+          "height": 1164.53125
+        },
+        ".footer": {
+          "x": 0,
+          "y": 9131.125,
+          "width": 390,
+          "height": 610.5625
+        }
+      },
+      "story": {
+        ".hero": {
+          "x": 0,
+          "y": -1330,
+          "width": 390,
+          "height": 1153.9375
+        },
+        ".hero__title": {
+          "x": 17.765625,
+          "y": -1234,
+          "width": 352.234375,
+          "height": 151.171875
+        },
+        ".hero__lede": {
+          "x": 20,
+          "y": -1058.828125,
+          "width": 350,
+          "height": 56
+        },
+        ".hero__ctas": {
+          "x": 20,
+          "y": -978.828125,
+          "width": 350,
+          "height": 108
+        },
+        ".hero__ctas .btn--primary": {
+          "x": 20,
+          "y": -978.828125,
+          "width": 186.953125,
+          "height": 48
+        },
+        ".hero__ctas .btn--quiet": {
+          "x": 20,
+          "y": -918.828125,
+          "width": 163.3125,
+          "height": 48
+        },
+        ".hero__stage": {
+          "x": 20,
+          "y": -846.828125,
+          "width": 350,
+          "height": 422
+        },
+        ".hero__stage canvas": {
+          "x": 20,
+          "y": -846.828125,
+          "width": 350,
+          "height": 422
+        },
+        ".titleblock": {
+          "x": 20,
+          "y": -400.828125,
+          "width": 350,
+          "height": 176.765625
+        },
+        ".nav": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 64
+        },
+        ".nav__links": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        ".nav__cta": {
+          "x": 315.515625,
+          "y": 15.5,
+          "width": 54.484375,
+          "height": 33
+        },
+        "#story": {
+          "x": 0,
+          "y": -176.0625,
+          "width": 390,
+          "height": 5232.796875
+        },
+        ".story__stage": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        ".story__canvas": {
+          "x": 20,
+          "y": 76,
+          "width": 350,
+          "height": 459.8125
+        },
+        ".story__copy": {
+          "x": 20,
+          "y": 549.8125,
+          "width": 350,
+          "height": 214
+        },
+        ".story__rail": {
+          "x": 20,
+          "y": 777.8125,
+          "width": 350,
+          "height": 50.1875
+        },
+        "#workspace": {
+          "x": 0,
+          "y": 5056.734375,
+          "width": 390,
+          "height": 1579.859375
+        },
+        "#scope": {
+          "x": 0,
+          "y": 6636.59375,
+          "width": 390,
+          "height": 1164.53125
+        },
+        ".footer": {
+          "x": 0,
+          "y": 7801.125,
+          "width": 390,
+          "height": 610.5625
+        }
+      }
+    }
+  }
+}
