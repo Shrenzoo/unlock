@@ -1,7 +1,8 @@
 # Story scroll zoom
 
-Live at <https://unlock-demo.shreyas-pabbathi.workers.dev>, static version
-`82642357`, application commit `8f90847`, checked 2026-10-31.
+Current URL: <https://unlock-demo.unlock-labs.workers.dev>. Originally checked
+at `unlock-demo.shreyas-pabbathi.workers.dev`, static version `82642357`,
+application commit `8f90847`, on 2026-10-31.
 This follows merged PR #11 on the separate `codex/story-scroll-zoom` branch.
 
 | Before | After |
