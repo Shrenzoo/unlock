@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="haze" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#002175" stop-opacity="0"/><stop offset=".45" stop-color="#001c58" stop-opacity=".45"/>
+      <stop offset=".7" stop-color="#03091b" stop-opacity=".65"/><stop offset="1" stop-color="#00091e" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="diffusion" x="-20%" y="-30%" width="140%" height="160%"><feGaussianBlur stdDeviation="30"/></filter>
+  </defs>
+  <path d="M-200 690C60 560 290 540 505 665S830 845 1080 735 1475 715 1800 770" fill="none" stroke="url(#haze)" stroke-width="120" filter="url(#diffusion)"/>
+</svg>
