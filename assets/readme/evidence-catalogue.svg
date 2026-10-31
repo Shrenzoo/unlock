@@ -53,7 +53,8 @@
 
     <text x="350" y="192" class="mono" font-size="11" fill="#3268f5">browser-acceptance/</text>
     <text x="370" y="214" class="mono" font-size="10" fill="#e9e8e3">report.json</text>
-    <text x="370" y="230" class="mono" font-size="9" fill="#7d8287">headless Chrome through the real HTTP service</text>
+    <text x="370" y="230" class="mono" font-size="9" fill="#7d8287">headless Chrome through the real</text>
+    <text x="370" y="242" class="mono" font-size="9" fill="#7d8287">HTTP service</text>
   </g>
 
   <line x1="600" y1="100" x2="600" y2="330" stroke="#272b2f"/>
