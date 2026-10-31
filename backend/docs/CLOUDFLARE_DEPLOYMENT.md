@@ -1,5 +1,8 @@
 # Cloudflare and Modal read-only launch
 
+Subsequent frontend release: [landing motion and CAD presentation](../../frontend/docs/UI_POLISH.md)
+records static version `47b955c6`. The original launch evidence below is preserved.
+
 Live and tested on 2026-10-30 (final checks finished 2026-10-31 04:01 UTC):
 
 - Website: <https://unlock-demo.shreyas-pabbathi.workers.dev>

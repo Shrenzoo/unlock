@@ -1,0 +1,76 @@
+{
+  "origin": "https://unlock-demo.shreyas-pabbathi.workers.dev",
+  "application_commit": "af6759e",
+  "desktop": {
+    "viewport": [
+      1440,
+      1000
+    ],
+    "scenes": [
+      "A small module with a part that will fail.",
+      "One failed part. An entire product in the way.",
+      "The straight lift stops after 2.0 mm.",
+      "Change the bracket, not the product.",
+      "A way out."
+    ],
+    "motion": true,
+    "directional_pointer": true,
+    "layout_and_annotations_contained": true,
+    "errors": []
+  },
+  "laptop": {
+    "viewport": [
+      1024,
+      768
+    ],
+    "scenes": [
+      "A small module with a part that will fail.",
+      "One failed part. An entire product in the way.",
+      "The straight lift stops after 2.0 mm.",
+      "Change the bracket, not the product.",
+      "A way out."
+    ],
+    "motion": true,
+    "directional_pointer": true,
+    "layout_and_annotations_contained": true,
+    "errors": []
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "scenes": [
+      "A small module with a part that will fail.",
+      "One failed part. An entire product in the way.",
+      "The straight lift stops after 2.0 mm.",
+      "Change the bracket, not the product.",
+      "A way out."
+    ],
+    "motion": true,
+    "directional_pointer": true,
+    "layout_and_annotations_contained": true,
+    "errors": []
+  },
+  "small-mobile": {
+    "viewport": [
+      360,
+      640
+    ],
+    "scenes": [
+      "A small module with a part that will fail.",
+      "One failed part. An entire product in the way.",
+      "The straight lift stops after 2.0 mm.",
+      "Change the bracket, not the product.",
+      "A way out."
+    ],
+    "motion": true,
+    "directional_pointer": true,
+    "layout_and_annotations_contained": true,
+    "errors": []
+  },
+  "reduced_motion": true,
+  "checked_at": "2026-10-31T04:30:02.987651+00:00",
+  "cloudflare_version": "47b955c6",
+  "validation_note": "Chrome viewport emulation; not a physical-phone test. The first journey run passed all cases but needed interruption during browser shutdown. A sequential retry completed normally with exit status 0."
+}
