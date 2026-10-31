@@ -1,44 +1,83 @@
 import { useEffect, useRef } from 'react'
+import { createLightField, type FieldFrame, type LightField } from './lightField'
+import paperPlate from './field-hero.webp'
+import nightPlate from './field-story.webp'
 import './noise-field.css'
 
-const clamp = (n: number) => Math.max(0, Math.min(1, n))
-const smooth = (n: number) => { const t = clamp(n); return t * t * (3 - 2 * t) }
+/** Ambient redraw rate; scrolling and pointer settling redraw every frame. */
+const FRAME_MS = 1000 / 30
+/** A pleasing still frame for reduced motion, and the starting point otherwise. */
+const STILL_TIME = 8
 
-/** One continuous field across the landing page. Pointer motion never rerenders React. */
+const loadPlate = (src: string) => {
+  const img = new Image()
+  img.src = src
+  return img.decode().then(() => img)
+}
+
+/** One continuous field across the landing page. Pointer and scroll motion never rerender React. */
 export function NoiseField() {
   const field = useRef<HTMLDivElement>(null)
+  const canvas = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
     const el = field.current
-    if (!el) return
+    const cv = canvas.current
+    if (!el || !cv) return
     const reduced = matchMedia('(prefers-reduced-motion: reduce)')
     const fine = matchMedia('(hover: hover) and (pointer: fine)')
+    const hero = document.querySelector('.hero')
     const story = document.getElementById('story')
     const footer = document.querySelector('.footer')
-    let scrollFrame = 0, pointerFrame = 0, lastTime = 0
+    let gl: LightField | null = null
+    let plates: { paper: HTMLImageElement; night: HTMLImageElement } | null = null
+    let disposed = false
+
+    const frame: FieldFrame = { time: STILL_TIME, shiftX: 0, shiftY: 0, heroTop: 0, storyTop: 1e5, storyBottom: 1e5, footerTop: 1e5 }
+    let raf = 0, lastTick = 0, lastDraw = 0, sized = false
     let x = 0, y = 0, tx = 0, ty = 0, lastX = 0, lastY = 0
-    const palette = () => {
-      scrollFrame = 0
-      const vh = innerHeight
+    const animating = () => !reduced.matches && !document.hidden
+
+    const tick = (now: number) => {
+      raf = 0
+      const dt = Math.min((now - (lastTick || now)) / 1000, 0.1)
+      lastTick = now
       const r = story?.getBoundingClientRect()
       const f = footer?.getBoundingClientRect()
-      el.style.setProperty('--story-top', `${r?.top ?? 100000}px`)
-      el.style.setProperty('--story-bottom', `${r?.bottom ?? 100000}px`)
-      el.style.setProperty('--footer-top', `${f?.top ?? 100000}px`)
-      const enter = r ? smooth((vh * 0.85 - r.top) / (vh * 0.75)) : 0
-      const leave = r ? smooth((r.bottom - vh * 0.15) / (vh * 0.75)) : 0
-      const end = f ? smooth((vh * 0.85 - f.top) / (vh * 0.75)) : 0
-      el.style.setProperty('--field-dark', String(Math.max(enter * leave, end)))
-    }
-    const scroll = () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(palette) }
-    const settle = (now: number) => {
-      const dt = Math.min((now - (lastTime || now)) / 1000, 0.05)
-      lastTime = now
+      const ht = hero?.getBoundingClientRect().top ?? 0
+      const st = r?.top ?? 1e5, sb = r?.bottom ?? 1e5, ft = f?.top ?? 1e5
+      const scrolled = ht !== frame.heroTop || st !== frame.storyTop || sb !== frame.storyBottom || ft !== frame.footerTop
+      frame.heroTop = ht; frame.storyTop = st; frame.storyBottom = sb; frame.footerTop = ft
+
       const k = 1 - Math.exp(-dt * 10)
       x += (tx - x) * k; y += (ty - y) * k
-      el.style.setProperty('--field-x', `${x.toFixed(2)}px`)
-      el.style.setProperty('--field-y', `${y.toFixed(2)}px`)
-      if (Math.abs(tx - x) + Math.abs(ty - y) > 0.05) pointerFrame = requestAnimationFrame(settle)
-      else { pointerFrame = 0; lastTime = 0 }
+      const settling = Math.abs(tx - x) + Math.abs(ty - y) > 0.05
+      const live = animating()
+      if (live) frame.time += dt
+
+      if (gl) {
+        if (!sized) { gl.resize(innerWidth, innerHeight); sized = true }
+        if (!lastDraw || scrolled || settling || (live && now - lastDraw >= FRAME_MS)) {
+          frame.shiftX = x; frame.shiftY = y
+          gl.render(frame)
+          lastDraw = now
+        }
+      }
+      if (scrolled) {
+        // grain (and the CSS fallback) follow the same handover as the shader
+        el.style.setProperty('--dusk', `${Math.min(st, ht + innerHeight)}px`)
+        el.style.setProperty('--story-bottom', `${sb}px`)
+        el.style.setProperty('--footer-top', `${ft}px`)
+      }
+      if ((live && gl) || settling) raf = requestAnimationFrame(tick)
+      else lastTick = 0
+    }
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(tick) }
+    const resize = () => { sized = false; lastDraw = 0; schedule() }
+    const start = () => {
+      gl = plates && createLightField(cv, plates)
+      el.dataset.field = gl ? 'ready' : 'fallback'
+      frame.storyTop = NaN
+      resize()
     }
     const move = (e: PointerEvent) => {
       if (reduced.matches || !fine.matches || e.pointerType === 'touch') return
@@ -47,39 +86,46 @@ export function NoiseField() {
       lastX = e.clientX; lastY = e.clientY
       tx = (e.clientX / innerWidth - 0.5) * 44 + dx * 0.5
       ty = (e.clientY / innerHeight - 0.5) * 32 + dy * 0.5
-      if (!pointerFrame) pointerFrame = requestAnimationFrame(settle)
+      schedule()
     }
-    const reset = () => {
-      tx = ty = lastX = lastY = 0
-      if (!reduced.matches && !pointerFrame) pointerFrame = requestAnimationFrame(settle)
-    }
+    const reset = () => { tx = ty = lastX = lastY = 0; schedule() }
     const preferences = () => {
-      el.dataset.paused = String(document.hidden || reduced.matches)
-      if (reduced.matches) {
-        cancelAnimationFrame(pointerFrame); pointerFrame = 0
-        x = y = tx = ty = 0
-        el.style.setProperty('--field-x', '0px'); el.style.setProperty('--field-y', '0px')
-      }
+      if (reduced.matches) { x = y = tx = ty = 0; frame.time = STILL_TIME; lastDraw = 0 }
+      schedule()
     }
-    palette(); preferences()
-    addEventListener('scroll', scroll, { passive: true })
-    addEventListener('resize', scroll, { passive: true })
+    const lost = (e: Event) => { e.preventDefault(); gl = null; el.dataset.field = 'fallback'; frame.storyTop = NaN; schedule() }
+
+    Promise.all([loadPlate(paperPlate), loadPlate(nightPlate)]).then(
+      ([paper, night]) => { if (!disposed) { plates = { paper, night }; start() } },
+      () => { if (!disposed) { el.dataset.field = 'fallback'; frame.storyTop = NaN; schedule() } },
+    )
+    schedule()
+    addEventListener('scroll', schedule, { passive: true })
+    addEventListener('resize', resize, { passive: true })
     document.addEventListener('pointermove', move, { passive: true })
     document.documentElement.addEventListener('pointerleave', reset)
     document.addEventListener('visibilitychange', preferences)
     reduced.addEventListener('change', preferences)
+    cv.addEventListener('webglcontextlost', lost)
+    cv.addEventListener('webglcontextrestored', start)
     return () => {
-      cancelAnimationFrame(scrollFrame); cancelAnimationFrame(pointerFrame)
-      removeEventListener('scroll', scroll); removeEventListener('resize', scroll)
+      disposed = true
+      cancelAnimationFrame(raf)
+      removeEventListener('scroll', schedule); removeEventListener('resize', resize)
       document.removeEventListener('pointermove', move)
       document.documentElement.removeEventListener('pointerleave', reset)
       document.removeEventListener('visibilitychange', preferences)
       reduced.removeEventListener('change', preferences)
+      cv.removeEventListener('webglcontextlost', lost)
+      cv.removeEventListener('webglcontextrestored', start)
+      gl?.dispose()
     }
   }, [])
   return <div ref={field} className="noise-field" aria-hidden="true">
-    <div className="noise-field__palette noise-field__palette--light"><div className="noise-field__pointer"><div className="noise-field__cloud noise-field__cloud--blue" /><div className="noise-field__cloud noise-field__cloud--ink" /></div></div>
-    <div className="noise-field__palette noise-field__palette--dark"><div className="noise-field__pointer"><div className="noise-field__cloud noise-field__cloud--blue" /><div className="noise-field__cloud noise-field__cloud--white" /></div></div>
-    <div className="noise-field__grain" />
+    <div className="noise-field__palette noise-field__palette--light" />
+    <div className="noise-field__palette noise-field__palette--dark" />
+    <canvas ref={canvas} className="noise-field__canvas" />
+    <div className="noise-field__grain noise-field__grain--paper" />
+    <div className="noise-field__grain noise-field__grain--night" />
   </div>
 }

@@ -10,10 +10,14 @@ production browser evidence and deployment settings.
 The [initial UI presentation update](docs/UI_POLISH.md) records the noise field
 and matching favicon. The current [spacious reference design](docs/REFERENCE_DESIGN.md)
 records larger sections, continuously visible idle motion and CAD framing.
-The latest [atmospheric lighting correction](docs/ATMOSPHERIC_LIGHTING.md) replaces
+The [atmospheric lighting correction](docs/ATMOSPHERIC_LIGHTING.md) replaced
 ribbons with irregular cloud lighting while verifying that every measured layout
 position and the existing CAD interactions are preserved. The later
 [story zoom correction](docs/STORY_ZOOM.md) makes the model grow throughout scrolling.
+The background now reproduces the reference design's light strokes: its interface was
+erased into two plates (`design/build_field_plates.py`, from `design/field-reference.webp`)
+that a small WebGL shader (`src/landing/lightField.ts`) lays behind the unchanged section
+layout, with slow drift and measured film grain. Without WebGL, CSS shows the same plates.
 
 ```bash
 npm install

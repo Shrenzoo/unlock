@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
-  <filter id="grain" x="0" y="0" width="100%" height="100%">
-    <feTurbulence type="fractalNoise" baseFrequency=".62" numOctaves="3" seed="19" stitchTiles="stitch"/>
-    <feColorMatrix type="saturate" values="0"/>
+  <!-- Opaque monochrome grain: one noise channel, contrast stretched around mid-grey. -->
+  <filter id="grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="19" stitchTiles="stitch"/>
+    <feColorMatrix type="matrix" values="2.6 0 0 0 -.8  2.6 0 0 0 -.8  2.6 0 0 0 -.8  0 0 0 0 1"/>
   </filter>
-  <path d="M0 0h240v240H0z" fill="#888" filter="url(#grain)"/>
+  <path d="M0 0h240v240H0z" filter="url(#grain)"/>
 </svg>
