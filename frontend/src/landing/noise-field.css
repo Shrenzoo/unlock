@@ -20,6 +20,7 @@
   --field-dark: 0;
   --field-x: 0px;
   --field-y: 0px;
+  --flow-travel: clamp(32px, 3.2vw, 64px);
   --story-top: 100000px;
   --story-bottom: 100000px;
   --footer-top: 100000px;
@@ -68,8 +69,8 @@
 }
 .noise-field[data-paused='true'] .noise-field__cloud { animation-play-state: paused; }
 @keyframes field-circulation {
-  from { transform: rotate(0deg) translate3d(3.2%, 0, 0) rotate(0deg) scale(1.04); }
-  to { transform: rotate(360deg) translate3d(3.2%, 0, 0) rotate(-360deg) scale(1.04); }
+  from { transform: rotate(0deg) translate3d(var(--flow-travel), 0, 0) rotate(0deg) scale(1.04); }
+  to { transform: rotate(360deg) translate3d(var(--flow-travel), 0, 0) rotate(-360deg) scale(1.04); }
 }
 @keyframes field-tide {
   from { transform: translate3d(-2%, -2%, 0) rotate(-5deg) scale(1.01); }
@@ -80,7 +81,8 @@
   to { transform: translate3d(-3%, -2%, 0) rotate(-5deg); }
 }
 @media (max-width: 900px) {
-  .noise-field__cloud { filter: none; }
+  .noise-field__pointer { inset: -40px; }
+  .noise-field__cloud { inset: -16px; filter: none; }
   .noise-field__cloud--blue {
     background:
       radial-gradient(ellipse 28% 24% at 90% 18%, #0055ffe8, #0075ff88 35%, transparent 78%),
