@@ -1,11 +1,10 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { b02Manifest } from '@/fixtures/b02'
 import { SAMPLE_PROJECT_PATH } from '@/api'
 import { Link } from '@/router'
 import { ModuleAssembly, PART_IDS, createView, type PartId } from '@/three/ModuleAssembly'
-import { AnchorProjector } from '@/three/Anchors'
 import { Studio } from '@/three/Studio'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
 import { hasWebGL, prefersReducedMotion } from '@/three/units'
@@ -14,38 +13,13 @@ import { gsap, scrollToId } from './scroll'
 const COVER_SCREWS = ['screw_c1', 'screw_c2', 'screw_c3', 'screw_c4'] as const
 const EXPLODE = { cover: 50, screws: 74 }
 
-/** leader length in px and angle in degrees (0 = right, -90 = up) */
-const CALLOUTS: Array<{ id: PartId; at: [number, number, number]; len: number; ang: number; text: string }> = [
-  { id: 'cover', at: [-80, 10, 61 + EXPLODE.cover], len: 80, ang: -150, text: 'Top cover, 4 × M3' },
-  { id: 'bridge_bracket', at: [46, -34, 42], len: 64, ang: -32, text: 'Bridge bracket over the fan' },
-  { id: 'fan_module', at: [-15, -26, 22], len: 190, ang: -174, text: 'Service target, 30 × 30 × 12 mm' },
-]
-
-function Callout({ c, on, hot }: { c: (typeof CALLOUTS)[number]; on: boolean; hot: boolean }) {
-  const rad = (c.ang * Math.PI) / 180
-  const ex = Math.cos(rad) * c.len
-  const ey = Math.sin(rad) * c.len
-  const left = ex < 0
-  return (
-    <div className={`callout ${left ? 'callout--left' : ''} ${on ? 'is-on' : ''} ${hot ? 'is-hot' : ''}`}>
-      <span className="callout__dot" />
-      <span className="callout__leader" style={{ width: c.len, transform: `rotate(${c.ang}deg)` }} />
-      <span className="callout__label" style={{ transform: `translate(${ex.toFixed(1)}px, ${ey.toFixed(1)}px) translate(${left ? '-100%' : '0'}, -100%)` }}>
-        <span className="mono">{c.id}</span>
-        <span>{c.text}</span>
-      </span>
-    </div>
-  )
-}
-
 const ISOLATABLE: PartId[] = ['fan_module', 'bridge_bracket', 'cover']
+const PART_LABELS: Record<string, string> = { fan_module: 'Fan module', bridge_bracket: 'Bridge bracket', cover: 'Top cover' }
 
 export function Hero() {
   const webgl = useMemo(hasWebGL, [])
   const [hovered, setHovered] = useState<PartId | null>(null)
   const [isolated, setIsolated] = useState<PartId | null>(null)
-  const [revealed, setRevealed] = useState(false)
-  const labels = useRef<Record<string, HTMLElement | null>>({})
   const focus = isolated ?? hovered
   const comp = focus ? b02Manifest.components.find((c) => c.id === focus) : null
 
@@ -61,18 +35,10 @@ export function Hero() {
             onPointerMissed={() => setIsolated(null)}
             aria-label="Interactive model of the B02 service module. Drag to turn it; select a part to isolate it."
           >
-            <HeroScene hovered={hovered} isolated={isolated} onHover={setHovered} onIsolate={setIsolated} onRevealed={() => setRevealed(true)} labels={labels} />
+            <HeroScene hovered={hovered} isolated={isolated} onHover={setHovered} onIsolate={setIsolated} />
           </Canvas>
         ) : null}
-        {webgl ? (
-          <div className="anchors" aria-hidden="true">
-            {CALLOUTS.map((c) => (
-              <div key={c.id} className="anchor" ref={(el) => void (labels.current[c.id] = el)}>
-                <Callout c={c} on={revealed && (!isolated || isolated === c.id)} hot={hovered === c.id || isolated === c.id} />
-              </div>
-            ))}
-          </div>
-        ) : (
+        {!webgl && (
           <div className="hero__fallback">
             <FallbackDrawing />
             <p>3D preview unavailable in this browser. The drawing shows the same module.</p>
@@ -124,7 +90,7 @@ export function Hero() {
         <div className="titleblock__row titleblock__part" aria-live="polite">
           {comp ? (
             <>
-              <span className="mono">{comp.id}</span>
+              <span>{PART_LABELS[comp.id] ?? comp.id}</span>
               <span>{comp.fixed ? 'Fixed' : comp.replaceable ? 'Replaceable' : 'Removable'}{comp.removal_axes.length ? `, ${comp.removal_axes.join(' ')}` : ''}</span>
             </>
           ) : (
@@ -133,8 +99,8 @@ export function Hero() {
         </div>
         <div className="titleblock__row titleblock__parts" role="group" aria-label="Isolate a part">
           {ISOLATABLE.map((id) => (
-            <button key={id} type="button" aria-pressed={isolated === id} onClick={() => setIsolated(isolated === id ? null : id)} className="mono">
-              {id}
+            <button key={id} type="button" aria-pressed={isolated === id} onClick={() => setIsolated(isolated === id ? null : id)}>
+              {PART_LABELS[id]}
             </button>
           ))}
         </div>
@@ -149,36 +115,31 @@ function HeroScene({
   isolated,
   onHover,
   onIsolate,
-  onRevealed,
-  labels,
 }: {
   hovered: PartId | null
   isolated: PartId | null
   onHover: (id: PartId | null) => void
   onIsolate: (id: PartId | null) => void
-  onRevealed: () => void
-  labels: MutableRefObject<Record<string, HTMLElement | null>>
 }) {
   const view = useRef(createView('light'))
   const rig = useRef<THREE.Group>(null)
   const { camera, invalidate, size, gl } = useThree()
-  const target = useMemo(() => new THREE.Vector3(0, 0.5, 0), [])
+  const target = useMemo(() => new THREE.Vector3(0, 0.65, 0), [])
   const motion = useRef({ yaw: 0, pitch: 0, baseYaw: 0, basePitch: 0, px: 0, py: 0, dragging: false })
   const reduced = useMemo(prefersReducedMotion, [])
 
-  // composition: push the module right of the headline on wide screens
+  // The scene has its own column: frame the entire exploded assembly in it.
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera
-    const wide = size.width >= 900
-    cam.filmOffset = wide ? -4.6 * Math.min(1, size.width / 1440) : 0
-    cam.fov = wide ? 21 : 27
-    // keep the module clear of the title block on mid-size screens
-    const k = wide ? Math.min(1.32, Math.max(1, 1440 / size.width)) : 1.18
-    cam.position.set(3.7 * k, 3.45 * k, 5.3 * k)
+    const aspect = size.width / Math.max(1, size.height)
+    const k = Math.max(1, 1.05 / aspect)
+    cam.filmOffset = 0
+    cam.fov = 32
+    cam.position.set(3 * k, 2.7 * k, 4.3 * k)
     cam.lookAt(target)
     cam.updateProjectionMatrix()
     invalidate()
-  }, [camera, size.width, target, invalidate])
+  }, [camera, size.width, size.height, target, invalidate])
 
   // one orchestrated reveal: screws lift, then the cover, exposing the bracket and fan
   useEffect(() => {
@@ -194,10 +155,9 @@ function HeroScene({
     const state = { s: 0, c: 0 }
     if (reduced) {
       apply({ s: 1, c: 1 })
-      onRevealed()
       return
     }
-    const tl = gsap.timeline({ delay: 0.35, onComplete: onRevealed })
+    const tl = gsap.timeline({ delay: 0.35 })
     tl.to(state, { s: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => apply(state) })
     tl.to(state, { c: 1, duration: 1.15, ease: 'power3.inOut', onUpdate: () => apply(state) }, 0.3)
     return () => {
@@ -296,7 +256,6 @@ function HeroScene({
       <Studio theme="light" />
       <group ref={rig}>
         <ModuleAssembly view={view} interactive onHover={onHover} onSelect={(id) => onIsolate(isolated === id ? null : id)} />
-        <AnchorProjector anchors={CALLOUTS} targets={labels} />
       </group>
     </>
   )

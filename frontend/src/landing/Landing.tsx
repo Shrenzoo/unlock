@@ -6,6 +6,7 @@ import { CheckResultTag, Glyph, ProvenanceTag } from '@/ui/Evidence'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
 import { b02Candidates, b02Events, b02Run } from '@/fixtures/b02'
 import { Hero } from './Hero'
+import { NoiseField } from './NoiseField'
 import { Story } from './Story'
 import { scrollToId, startSmoothScroll } from './scroll'
 import './landing.css'
@@ -14,7 +15,8 @@ export default function Landing() {
   useEffect(() => startSmoothScroll(), [])
 
   return (
-    <>
+    <div className="landing">
+      <NoiseField />
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -26,7 +28,7 @@ export default function Landing() {
         <Scope />
       </main>
       <Footer />
-    </>
+    </div>
   )
 }
 
@@ -42,10 +44,11 @@ function Nav() {
 
   useEffect(() => {
     const story = document.getElementById('story')
+    const footer = document.querySelector('.footer')
     const onScroll = () => {
       setScrolled(window.scrollY > 8)
       const r = story?.getBoundingClientRect()
-      setDark(!!r && r.top <= 32 && r.bottom > 32)
+      setDark((!!r && r.top <= 32 && r.bottom > 32) || (footer?.getBoundingClientRect().top ?? Infinity) <= 32)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })

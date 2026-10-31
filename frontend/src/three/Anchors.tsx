@@ -31,6 +31,8 @@ export function AnchorProjector({ anchors, targets }: { anchors: Anchor[]; targe
       const behind = v.z > 1
       const x = ((v.x + 1) / 2) * size.width
       const y = ((1 - v.y) / 2) * size.height
+      el.style.setProperty('--anchor-x', `${x.toFixed(1)}px`)
+      el.style.setProperty('--stage-width', `${size.width}px`)
       el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`
       el.style.visibility = behind ? 'hidden' : ''
     }

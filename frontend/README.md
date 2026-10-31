@@ -7,6 +7,8 @@ Its Modal API serves recorded CAD results from an offline scripted decision poli
 Uploads, live AI inference and engineering mutations are disabled. See the
 [launch report](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) for licensing, usage,
 production browser evidence and deployment settings.
+The later [UI presentation update](docs/UI_POLISH.md) records the moving noise
+field, CAD layout corrections, matching favicon and current static release.
 
 ```bash
 npm install

@@ -38,12 +38,12 @@ const COPY = [
 ]
 
 const ANNOTS: Array<Anchor & { cls: string; mono: string; text?: string }> = [
-  { id: 'witness', at: [-30, -34, 42], cls: 'annot annot--signal annot--left', mono: 'fan_module ∩ bridge_bracket', text: 'Witness after 2.0 mm of travel' },
-  { id: 'tool', at: [24, -20, 48], cls: 'annot annot--signal', mono: 'driver_ph1', text: 'Approach blocked at z 42.0 mm' },
+  { id: 'witness', at: [-30, -34, 42], cls: 'annot annot--signal annot--left', mono: 'Fan / bracket contact', text: 'Witness after 2.0 mm of travel' },
+  { id: 'tool', at: [24, -20, 48], cls: 'annot annot--signal', mono: 'Tool approach', text: 'Approach blocked at z 42.0 mm' },
   { id: 'dimW', at: [0, -40, 42], cls: 'annot annot--dim', mono: '52.0' },
   { id: 'dimD', at: [52, -20, 42], cls: 'annot annot--dim', mono: '16.0' },
   { id: 'protected', at: [56, 12, 8], cls: 'annot', mono: 'protected', text: 'Feet, posts and hole axes unchanged' },
-  { id: 'path', at: [0, -20, 97], cls: 'annot annot--cobalt', mono: 'stage_above', text: 'Z+ 64.0 mm, illustrative' },
+  { id: 'path', at: [0, -20, 97], cls: 'annot annot--cobalt', mono: 'Removal direction', text: 'Z+ 64.0 mm, illustrative' },
 ]
 
 export function Story() {
@@ -129,7 +129,7 @@ export function Story() {
               <li key={s.id}>
                 <button type="button" className={i === scene ? 'is-active' : ''} aria-current={i === scene ? 'step' : undefined} onClick={() => jump(i)}>
                   <span className="mono">{i + 1}</span>
-                  {s.label}
+                  <span className="story__step-name">{s.label}</span>
                 </button>
               </li>
             ))}
@@ -162,21 +162,26 @@ function StoryScene({
 
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera
-    cam.filmOffset = size.width >= 900 ? -2.6 : 0
+    cam.filmOffset = 0
     cam.updateProjectionMatrix()
     invalidate()
-  }, [camera, size.width, invalidate])
+  }, [camera, invalidate])
 
   useFrame(() => {
     const p = progress.current
     applyStory(p, view.current)
     const c = cameraAt(p)
-    // portrait screens narrow the horizontal field: back the camera off and aim lower so the
-    // module sits above the copy panel
-    const aspect = size.width / size.height
-    const k = aspect >= 1.2 ? 1 : Math.min(2.3, (1.2 / aspect) * 0.85)
-    target.set(c.target[0], c.target[1] - (k - 1) * 0.32, c.target[2])
-    camera.position.set(target.x + (c.pos[0] - c.target[0]) * k, target.y + (c.pos[1] - c.target[1]) * k, target.z + (c.pos[2] - c.target[2]) * k)
+    // Fit a conservative sphere around every story pose, including lifted parts.
+    // The camera keeps the authored direction without cropping a narrow viewport.
+    const aspect = size.width / Math.max(1, size.height)
+    const cam = camera as THREE.PerspectiveCamera
+    const vertical = THREE.MathUtils.degToRad(cam.fov)
+    const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * aspect)
+    const needed = 1.48 / Math.sin(Math.min(vertical, horizontal) / 2)
+    target.set(c.target[0], 0.65 + (c.target[1] - 0.3) * 0.25, c.target[2])
+    const dx = c.pos[0] - c.target[0], dy = c.pos[1] - c.target[1], dz = c.pos[2] - c.target[2]
+    const k = Math.max(1, needed / Math.hypot(dx, dy, dz))
+    camera.position.set(target.x + dx * k, target.y + dy * k, target.z + dz * k)
     camera.lookAt(target)
 
     const show = (key: string, a: number, b: number, fade = 0.015) => {
@@ -222,7 +227,6 @@ function StoryScene({
 
   return (
     <>
-      <color attach="background" args={['#151719']} />
       <Studio theme="dark" />
       <ModuleAssembly view={view} />
       <AnchorProjector anchors={ANNOTS} targets={labels} />
