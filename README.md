@@ -1167,10 +1167,15 @@ It exposed a real gap: the refusal message did not initially tell the model *whi
 ### Scale
 
 ```text
-backend/src      ~13,600 lines     kernel, planner, verifier, AI controller, API
-backend/tests     ~6,500 lines     327 tests, all passing
-frontend/src      ~7,800 lines     React 19 workspace, Three.js viewport
-backend/evidence    ~360 KB        live run, controls, benchmarks, exports
+backend/src        13,627 lines   kernel, planner, verifier, AI controller, API
+backend/tests       6,542 lines   327 tests, all passing
+frontend/src        7,832 lines   React 19 workspace, Three.js viewport
+
+backend/evidence/       5.9 MB    committed evidence, four sets:
+  browser-acceptance/   3.7 MB    headless Chrome run: 16 screenshots + report
+  meta/                 1.6 MB    frozen validation record, export bundle
+  live-b02/             584 KB    the live run, its controls, benchmarks
+  meta-tool-smoke/       20 KB    live native tool-calling verification
 ```
 
 ---
