@@ -74,8 +74,8 @@
 
   <!-- the policy band underneath -->
   <rect x="250" y="236" width="550" height="46" rx="9" fill="#2a1a14" stroke="#e4602f" stroke-opacity=".6"/>
-  <text x="270" y="258" class="mono" font-size="11" fill="#e4602f">contracts.Policy — full digest bound into every identity above</text>
-  <text x="270" y="274" class="mono" font-size="9" fill="#a5a9ad">change a tolerance → every geometry and constraint hash derived under the old one is invalidated</text>
+  <text x="270" y="253" class="mono" font-size="11" fill="#e4602f">contracts.Policy — full digest bound into every identity above</text>
+  <text x="270" y="269" class="mono" font-size="9" fill="#a5a9ad">change a tolerance → every geometry and constraint hash derived under the old one is invalidated</text>
 
   <!-- vertical ties from policy to the hashed objects -->
   <path d="M335 236 V198 M535 236 V182 M725 236 V182" stroke="#e4602f" stroke-width="1" stroke-dasharray="3 4" fill="none" opacity=".55"/>
