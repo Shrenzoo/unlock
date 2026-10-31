@@ -34,23 +34,27 @@
 <td width="50%">
 
 **The argument**
-1. [The problem](#the-problem)
-2. [What UNLOCK does](#what-unlock-does)
-3. [Why this pushes the frontier](#why-this-pushes-the-frontier)
-4. [Why nothing like this exists](#why-nothing-like-this-exists)
-5. [The trust boundary](#the-trust-boundary)
-6. [Objections we would raise ourselves](#objections-we-would-raise-ourselves)
+<ol>
+<li><a href="#the-problem">The problem</a></li>
+<li><a href="#what-unlock-does">What UNLOCK does</a></li>
+<li><a href="#why-this-pushes-the-frontier">Why this pushes the frontier</a></li>
+<li><a href="#why-nothing-like-this-exists">Why nothing like this exists</a></li>
+<li><a href="#the-trust-boundary">The trust boundary</a></li>
+<li><a href="#objections-we-would-raise-ourselves">Objections we would raise ourselves</a></li>
+</ol>
 
 </td>
 <td width="50%">
 
 **The mechanism**
-7. [How it works](#how-it-works)
-8. [The eight tools](#the-eight-tools)
-9. [Verification](#verification)
-10. [Architecture](#architecture)
-11. [Design decisions and what they cost](#design-decisions-and-what-they-cost)
-12. [Security model](#security-model)
+<ol start="7">
+<li><a href="#how-it-works">How it works</a></li>
+<li><a href="#the-eight-tools">The eight tools</a></li>
+<li><a href="#verification">Verification</a></li>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#design-decisions-and-what-they-cost">Design decisions and what they cost</a></li>
+<li><a href="#security-model">Security model</a></li>
+</ol>
 
 </td>
 </tr>
@@ -58,23 +62,27 @@
 <td>
 
 **The evidence**
-13. [The live run](#the-live-run)
-14. [Evidence & reproducibility](#evidence--reproducibility)
-15. [Scope, honestly](#scope-honestly)
-16. [Built during the hackathon](#built-during-the-hackathon)
-17. [Roadmap](#roadmap)
+<ol start="13">
+<li><a href="#the-live-run">The live run</a></li>
+<li><a href="#evidence--reproducibility">Evidence &amp; reproducibility</a></li>
+<li><a href="#scope-honestly">Scope, honestly</a></li>
+<li><a href="#built-during-the-hackathon">Built during the hackathon</a></li>
+<li><a href="#roadmap">Roadmap</a></li>
+</ol>
 
 </td>
 <td>
 
 **Running it**
-18. [Getting started](#getting-started)
-19. [The demo in five minutes](#the-demo-in-five-minutes)
-20. [Performance, measured](#performance-measured)
-21. [The API surface](#the-api-surface)
-22. [The whole thing in ninety seconds](#the-whole-thing-in-ninety-seconds)
-23. [Glossary](#glossary)
-24. [Credits](#credits)
+<ol start="18">
+<li><a href="#getting-started">Getting started</a></li>
+<li><a href="#the-demo-in-five-minutes">The demo in five minutes</a></li>
+<li><a href="#performance-measured">Performance, measured</a></li>
+<li><a href="#the-api-surface">The API surface</a></li>
+<li><a href="#the-whole-thing-in-ninety-seconds">The whole thing in ninety seconds</a></li>
+<li><a href="#glossary">Glossary</a></li>
+<li><a href="#credits">Credits</a></li>
+</ol>
 
 </td>
 </tr>
