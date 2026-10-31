@@ -6,7 +6,8 @@ import { CadSpace, ModuleAssembly, createView } from '@/three/ModuleAssembly'
 import { AnchorProjector, type Anchor } from '@/three/Anchors'
 import { Studio } from '@/three/Studio'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
-import { hasWebGL, prefersReducedMotion } from '@/three/units'
+import { hasWebGL } from '@/three/units'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { SCENES, applyStory, cameraAt, sceneAt } from './storyTimeline'
 import { gsap, scrollToY } from './scroll'
 
@@ -47,6 +48,7 @@ const ANNOTS: Array<Anchor & { cls: string; mono: string; text?: string }> = [
 ]
 
 export function Story() {
+  const reduced = useReducedMotion()
   const section = useRef<HTMLElement>(null)
   const progress = useRef(0)
   const invalidateRef = useRef<() => void>(() => {})
@@ -62,7 +64,7 @@ export function Story() {
     const tween = gsap.to(state, {
       p: 1,
       ease: 'none',
-      scrollTrigger: { trigger: el, start: 'top top', end: 'bottom bottom', scrub: prefersReducedMotion() ? true : 0.6 },
+      scrollTrigger: { trigger: el, start: 'top top', end: 'bottom bottom', scrub: reduced ? true : 0.6 },
       onUpdate: () => {
         progress.current = state.p
         invalidateRef.current()
@@ -74,7 +76,7 @@ export function Story() {
       tween.scrollTrigger?.kill()
       tween.kill()
     }
-  }, [])
+  }, [reduced])
 
   const jump = (i: number) => {
     const el = section.current
@@ -89,7 +91,7 @@ export function Story() {
       <div className="story__stage">
         <div className="story__canvas">
           {webgl ? (
-            <Canvas frameloop="demand" dpr={[1, 2]} camera={{ fov: 30, position: [2.9, 1.65, 3.6], near: 0.05, far: 40 }} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
+            <Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ fov: 30, position: [2.9, 1.65, 3.6], near: 0.05, far: 40 }} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
               <StoryScene progress={progress} invalidateRef={invalidateRef} labels={labels} annots={annots} />
             </Canvas>
           ) : (
@@ -177,11 +179,14 @@ function StoryScene({
     const cam = camera as THREE.PerspectiveCamera
     const vertical = THREE.MathUtils.degToRad(cam.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * aspect)
-    const needed = 1.48 / Math.sin(Math.min(vertical, horizontal) / 2)
-    target.set(c.target[0], 0.65 + (c.target[1] - 0.3) * 0.25, c.target[2])
+    const opening = Math.min(1, Math.max(0, (p - 0.1) / 0.14))
+    const radius = THREE.MathUtils.lerp(1.3, 1.6, opening)
+    const needed = radius / Math.sin(Math.min(vertical, horizontal) / 2)
+    target.set(c.target[0], THREE.MathUtils.lerp(0.32, 0.65, opening) + (c.target[1] - 0.3) * 0.25, c.target[2])
     const dx = c.pos[0] - c.target[0], dy = c.pos[1] - c.target[1], dz = c.pos[2] - c.target[2]
-    const k = Math.max(1, needed / Math.hypot(dx, dy, dz))
-    camera.position.set(target.x + dx * k, target.y + dy * k, target.z + dz * k)
+    const k = Math.max(0.52, needed / Math.hypot(dx, dy, dz))
+    camera.position.set(target.x + dx * k, target.y + dy * k * 1.12, target.z + dz * k)
+    if (cam.view?.enabled) cam.clearViewOffset()
     camera.lookAt(target)
 
     const show = (key: string, a: number, b: number, fade = 0.015) => {
@@ -227,8 +232,8 @@ function StoryScene({
 
   return (
     <>
-      <Studio theme="dark" />
-      <ModuleAssembly view={view} />
+      <Studio theme="dark" polished />
+      <ModuleAssembly view={view} polished />
       <AnchorProjector anchors={ANNOTS} targets={labels} />
       <CadSpace>
         {/* scene 4 dimensions of the relief, constructor parameters */}

@@ -21,6 +21,9 @@ export function NoiseField() {
       const vh = innerHeight
       const r = story?.getBoundingClientRect()
       const f = footer?.getBoundingClientRect()
+      el.style.setProperty('--story-top', `${r?.top ?? 100000}px`)
+      el.style.setProperty('--story-bottom', `${r?.bottom ?? 100000}px`)
+      el.style.setProperty('--footer-top', `${f?.top ?? 100000}px`)
       const enter = r ? smooth((vh * 0.85 - r.top) / (vh * 0.75)) : 0
       const leave = r ? smooth((r.bottom - vh * 0.15) / (vh * 0.75)) : 0
       const end = f ? smooth((vh * 0.85 - f.top) / (vh * 0.75)) : 0

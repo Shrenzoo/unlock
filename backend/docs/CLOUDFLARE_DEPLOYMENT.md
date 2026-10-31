@@ -1,7 +1,12 @@
 # Cloudflare and Modal read-only launch
 
-Subsequent frontend release: [landing motion and CAD presentation](../../frontend/docs/UI_POLISH.md)
-records static version `47b955c6`. The original launch evidence below is preserved.
+Current frontend release: [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
+records static version `78201c9c`, preserved layout and production acceptance.
+The [prior wave refinement](../../frontend/docs/WAVE_REFINEMENT.md) records version
+`97a79a61`.
+The earlier [spacious reference design](../../frontend/docs/REFERENCE_DESIGN.md)
+records version `0131c15a`. The earlier [UI presentation update](../../frontend/docs/UI_POLISH.md)
+records version `47b955c6`. The original launch evidence below is preserved.
 
 Live and tested on 2026-10-30 (final checks finished 2026-10-31 04:01 UTC):
 

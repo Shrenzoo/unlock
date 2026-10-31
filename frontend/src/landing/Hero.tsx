@@ -1,13 +1,15 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import * as THREE from 'three'
 import { b02Manifest } from '@/fixtures/b02'
 import { SAMPLE_PROJECT_PATH } from '@/api'
 import { Link } from '@/router'
 import { ModuleAssembly, PART_IDS, createView, type PartId } from '@/three/ModuleAssembly'
 import { Studio } from '@/three/Studio'
+import { AnchorProjector, type Anchor } from '@/three/Anchors'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
-import { hasWebGL, prefersReducedMotion } from '@/three/units'
+import { hasWebGL } from '@/three/units'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { gsap, scrollToId } from './scroll'
 
 const COVER_SCREWS = ['screw_c1', 'screw_c2', 'screw_c3', 'screw_c4'] as const
@@ -15,11 +17,19 @@ const EXPLODE = { cover: 50, screws: 74 }
 
 const ISOLATABLE: PartId[] = ['fan_module', 'bridge_bracket', 'cover']
 const PART_LABELS: Record<string, string> = { fan_module: 'Fan module', bridge_bracket: 'Bridge bracket', cover: 'Top cover' }
+const CALLOUTS: Array<Anchor & { label: string; detail: string; dx: number; dy: number }> = [
+  { id: 'cover', at: [-80, -35, 111], label: 'cover', detail: 'Top cover, 4 × M3', dx: -58, dy: -12 },
+  { id: 'fan_module', at: [-15, -26, 22], label: 'fan_module', detail: 'Service target, 30 × 30 × 12 mm', dx: -150, dy: -18 },
+  { id: 'bridge_bracket', at: [46, -34, 42], label: 'bridge_bracket', detail: 'Bridge bracket over the fan', dx: 50, dy: -45 },
+]
 
 export function Hero() {
   const webgl = useMemo(hasWebGL, [])
   const [hovered, setHovered] = useState<PartId | null>(null)
   const [isolated, setIsolated] = useState<PartId | null>(null)
+  const [revealed, setRevealed] = useState(false)
+  const reveal = useCallback(() => setRevealed(true), [])
+  const labels = useRef<Record<string, HTMLElement | null>>({})
   const focus = isolated ?? hovered
   const comp = focus ? b02Manifest.components.find((c) => c.id === focus) : null
 
@@ -29,15 +39,23 @@ export function Hero() {
         {webgl ? (
           <Canvas
             frameloop="demand"
-            dpr={[1, 2]}
+            dpr={[1, 1.5]}
             camera={{ fov: 24, position: [2.7, 1.55, 3.4], near: 0.1, far: 40 }}
             gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
             onPointerMissed={() => setIsolated(null)}
             aria-label="Interactive model of the B02 service module. Drag to turn it; select a part to isolate it."
           >
-            <HeroScene hovered={hovered} isolated={isolated} onHover={setHovered} onIsolate={setIsolated} />
+            <HeroScene hovered={hovered} isolated={isolated} onHover={setHovered} onIsolate={setIsolated} labels={labels} onRevealed={reveal} />
           </Canvas>
         ) : null}
+        {webgl && <div className={`anchors hero__annotations ${revealed ? 'is-revealed' : ''}`} aria-hidden="true">
+          {CALLOUTS.map((c) => <div key={c.id} className="anchor" ref={(el) => void (labels.current[c.id] = el)}>
+            <div className="hero-note" style={{ opacity: !isolated || isolated === c.id ? 1 : 0 }}>
+              <svg className="hero-note__line" overflow="visible"><path d={`M0 0 L${c.dx} ${c.dy / 2} V${c.dy}`} /><rect x="-2" y="-2" width="4" height="4" /></svg>
+              <span className={`hero-note__label ${c.dx < 0 ? 'hero-note__label--left' : ''}`} style={{ left: c.dx, top: c.dy }}><strong>{c.label}</strong><span>{c.detail}</span></span>
+            </div>
+          </div>)}
+        </div>}
         {!webgl && (
           <div className="hero__fallback">
             <FallbackDrawing />
@@ -115,27 +133,61 @@ function HeroScene({
   isolated,
   onHover,
   onIsolate,
+  labels,
+  onRevealed,
 }: {
   hovered: PartId | null
   isolated: PartId | null
   onHover: (id: PartId | null) => void
   onIsolate: (id: PartId | null) => void
+  labels: MutableRefObject<Record<string, HTMLElement | null>>
+  onRevealed: () => void
 }) {
   const view = useRef(createView('light'))
   const rig = useRef<THREE.Group>(null)
   const { camera, invalidate, size, gl } = useThree()
   const target = useMemo(() => new THREE.Vector3(0, 0.65, 0), [])
   const motion = useRef({ yaw: 0, pitch: 0, baseYaw: 0, basePitch: 0, px: 0, py: 0, dragging: false })
-  const reduced = useMemo(prefersReducedMotion, [])
+  const reduced = useReducedMotion()
+  const introFinished = useRef(false)
 
-  // The scene has its own column: frame the entire exploded assembly in it.
+  // Fit the actual render bounds at the fully exploded pose. This is display
+  // framing only; it neither changes CAD geometry nor runs engineering tools.
   useEffect(() => {
+    const root = rig.current
+    if (!root || !size.width || !size.height) return
+    root.updateWorldMatrix(true, true)
+    const boxes: THREE.Box3[] = []
+    const whole = new THREE.Box3()
+    for (const id of PART_IDS) {
+      const part = root.getObjectByName(id)
+      if (!part) continue
+      const bounds = new THREE.Box3().setFromObject(part)
+      if (bounds.isEmpty()) continue
+      const lift = id === 'cover' ? EXPLODE.cover : COVER_SCREWS.includes(id as typeof COVER_SCREWS[number]) ? EXPLODE.screws : 0
+      bounds.translate(new THREE.Vector3(0, (lift - part.position.z) * 0.01, 0))
+      boxes.push(bounds)
+      whole.union(bounds)
+    }
+    if (whole.isEmpty()) return
+    whole.getCenter(target)
     const cam = camera as THREE.PerspectiveCamera
-    const aspect = size.width / Math.max(1, size.height)
-    const k = Math.max(1, 1.05 / aspect)
+    cam.fov = 30
     cam.filmOffset = 0
-    cam.fov = 32
-    cam.position.set(3 * k, 2.7 * k, 4.3 * k)
+    cam.clearViewOffset()
+    const direction = new THREE.Vector3(2.7, 2.2, 3.8).normalize()
+    const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), direction).normalize()
+    const up = new THREE.Vector3().crossVectors(direction, right)
+    const tanV = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 0.88
+    const tanH = tanV * size.width / size.height * 0.92
+    const point = new THREE.Vector3()
+    let distance = 0
+    for (const box of boxes) for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
+      point.set(x, y, z).sub(target)
+      const depth = point.dot(direction)
+      distance = Math.max(distance, Math.abs(point.dot(up)) / tanV + depth, Math.abs(point.dot(right)) / tanH + depth)
+    }
+    cam.position.copy(target).addScaledVector(direction, distance * 1.04)
     cam.lookAt(target)
     cam.updateProjectionMatrix()
     invalidate()
@@ -153,18 +205,19 @@ function HeroScene({
       invalidate()
     }
     const state = { s: 0, c: 0 }
-    if (reduced) {
+    if (reduced || introFinished.current) {
       apply({ s: 1, c: 1 })
+      introFinished.current = true
+      onRevealed()
       return
     }
-    const tl = gsap.timeline({ delay: 0.35 })
+    const tl = gsap.timeline({ delay: 0.35, onComplete: () => { introFinished.current = true; onRevealed() } })
     tl.to(state, { s: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => apply(state) })
     tl.to(state, { c: 1, duration: 1.15, ease: 'power3.inOut', onUpdate: () => apply(state) }, 0.3)
     return () => {
       tl.kill()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [reduced, invalidate, onRevealed])
 
   // isolation: fade everything except the chosen part
   useEffect(() => {
@@ -195,6 +248,13 @@ function HeroScene({
   useEffect(() => {
     const el = gl.domElement
     const m = motion.current
+    let visible = true
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) invalidate()
+    }, { rootMargin: '100px' })
+    observer.observe(el)
+    if (reduced) { m.px = m.py = 0; m.yaw = m.baseYaw; m.pitch = m.basePitch; invalidate() }
     let lastX = 0
     let lastY = 0
     const down = (e: PointerEvent) => {
@@ -204,6 +264,7 @@ function HeroScene({
       el.setPointerCapture(e.pointerId)
     }
     const move = (e: PointerEvent) => {
+      if (!visible && !m.dragging) return
       if (m.dragging) {
         m.baseYaw = Math.max(-1.1, Math.min(1.1, m.baseYaw + (e.clientX - lastX) * 0.006))
         m.basePitch = Math.max(-0.25, Math.min(0.32, m.basePitch + (e.clientY - lastY) * 0.003))
@@ -212,7 +273,7 @@ function HeroScene({
       } else if (!reduced) {
         m.px = (e.clientX / window.innerWidth - 0.5) * 0.08
         m.py = (e.clientY / window.innerHeight - 0.5) * 0.04
-      }
+      } else return
       invalidate()
     }
     const up = (e: PointerEvent) => {
@@ -230,6 +291,7 @@ function HeroScene({
     el.addEventListener('dblclick', dbl)
     el.style.touchAction = 'pan-y'
     return () => {
+      observer.disconnect()
       el.removeEventListener('pointerdown', down)
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
@@ -239,7 +301,7 @@ function HeroScene({
 
   useFrame((_, dt) => {
     const m = motion.current
-    const k = 1 - Math.exp(-dt * 9)
+    const k = reduced ? 1 : 1 - Math.exp(-dt * 9)
     const ty = m.baseYaw + m.px
     const tp = m.basePitch + m.py
     m.yaw += (ty - m.yaw) * k
@@ -253,9 +315,10 @@ function HeroScene({
 
   return (
     <>
-      <Studio theme="light" />
+      <Studio theme="light" polished />
       <group ref={rig}>
-        <ModuleAssembly view={view} interactive onHover={onHover} onSelect={(id) => onIsolate(isolated === id ? null : id)} />
+        <ModuleAssembly view={view} polished interactive onHover={onHover} onSelect={(id) => onIsolate(isolated === id ? null : id)} />
+        <AnchorProjector anchors={CALLOUTS} targets={labels} />
       </group>
     </>
   )
