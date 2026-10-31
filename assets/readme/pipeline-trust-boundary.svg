@@ -46,5 +46,6 @@
   <text x="700" y="228" class="mono" font-size="11" fill="#34866b">◀  OCCT kernel disposes  ▶</text>
 
   <text x="60" y="212" class="mono" font-size="10" fill="#4f5357">stages 01–05 · evidence gathering + bounded proposal</text>
-  <text x="700" y="196" class="mono" font-size="10" fill="#4f5357">independent reconstruction · no model flags accepted</text>
+  <text x="700" y="196" class="mono" font-size="10" fill="#4f5357">independent reconstruction ·</text>
+  <text x="700" y="210" class="mono" font-size="10" fill="#4f5357">no model flags accepted</text>
 </svg>
