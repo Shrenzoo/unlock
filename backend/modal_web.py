@@ -18,7 +18,8 @@ if not origins or any(
 
 
 @app.function(
-    image=image.env({"UNLOCK_CORS_ORIGINS": origins}),
+    image=image,
+    env={"UNLOCK_CORS_ORIGINS": origins},
     cpu=(0.125, 0.5),
     memory=(256, 512),
     timeout=30,
