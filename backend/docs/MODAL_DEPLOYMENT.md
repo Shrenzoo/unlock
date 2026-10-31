@@ -1,5 +1,10 @@
 # Modal deployment checkpoint
 
+Current follow-up: [Cloudflare and Modal launch](CLOUDFLARE_DEPLOYMENT.md). PR #7
+was merged; the new feature branch retains the Modal integration, records the B02
+contributor grant, regenerates licensed evidence and uses Cloudflare free static
+hosting. The remainder of this file preserves the earlier implementation checkpoint.
+
 This branch prepares a public read-only engineering demonstration and private
 Modal engineering jobs. Public deployment still requires the account holder's
 approval. The existing local interactive application remains available.

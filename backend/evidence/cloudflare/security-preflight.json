@@ -1,0 +1,30 @@
+{
+  "result": "passed_local_security_preflight",
+  "source_commit": "639f89e19f01c78df76577a17edd4224eed4fbba",
+  "selected_job": "9ad44594b93d4d0b860e8efda623b2d6",
+  "blocked_write_requests": 42,
+  "successful_read_routes": 15,
+  "hash_checked_artifact_downloads": 14,
+  "scan_payload_count": 406,
+  "nested_zip_scans": 3,
+  "known_credentials_and_canaries_checked": true,
+  "credential_values_logged": false,
+  "credential_findings": [],
+  "public_directory_files": [
+    "THIRD_PARTY_NOTICES.txt",
+    "_headers",
+    "favicon.svg"
+  ],
+  "frontend_source_maps": false,
+  "gateway_imported_cad_or_worker": false,
+  "exact_origin_and_host_checks": "passed",
+  "private_path_and_unknown_artifact_checks": "passed",
+  "rate_limit_120_then_429": "passed",
+  "production_deployment": false,
+  "limitations": [
+    "Local ASGI TestClient only; no public endpoint exists.",
+    "Per-container limiter resets on cold restart.",
+    "All selected B02 artifacts are intentionally public under the documented CC BY 4.0 grant.",
+    "Cloudflare free static-hosting terms reviewed separately."
+  ]
+}
