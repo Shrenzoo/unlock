@@ -214,7 +214,7 @@ function Footer() {
         <p>
           A prototype for the Meta Global AI Developer Hackathon, 2026. Redesign proposals use Muse Spark 1.3 through bounded tool calls when the backend is configured. Independent geometry checks determine the result.
         </p>
-        <p>Fixture B02 is synthetic and authored by the team. Every result shown on this site is illustrative.</p>
+        <p>Fixture B02 is synthetic and authored by the team. This landing page uses illustrative geometry. The workspace shows each result’s source and computation history.</p>
       </div>
     </footer>
   )

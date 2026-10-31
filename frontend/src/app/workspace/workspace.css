@@ -310,6 +310,8 @@ kbd {
 .vp__view {
   position: relative;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   background: #ebeae5;
 }
 .vp__label {
@@ -1107,7 +1109,7 @@ button.chip {
   }
   .vp--compare .vp__views {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
   }
   .vp__tools {
     left: 12px;

@@ -120,6 +120,21 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
         page.locator("canvas").nth(1).wait_for()
         left, right = rendered(page, 0), rendered(page, 1)
         assert image_difference(left, right) > 0.003
+        # R3F's intrinsic canvas height must not stretch a narrow grid row into
+        # the other model or the evidence panel, even if pixels still render.
+        viewport = page.get_by_role("main", name="Assembly viewport").bounding_box()
+        assert viewport
+        canvases = [page.locator("canvas").nth(i).bounding_box() for i in (0, 1)]
+        for canvas in canvases:
+            assert canvas
+            assert canvas["y"] >= viewport["y"] - 1
+            assert (
+                canvas["y"] + canvas["height"] <= viewport["y"] + viewport["height"] + 1
+            )
+        if label == "mobile":
+            assert canvases[0]["y"] + canvases[0]["height"] <= canvases[1]["y"] + 1
+            panel = page.get_by_role("complementary", name="Evidence").bounding_box()
+            assert panel and panel["y"] >= viewport["y"] + viewport["height"] - 1
         evidence = page.get_by_role("complementary", name="Evidence").inner_text()
         assert "no_path_supported" in evidence and "feasible" in evidence
         assert "manufacturing" in evidence.lower()
@@ -137,6 +152,11 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
             "() => document.scrollingElement.scrollWidth <= innerWidth + 1"
         )
         shot(page, "production-" + label + "-comparison")
+        if label == "mobile":
+            page.screenshot(
+                path=evidence_dir / "production-mobile-full-comparison.png",
+                full_page=True,
+            )
 
         page.get_by_role("button", name="5 Export", exact=True).click()
         expect(
