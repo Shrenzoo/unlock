@@ -12,7 +12,8 @@ and matching favicon. The current [spacious reference design](docs/REFERENCE_DES
 records larger sections, continuously visible idle motion and CAD framing.
 The latest [atmospheric lighting correction](docs/ATMOSPHERIC_LIGHTING.md) replaces
 ribbons with irregular cloud lighting while verifying that every measured layout
-position and the existing CAD interactions are preserved.
+position and the existing CAD interactions are preserved. The later
+[story zoom correction](docs/STORY_ZOOM.md) makes the model grow throughout scrolling.
 
 ```bash
 npm install
