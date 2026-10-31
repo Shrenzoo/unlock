@@ -225,6 +225,8 @@ const EDGE = {
   obstruction: new THREE.Color('#7a2a0e'),
 }
 const HOVER = new THREE.Color('#3268f5')
+/** landing hero on paper: bright silver metal over a near-black base, as in the reference design */
+const LIGHT_STUDIO: Partial<Record<Mat, number>> = { aluminum: 1.9, steel: 1.9, cap: 1.9, anodized: 0.35 }
 
 interface Registered {
   id: PartId
@@ -275,6 +277,7 @@ export function ModuleAssembly({ view, interactive = false, onSelect, onHover, p
       for (const { m, spec, key } of r.mats) {
         const opacity = s.opacity * (s.fade?.[key] ?? 1)
         m.color.set(spec.color)
+        if (polished && !dark) m.color.multiplyScalar(LIGHT_STUDIO[key] ?? 1)
         m.metalness = spec.metalness
         m.roughness = spec.roughness * (polished && spec.metalness > 0.5 ? 0.42 : 1)
         m.envMapIntensity = polished ? 1.6 : 1.1

@@ -10,7 +10,7 @@
   align-items: center;
   padding: 0 var(--gutter);
   color: var(--ink);
-  background: linear-gradient(#f9fcffdf, #f9fcff4d);
+  background: transparent;
   transition:
     background-color var(--d-panel) var(--ease-out),
     color var(--d-panel) var(--ease-out),
@@ -20,18 +20,23 @@
   grid-column: 1 / 4;
   justify-self: start;
 }
-.nav--solid {
-  background: var(--paper);
-  box-shadow: 0 1px 0 var(--rule);
+/* frosted rather than opaque, fading out below the bar, so the strokes run behind it as in the reference */
+.nav--solid::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -28px 0;
+  z-index: -1;
+  pointer-events: none;
+  background: #f9fcffa6;
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  mask-image: linear-gradient(#000 62%, transparent);
 }
 .nav--dark {
   color: var(--fog);
-  background: linear-gradient(#02050bdf, #02050b4d);
+  background: transparent;
 }
-.nav--dark.nav--solid {
-  background: var(--graphite);
-  box-shadow: 0 1px 0 var(--graphite-rule);
-}
+.nav--dark.nav--solid::before { background: #02050b2e; }
 .nav__links {
   grid-column: 7 / 11;
   display: flex;
@@ -243,7 +248,7 @@
 .hero-note__line { position: absolute; width: 1px; height: 1px; }
 .hero-note__line path { fill: none; stroke: currentColor; stroke-width: 1; }
 .hero-note__line rect { fill: currentColor; }
-.hero-note__label { position: absolute; display: grid; white-space: nowrap; transform: translateY(-100%); background: #f9fcff80; padding: 2px 5px; }
+.hero-note__label { position: absolute; display: grid; white-space: nowrap; transform: translateY(-100%); padding: 2px 5px; text-shadow: 0 0 2px #f9fcff, 0 0 6px #f9fcffe6, 0 0 14px #f9fcffb3; }
 .hero-note__label--left { transform: translate(-100%, -100%); text-align: right; }
 
 /* ── story ───────────────────────────────────────────────────────────── */
