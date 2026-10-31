@@ -1,0 +1,160 @@
+{
+  "desktop": {
+    "viewport": [
+      1440,
+      1000
+    ],
+    "frames": [
+      {
+        "progress": 0.02,
+        "metal_bbox": [
+          92,
+          288,
+          583,
+          740
+        ],
+        "metal_pixels": 101538
+      },
+      {
+        "progress": 0.1,
+        "metal_bbox": [
+          86,
+          284,
+          587,
+          740
+        ],
+        "metal_pixels": 107023
+      },
+      {
+        "progress": 0.16,
+        "metal_bbox": [
+          84,
+          312,
+          589,
+          740
+        ],
+        "metal_pixels": 110692
+      },
+      {
+        "progress": 0.23,
+        "metal_bbox": [
+          85,
+          342,
+          591,
+          740
+        ],
+        "metal_pixels": 113863
+      },
+      {
+        "progress": 0.48,
+        "metal_bbox": [
+          54,
+          0,
+          607,
+          740
+        ],
+        "metal_pixels": 8545
+      },
+      {
+        "progress": 0.7,
+        "metal_bbox": [
+          89,
+          250,
+          649,
+          740
+        ],
+        "metal_pixels": 33472
+      },
+      {
+        "progress": 0.93,
+        "metal_bbox": [
+          55,
+          326,
+          643,
+          736
+        ],
+        "metal_pixels": 39114
+      }
+    ],
+    "page_errors": []
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "frames": [
+      {
+        "progress": 0.02,
+        "metal_bbox": [
+          47,
+          163,
+          304,
+          318
+        ],
+        "metal_pixels": 28148
+      },
+      {
+        "progress": 0.1,
+        "metal_bbox": [
+          44,
+          160,
+          307,
+          322
+        ],
+        "metal_pixels": 29712
+      },
+      {
+        "progress": 0.16,
+        "metal_bbox": [
+          43,
+          175,
+          307,
+          343
+        ],
+        "metal_pixels": 30743
+      },
+      {
+        "progress": 0.23,
+        "metal_bbox": [
+          44,
+          191,
+          308,
+          366
+        ],
+        "metal_pixels": 31630
+      },
+      {
+        "progress": 0.48,
+        "metal_bbox": [
+          43,
+          0,
+          317,
+          355
+        ],
+        "metal_pixels": 2996
+      },
+      {
+        "progress": 0.7,
+        "metal_bbox": [
+          48,
+          141,
+          328,
+          324
+        ],
+        "metal_pixels": 10233
+      },
+      {
+        "progress": 0.93,
+        "metal_bbox": [
+          28,
+          181,
+          336,
+          391
+        ],
+        "metal_pixels": 12508
+      }
+    ],
+    "page_errors": []
+  }
+}

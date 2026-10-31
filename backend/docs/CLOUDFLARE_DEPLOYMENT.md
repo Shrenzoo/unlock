@@ -1,7 +1,9 @@
 # Cloudflare and Modal read-only launch
 
-Current frontend release: [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
-records static version `78201c9c`, preserved layout and production acceptance.
+Current frontend release: [story zoom correction](../../frontend/docs/STORY_ZOOM.md)
+records static version `82642357`, a continuous camera approach and verified
+responsive framing. The [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
+records preceding version `78201c9c`.
 The [prior wave refinement](../../frontend/docs/WAVE_REFINEMENT.md) records version
 `97a79a61`.
 The earlier [spacious reference design](../../frontend/docs/REFERENCE_DESIGN.md)

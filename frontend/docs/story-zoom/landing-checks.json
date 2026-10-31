@@ -1,0 +1,180 @@
+{
+  "started_at": "20261031T155250Z",
+  "environment": {
+    "browser": "chromium 156.0.8078.76 (installed Chrome, headless)",
+    "git_commit": "8f908477f588bf881c257646e32a7aca00e99ffd",
+    "git_branch": "codex/story-scroll-zoom",
+    "python": "3.12.16",
+    "node": "v26.10.0",
+    "platform": "darwin"
+  },
+  "stacks": {},
+  "tests": {
+    "tests/browser/test_landing_design.py::test_spacious_reference_motion_and_navigation[reference]": {
+      "outcome": "passed",
+      "duration_s": 19.3,
+      "detail": null
+    },
+    "tests/browser/test_landing_design.py::test_spacious_reference_motion_and_navigation[desktop]": {
+      "outcome": "passed",
+      "duration_s": 21.32,
+      "detail": null
+    },
+    "tests/browser/test_landing_design.py::test_spacious_reference_motion_and_navigation[laptop]": {
+      "outcome": "passed",
+      "duration_s": 16.83,
+      "detail": null
+    },
+    "tests/browser/test_landing_design.py::test_spacious_reference_motion_and_navigation[mobile]": {
+      "outcome": "passed",
+      "duration_s": 14.42,
+      "detail": null
+    },
+    "tests/browser/test_landing_design.py::test_spacious_reference_motion_and_navigation[small-mobile]": {
+      "outcome": "passed",
+      "duration_s": 14.49,
+      "detail": null
+    },
+    "tests/browser/test_landing_design.py::test_live_reduced_motion_and_webgl_fallback": {
+      "outcome": "passed",
+      "duration_s": 7.49,
+      "detail": null
+    }
+  },
+  "measurements": {},
+  "correlation": {},
+  "landing_origin": "http://127.0.0.1:5189",
+  "landing_design": {
+    "reference": {
+      "viewport": [
+        1774,
+        887
+      ],
+      "hero_height": 887,
+      "idle_changed_fraction": 0.10785567301202767,
+      "idle_frame_sample": {
+        "samples": 89,
+        "median_ms": 16.699999999999818,
+        "p95_ms": 16.700000000000728,
+        "over_50ms": 0
+      },
+      "scroll_frame_sample": null,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "part_and_step_controls": true,
+      "page_errors": []
+    },
+    "desktop": {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "hero_height": 1000,
+      "idle_changed_fraction": 0.11020347222222222,
+      "idle_frame_sample": {
+        "samples": 89,
+        "median_ms": 16.699999999999818,
+        "p95_ms": 16.700000000000728,
+        "over_50ms": 0
+      },
+      "scroll_frame_sample": {
+        "samples": 89,
+        "median_ms": 16.69999999999891,
+        "p95_ms": 16.80000000000109,
+        "over_50ms": 0
+      },
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "part_and_step_controls": true,
+      "page_errors": []
+    },
+    "laptop": {
+      "viewport": [
+        1024,
+        768
+      ],
+      "hero_height": 820,
+      "idle_changed_fraction": 0.06865183512369792,
+      "idle_frame_sample": {
+        "samples": 89,
+        "median_ms": 16.699999999999818,
+        "p95_ms": 16.800000000000182,
+        "over_50ms": 0
+      },
+      "scroll_frame_sample": null,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "part_and_step_controls": true,
+      "page_errors": []
+    },
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "hero_height": 1153.9375,
+      "idle_changed_fraction": 0.09164236237695954,
+      "idle_frame_sample": {
+        "samples": 89,
+        "median_ms": 16.699999999999818,
+        "p95_ms": 16.800000000000182,
+        "over_50ms": 0
+      },
+      "scroll_frame_sample": null,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "part_and_step_controls": true,
+      "page_errors": []
+    },
+    "small-mobile": {
+      "viewport": [
+        360,
+        640
+      ],
+      "hero_height": 1066.78125,
+      "idle_changed_fraction": 0.10184027777777778,
+      "idle_frame_sample": {
+        "samples": 89,
+        "median_ms": 16.699999999999818,
+        "p95_ms": 16.700000000000728,
+        "over_50ms": 0
+      },
+      "scroll_frame_sample": null,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "part_and_step_controls": true,
+      "page_errors": []
+    }
+  },
+  "landing_accessibility": {
+    "live_reduced_motion": true,
+    "webgl_fallback": true
+  },
+  "finished_at": "20261031T155427Z",
+  "exit_status": 0
+}

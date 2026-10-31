@@ -1,6 +1,9 @@
 # Atmospheric blue lighting correction
 
-Live at <https://unlock-demo.shreyas-pabbathi.workers.dev>, Cloudflare static
+The later [story zoom correction](STORY_ZOOM.md) retains these backgrounds and
+records current static version `82642357`. This report preserves the styling release.
+
+Originally published at <https://unlock-demo.shreyas-pabbathi.workers.dev>, Cloudflare static
 version `78201c9c`, application commit `1dc3e97`, verified 2026-10-31.
 This replaces the preceding ribbon treatment while retaining the accepted layout.
 
