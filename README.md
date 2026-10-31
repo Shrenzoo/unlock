@@ -1133,28 +1133,36 @@ That is the generalisable result. The specific fixture is an example of it.
 
 This was built for the **Meta Global AI Developer Hackathon**, on the **Push the Frontier** track, in the Cerebral Valley batch.
 
-### The timeline, as it actually happened
+### The timeline, as git records it
+
+Four days, 56 commits, no history rewritten. This is derived from the commit dates rather than from memory:
 
 ```text
-day 1–2    geometry kernel          import, revisions, B-rep immutability
-           ├─ real STEP in isolated workers
-           └─ private deep copies at every mutation boundary
+day 1 · Oct 27    the workspace
+                  frontend: landing, projects list, engineering workspace
 
-day 3–5    the planner              six-axis sweep separation
-           ├─ conservative coverage + analytic sweeps
-           └─ conservative unknown handling (never admit from sampling)
+day 2 · Oct 28    the presentation layer
+                  banner and README asset work
 
-day 6–8    templates + verifier     T01/T02 constructors
-           ├─ twelve mandatory checks
-           └─ independent reconstruction
+day 3 · Oct 29    the engine, and the Meta integration     ← the big one
+                  ├─ preserve the CAD planner and AI controller baseline
+                  ├─ direct Meta configuration, secure environment loading
+                  ├─ cancellable Meta SDK transport + native tool calling
+                  ├─ enforce retry budgets, retain authoritative evidence
+                  ├─ gated Meta smoke and real-engine live acceptance tests
+                  ├─ preserve evidence handles, validate provider usage
+                  ├─ connect persistent jobs to real analysis, redesign, export
+                  └─ reproducible CAD API and browser validation evidence
 
-day 9–11   Meta integration         eight-tool surface, controller budgets
-           ├─ live tool-calling verified 15/15
-           └─ defect found during the live run, fixed, regression-tested
-
-day 12–14  the live redesign run    B02 · 48.1 s · VERIFIED_IMPROVEMENT
-           └─ two deterministic controls frozen and run first
+day 4 · Oct 30    the proof it survives contact
+                  05:23  real-service browser acceptance harness, B02 journey
+                  05:29  genuine upload, rejected packages, failures, recovery
+                  05:32  keep the whole assembly in narrow viewports
+                  05:46  fit the camera to tessellated parts, not the envelope
+                  05:55  record full browser acceptance results and evidence
 ```
+
+Day 3 carries the project. It is where the geometry engine, the model transport, the budget enforcement and the evidence-preservation layer all landed in a single sitting — and where the integration tests that still guard them were written.
 
 ### The defect worth telling you about
 
