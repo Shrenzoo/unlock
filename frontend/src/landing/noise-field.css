@@ -46,6 +46,7 @@
 }
 .noise-field__cloud--blue {
   background: url('./flow-field.svg') center / 100% 100% no-repeat;
+  animation: field-circulation 32s linear -4s infinite;
 }
 .noise-field__cloud--ink {
   background: radial-gradient(ellipse 32% 13% at 60% 74%, #01040e9c, transparent 80%);
@@ -66,6 +67,10 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.15' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0 .8 .15 1 .1 .8 0'/%3E%3CfeFuncG type='table' tableValues='0 .8 .15 1 .1 .8 0'/%3E%3CfeFuncB type='table' tableValues='0 .8 .15 1 .1 .8 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cpath fill='%23888' filter='url(%23n)' d='M0 0h220v220H0z'/%3E%3C/svg%3E");
 }
 .noise-field[data-paused='true'] .noise-field__cloud { animation-play-state: paused; }
+@keyframes field-circulation {
+  from { transform: rotate(0deg) translate3d(3.2%, 0, 0) rotate(0deg) scale(1.04); }
+  to { transform: rotate(360deg) translate3d(3.2%, 0, 0) rotate(-360deg) scale(1.04); }
+}
 @keyframes field-tide {
   from { transform: translate3d(-2%, -2%, 0) rotate(-5deg) scale(1.01); }
   to { transform: translate3d(3%, 3%, 0) rotate(5deg) scale(1.08); }

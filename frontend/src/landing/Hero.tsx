@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import * as THREE from 'three'
 import { b02Manifest } from '@/fixtures/b02'
 import { SAMPLE_PROJECT_PATH } from '@/api'
@@ -8,7 +8,8 @@ import { ModuleAssembly, PART_IDS, createView, type PartId } from '@/three/Modul
 import { Studio } from '@/three/Studio'
 import { AnchorProjector, type Anchor } from '@/three/Anchors'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
-import { hasWebGL, prefersReducedMotion } from '@/three/units'
+import { hasWebGL } from '@/three/units'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { gsap, scrollToId } from './scroll'
 
 const COVER_SCREWS = ['screw_c1', 'screw_c2', 'screw_c3', 'screw_c4'] as const
@@ -27,6 +28,7 @@ export function Hero() {
   const [hovered, setHovered] = useState<PartId | null>(null)
   const [isolated, setIsolated] = useState<PartId | null>(null)
   const [revealed, setRevealed] = useState(false)
+  const reveal = useCallback(() => setRevealed(true), [])
   const labels = useRef<Record<string, HTMLElement | null>>({})
   const focus = isolated ?? hovered
   const comp = focus ? b02Manifest.components.find((c) => c.id === focus) : null
@@ -37,13 +39,13 @@ export function Hero() {
         {webgl ? (
           <Canvas
             frameloop="demand"
-            dpr={[1, 2]}
+            dpr={[1, 1.5]}
             camera={{ fov: 24, position: [2.7, 1.55, 3.4], near: 0.1, far: 40 }}
             gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
             onPointerMissed={() => setIsolated(null)}
             aria-label="Interactive model of the B02 service module. Drag to turn it; select a part to isolate it."
           >
-            <HeroScene hovered={hovered} isolated={isolated} onHover={setHovered} onIsolate={setIsolated} labels={labels} onRevealed={() => setRevealed(true)} />
+            <HeroScene hovered={hovered} isolated={isolated} onHover={setHovered} onIsolate={setIsolated} labels={labels} onRevealed={reveal} />
           </Canvas>
         ) : null}
         {webgl && <div className={`anchors hero__annotations ${revealed ? 'is-revealed' : ''}`} aria-hidden="true">
@@ -146,7 +148,8 @@ function HeroScene({
   const { camera, invalidate, size, gl } = useThree()
   const target = useMemo(() => new THREE.Vector3(0, 0.65, 0), [])
   const motion = useRef({ yaw: 0, pitch: 0, baseYaw: 0, basePitch: 0, px: 0, py: 0, dragging: false })
-  const reduced = useMemo(prefersReducedMotion, [])
+  const reduced = useReducedMotion()
+  const introFinished = useRef(false)
 
   // Fit the actual render bounds at the fully exploded pose. This is display
   // framing only; it neither changes CAD geometry nor runs engineering tools.
@@ -202,19 +205,19 @@ function HeroScene({
       invalidate()
     }
     const state = { s: 0, c: 0 }
-    if (reduced) {
+    if (reduced || introFinished.current) {
       apply({ s: 1, c: 1 })
+      introFinished.current = true
       onRevealed()
       return
     }
-    const tl = gsap.timeline({ delay: 0.35, onComplete: onRevealed })
+    const tl = gsap.timeline({ delay: 0.35, onComplete: () => { introFinished.current = true; onRevealed() } })
     tl.to(state, { s: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => apply(state) })
     tl.to(state, { c: 1, duration: 1.15, ease: 'power3.inOut', onUpdate: () => apply(state) }, 0.3)
     return () => {
       tl.kill()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [reduced, invalidate, onRevealed])
 
   // isolation: fade everything except the chosen part
   useEffect(() => {
@@ -245,6 +248,13 @@ function HeroScene({
   useEffect(() => {
     const el = gl.domElement
     const m = motion.current
+    let visible = true
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) invalidate()
+    }, { rootMargin: '100px' })
+    observer.observe(el)
+    if (reduced) { m.px = m.py = 0; m.yaw = m.baseYaw; m.pitch = m.basePitch; invalidate() }
     let lastX = 0
     let lastY = 0
     const down = (e: PointerEvent) => {
@@ -254,6 +264,7 @@ function HeroScene({
       el.setPointerCapture(e.pointerId)
     }
     const move = (e: PointerEvent) => {
+      if (!visible && !m.dragging) return
       if (m.dragging) {
         m.baseYaw = Math.max(-1.1, Math.min(1.1, m.baseYaw + (e.clientX - lastX) * 0.006))
         m.basePitch = Math.max(-0.25, Math.min(0.32, m.basePitch + (e.clientY - lastY) * 0.003))
@@ -262,7 +273,7 @@ function HeroScene({
       } else if (!reduced) {
         m.px = (e.clientX / window.innerWidth - 0.5) * 0.08
         m.py = (e.clientY / window.innerHeight - 0.5) * 0.04
-      }
+      } else return
       invalidate()
     }
     const up = (e: PointerEvent) => {
@@ -280,6 +291,7 @@ function HeroScene({
     el.addEventListener('dblclick', dbl)
     el.style.touchAction = 'pan-y'
     return () => {
+      observer.disconnect()
       el.removeEventListener('pointerdown', down)
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
@@ -289,7 +301,7 @@ function HeroScene({
 
   useFrame((_, dt) => {
     const m = motion.current
-    const k = 1 - Math.exp(-dt * 9)
+    const k = reduced ? 1 : 1 - Math.exp(-dt * 9)
     const ty = m.baseYaw + m.px
     const tp = m.basePitch + m.py
     m.yaw += (ty - m.yaw) * k
