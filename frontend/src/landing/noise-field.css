@@ -28,7 +28,7 @@
 .noise-field__palette { position: absolute; inset: 0; overflow: hidden; }
 .noise-field__palette--light { background: #f9fcff; }
 .noise-field__palette--dark {
-  background: linear-gradient(to bottom, #004be3 calc(var(--story-top) - 24px), #02050b calc(var(--story-top) + 160px));
+  background: linear-gradient(to bottom, #002660 calc(var(--story-top) - 24px), #02050b calc(var(--story-top) + 160px));
   mask-image:
     linear-gradient(to bottom, transparent calc(var(--story-top) - 100px), #000 calc(var(--story-top) + 24px), #000 calc(var(--story-bottom) - 32px), transparent calc(var(--story-bottom) + 110px)),
     linear-gradient(to bottom, transparent calc(var(--footer-top) - 100px), #000 calc(var(--footer-top) + 36px));
@@ -51,7 +51,7 @@
 }
 .noise-field__cloud--ink {
   background: url('./flow-atmosphere.svg') center / 100% 100% no-repeat;
-  opacity: 0.35;
+  opacity: 0.14;
   animation-name: field-undertow;
   animation-duration: 30s;
 }
@@ -59,18 +59,21 @@
   background: #d4e9ff;
   mask: url('./flow-atmosphere.svg') center / 100% 100% no-repeat;
   mix-blend-mode: screen;
-  opacity: 0.18;
+  opacity: 0.08;
   animation-name: field-undertow;
   animation-duration: 30s;
 }
-.noise-field__palette--dark .noise-field__cloud--blue { opacity: 0.88; }
+.noise-field__palette--dark .noise-field__cloud--blue {
+  opacity: 0.94;
+  mask-image: linear-gradient(to bottom, #000a, #0009 40%, #000 72%, #000b);
+}
 .noise-field__grain {
   position: absolute;
   inset: 0;
-  opacity: 0.17;
+  opacity: 0.13;
   mix-blend-mode: soft-light;
   background-image: url('./flow-grain.svg');
-  background-size: 144px 144px;
+  background-size: 240px 240px;
 }
 .noise-field[data-paused='true'] .noise-field__cloud { animation-play-state: paused; }
 @keyframes field-circulation {

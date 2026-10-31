@@ -1,43 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
   <defs>
-    <!-- Connected currents, with a broad body and finer light following each bend. -->
-    <path id="current" d="M410-190C325-10 460 90 610 175S810 285 670 350 395 365 345 450 465 565 650 625 980 735 1175 660 1515 645 1780 765"/>
-    <path id="return" d="M-180 670C70 450 285 480 490 635S795 820 1030 715 1420 680 1790 625"/>
-    <path id="tributary" d="M1460-180C1605 15 1240 80 1340 230S1710 335 1650 505 1440 675 1180 660"/>
-    <path id="body-return" d="M-180 620C80 438 300 455 508 620 690 765 788 802 1004 706 1230 603 1450 650 1780 580L1790 650C1430 748 1260 706 1060 785 815 885 660 810 450 690 270 565 55 530-160 735Z"/>
-    <linearGradient id="body" x1=".15" y1="0" x2=".72" y2="1">
-      <stop stop-color="#1243ce"/><stop offset=".25" stop-color="#0049f5"/>
-      <stop offset=".52" stop-color="#0563ff"/><stop offset=".74" stop-color="#003ee2"/><stop offset="1" stop-color="#0756ee"/>
+    <!-- Filled light volumes, broken up by density noise. No stroked wave paths. -->
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#2259d9"/><stop offset=".45" stop-color="#0759f3"/><stop offset="1" stop-color="#3a8afa"/>
     </linearGradient>
-    <linearGradient id="light" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#81c7ff" stop-opacity=".15"/><stop offset=".3" stop-color="#459bff" stop-opacity=".75"/>
-      <stop offset=".55" stop-color="#9cdeff" stop-opacity=".48"/><stop offset=".8" stop-color="#288aff" stop-opacity=".8"/><stop offset="1" stop-color="#84cfff" stop-opacity=".1"/>
-    </linearGradient>
-    <filter id="bloom" x="-25%" y="-30%" width="150%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="34"/></filter>
-    <filter id="body-soft" x="-15%" y="-20%" width="130%" height="140%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency=".004 .009" numOctaves="2" seed="13" result="flow"/>
-      <feDisplacementMap in="SourceGraphic" in2="flow" scale="22" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="9"/>
+    <filter id="cloud" x="-35%" y="-40%" width="170%" height="180%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".004 .007" numOctaves="3" seed="21" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="160" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="18" result="volume"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".009 .014" numOctaves="3" seed="7" result="density-noise"/>
+      <feColorMatrix in="density-noise" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 3.2 0 0 0 -.8" result="density"/>
+      <feComposite in="volume" in2="density" operator="in"/>
+      <feGaussianBlur stdDeviation="4"/>
     </filter>
-    <filter id="diffuse" x="-15%" y="-20%" width="130%" height="140%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="haze" x="-35%" y="-45%" width="170%" height="190%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".003 .008" numOctaves="2" seed="14" result="drift"/>
+      <feDisplacementMap in="SourceGraphic" in2="drift" scale="130" xChannelSelector="R" yChannelSelector="B"/>
+      <feGaussianBlur stdDeviation="42"/>
+    </filter>
   </defs>
-  <g fill="none" stroke-linecap="round">
-    <g stroke="#1764ff" filter="url(#bloom)" opacity=".38">
-      <use href="#current" stroke-width="195"/><use href="#return" stroke-width="230"/>
-      <use href="#tributary" stroke-width="155"/>
-    </g>
-    <g fill="url(#body)" filter="url(#body-soft)">
-      <use href="#body-return"/>
-    </g>
-    <g stroke="url(#body)" filter="url(#body-soft)">
-      <use href="#current" stroke-width="90"/>
-      <use href="#tributary" stroke-width="72" opacity=".78"/>
-    </g>
-    <!-- Unequal, offset veils avoid a uniform neon-tube outline. -->
-    <g stroke="url(#light)" filter="url(#diffuse)">
-      <path d="M415-160C355 5 495 115 625 183S780 275 654 327 375 360 326 455 488 595 685 640 980 716 1170 641 1515 615 1780 748" stroke-width="28" opacity=".28"/>
-      <path d="M-170 681C80 485 285 490 482 653S795 839 1038 736 1425 704 1780 641" stroke-width="22" opacity=".34"/>
-      <path d="M1465-160C1560 10 1212 80 1318 238S1690 350 1625 510 1420 660 1180 650" stroke-width="19" opacity=".24"/>
-    </g>
+  <g fill="#5b9afa" filter="url(#haze)" opacity=".24">
+    <path d="M430-130C330-30 420 100 475 160S670 235 725 150 620 10 625-100Z"/>
+    <path d="M415 285C315 305 355 410 460 450S735 465 785 365 585 260 415 285Z"/>
+    <path d="M470 690C600 585 740 650 865 625S1120 575 1305 690 1450 800 1275 825 1050 740 890 790 590 855 470 690Z"/>
+  </g>
+  <g fill="url(#blue)" filter="url(#cloud)">
+    <path d="M440-120C350-40 385 45 425 85 415 135 455 130 500 185 565 235 550 260 625 230 690 195 620 155 635 75 655-5 540-75 440-120Z" opacity=".9"/>
+    <path d="M465 295C390 280 380 340 400 380 375 425 465 470 530 445 610 475 700 410 720 360 735 295 565 320 540 280Z" opacity=".72"/>
+    <path d="M1440-100C1320-40 1360 35 1390 75 1335 125 1415 185 1450 205 1470 275 1575 260 1630 205 1710 135 1590 65 1580-35Z" opacity=".62"/>
+    <path d="M575 670C525 710 550 780 650 775 700 825 790 770 840 785 895 845 1010 780 1070 785 1160 830 1235 790 1300 745 1340 690 1210 645 1160 670 1075 620 1020 650 970 680 870 635 810 690 760 655 695 615 650 690 575 670Z" opacity=".8"/>
+    <path d="M835 705C805 680 860 660 895 680 940 655 990 700 965 725 930 760 865 735 835 705Z" fill="#3388ff" opacity=".32"/>
+    <path d="M1165 735C1135 705 1190 680 1225 705 1275 695 1300 740 1255 765 1210 790 1185 760 1165 735Z" fill="#378bff" opacity=".28"/>
+    <path d="M-80 695C5 640 110 665 145 720 210 715 260 785 195 815 80 865-20 790-80 830Z" opacity=".3"/>
   </g>
 </svg>
