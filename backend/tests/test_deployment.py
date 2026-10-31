@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from unlock_engine.contracts import EngineError
 from unlock_engine.deployment import jobs
+from unlock_engine.deployment.publication import validate_public_b02
 from unlock_engine.deployment.snapshot import (
     RequestLimiter,
     SnapshotStore,
@@ -40,6 +41,21 @@ def test_restart_snapshot_retains_real_verified_cad_and_export(completed):
     assert candidate["verification"]["status"] == "passed"
     assert candidate["revised_plan"]["replacement_verified"]
     assert candidate["revised_plan"]["steps"][0]["end_mm"] == [0.0, 0.0, 80.0]
+    assert validate_public_b02(root)["export_sha256"] == result["export_sha256"]
+
+
+def test_publication_refuses_pending_license_snapshot(completed, tmp_path):
+    import shutil
+
+    root, _ = completed
+    shutil.copytree(root, tmp_path / "copy")
+    path = tmp_path / "copy" / "snapshot.json"
+    data = json.loads(path.read_bytes())
+    revision = next(r["data"] for r in data["records"] if r["kind"] == "revision")
+    revision["manifest"]["provenance"]["license"] = "pending author approval"
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="CC BY 4.0 grant"):
+        validate_public_b02(tmp_path / "copy")
 
 
 def test_public_reads_reuse_routes_and_refuse_every_write(completed):

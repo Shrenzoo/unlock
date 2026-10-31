@@ -14,7 +14,7 @@ if not re.fullmatch(r"[a-f0-9]{32}", job_id):
 if not origins or any(
     not value.startswith("https://") or "*" in value for value in origins.split(",")
 ):
-    raise ValueError("Set exact HTTPS Vercel origins before public deployment")
+    raise ValueError("Set exact HTTPS frontend origins before public deployment")
 
 
 @app.function(
@@ -31,13 +31,8 @@ if not origins or any(
 @modal.concurrent(max_inputs=8)
 @modal.asgi_app()
 def web():
-    import json
-    from pathlib import Path
+    from unlock_engine.deployment.publication import validate_public_b02
     from unlock_engine.deployment.snapshot import create_snapshot_app
 
-    status = json.loads(Path("/demo/status.json").read_bytes())
-    if status["state"] != "completed" or status["fixture"] != "B02":
-        raise ValueError(
-            "Only a completed synthetic B02 demonstration may be published"
-        )
+    validate_public_b02("/demo")
     return create_snapshot_app("/demo", allowed_hosts=["*.modal.run"])
