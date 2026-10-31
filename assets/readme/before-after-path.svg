@@ -28,7 +28,7 @@
     </g>
     <!-- blocked arrow -->
     <g class="ob">
-      <path d="M230 138 V118" stroke="#e4602f" stroke-width="3" marker-end="url(#x)"/>
+      <path d="M230 138 V118" stroke="#e4602f" stroke-width="3"/>
       <path d="M222 126 l16 12 M238 126 l-16 12" stroke="#e4602f" stroke-width="2.5"/>
     </g>
     <text x="346" y="122" class="mono" font-size="10.5" fill="#e4602f">CONFIRMED_GEOMETRIC</text>
