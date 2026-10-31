@@ -18,8 +18,8 @@ if not origins or any(
 
 
 @app.function(
-    image=image,
-    env={"UNLOCK_CORS_ORIGINS": origins},
+    image=image.add_local_python_source("modal_app"),
+    env={"UNLOCK_CORS_ORIGINS": origins, "UNLOCK_DEMO_JOB": job_id},
     cpu=(0.125, 0.5),
     memory=(256, 512),
     timeout=30,
