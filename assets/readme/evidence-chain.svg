@@ -54,8 +54,8 @@
   <!-- report -->
   <g class="rn" style="animation-delay:.65s">
     <rect x="850" y="104" width="80" height="94" rx="9" fill="#14211c" stroke="#34866b"/>
-    <text x="890" y="152" class="mono" font-size="11" fill="#34866b" text-anchor="middle">report</text>
-    <text x="890" y="170" class="mono" font-size="9.5" fill="#34866b" text-anchor="middle">12/12</text>
+    <text x="890" y="145" class="mono" font-size="11" fill="#34866b" text-anchor="middle">report</text>
+    <text x="890" y="163" class="mono" font-size="9.5" fill="#34866b" text-anchor="middle">12/12</text>
   </g>
 
   <!-- links -->
