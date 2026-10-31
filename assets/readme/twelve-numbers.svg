@@ -45,10 +45,10 @@
   </g>
 
   <!-- brackets grouping each axis -->
-  <path class="dy" d="M36 80 h148 M36 76 v8 M184 76 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
-  <path class="dy" d="M216 80 h148 M216 76 v8 M364 76 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
-  <path class="dy" d="M416 80 h148 M416 76 v8 M564 76 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
-  <path class="dy" d="M616 80 h136 M616 76 v8 M752 76 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
+  <path class="dy" d="M36 76 h148 M36 72 v8 M184 72 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
+  <path class="dy" d="M216 76 h148 M216 72 v8 M364 72 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
+  <path class="dy" d="M416 76 h148 M416 72 v8 M564 72 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
+  <path class="dy" d="M616 76 h136 M616 72 v8 M752 72 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
 
   <!-- T02 -->
   <g class="mono">
@@ -57,7 +57,7 @@
     <text x="96" y="162" font-size="11.5" fill="#3268f5" class="cn" style="animation-delay:.6s">12.0</text>
     <text x="152" y="162" font-size="11.5" fill="#3268f5" class="cn" style="animation-delay:.6s">24.0</text>
     <text x="208" y="162" font-size="11.5" fill="#3268f5" class="cn" style="animation-delay:.6s">36.0</text>
-    <path class="dy" d="M36 132 h200 M36 128 v8 M236 128 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
+    <path class="dy" d="M36 128 h200 M36 124 v8 M236 124 v8" stroke="#3268f5" stroke-width="1" fill="none"/>
   </g>
 
   <!-- the big count -->
