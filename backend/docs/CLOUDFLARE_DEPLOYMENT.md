@@ -1,5 +1,15 @@
 # Cloudflare and Modal read-only launch
 
+Current website: <https://unlock-demo.unlock-labs.workers.dev>. The Cloudflare
+account subdomain was renamed from `shreyas-pabbathi` to `unlock-labs` on
+2026-10-31; historical launch evidence below retains the original URL. The
+same read-only Modal API was redeployed with
+`UNLOCK_CORS_ORIGINS=https://unlock-demo.unlock-labs.workers.dev` and the same
+verified B02 job ID. The new root, Projects and B02 workspace opened in Chrome.
+Before this API update, Projects reported the engine unreachable at the new
+hostname. Modal's usage limit remained $30, spend limit $0, and displayed
+credits $29.99 before the API redeploy; no billing settings were changed.
+
 Current frontend release: [story zoom correction](../../frontend/docs/STORY_ZOOM.md)
 records static version `82642357`, a continuous camera approach and verified
 responsive framing. The [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
