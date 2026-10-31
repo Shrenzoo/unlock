@@ -48,7 +48,8 @@
   <g class="it" style="animation-delay:.3s">
     <text x="350" y="118" class="mono" font-size="11" fill="#3268f5">meta-tool-smoke/</text>
     <text x="370" y="140" class="mono" font-size="10" fill="#e9e8e3">live_report.json</text>
-    <text x="370" y="156" class="mono" font-size="9" fill="#7d8287">15/15 checks · key absent from report, stdout, stderr</text>
+    <text x="370" y="156" class="mono" font-size="9" fill="#7d8287">15/15 checks · key absent from</text>
+    <text x="370" y="168" class="mono" font-size="9" fill="#7d8287">report, stdout, stderr</text>
 
     <text x="350" y="192" class="mono" font-size="11" fill="#3268f5">browser-acceptance/</text>
     <text x="370" y="214" class="mono" font-size="10" fill="#e9e8e3">report.json</text>
