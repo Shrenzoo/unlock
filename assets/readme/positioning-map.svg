@@ -34,9 +34,9 @@
   <!-- existing: naive llm copilots -->
   <g class="bl" style="animation-delay:.25s">
     <circle cx="735" cy="288" r="9" fill="#e4602f"/>
-    <text x="640" y="270" class="mono" font-size="11" fill="#e4602f">"AI copilot" for CAD</text>
-    <text x="620" y="286" class="mono" font-size="9.5" fill="#7d8287">ambitious, unproven — you get</text>
-    <text x="620" y="300" class="mono" font-size="9.5" fill="#7d8287">a plausible-looking STEP file</text>
+    <text x="640" y="244" class="mono" font-size="11" fill="#e4602f">"AI copilot" for CAD</text>
+    <text x="620" y="260" class="mono" font-size="9.5" fill="#7d8287">ambitious, unproven — you get</text>
+    <text x="620" y="274" class="mono" font-size="9.5" fill="#7d8287">a plausible-looking STEP file</text>
   </g>
 
   <!-- existing: rule-based repair -->
