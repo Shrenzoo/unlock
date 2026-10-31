@@ -2,7 +2,7 @@
 
 React 19 + TypeScript + Vite, with Three.js through React Three Fiber and Drei. GSAP drives the hero reveal and the scroll story; Lenis smooths landing-page scrolling. Everything else is CSS.
 
-Public read-only B02 demonstration: <https://unlock-demo.shreyas-pabbathi.workers.dev>.
+Public read-only B02 demonstration: <https://unlock-demo.unlock-labs.workers.dev>.
 Its Modal API serves recorded CAD results from an offline scripted decision policy.
 Uploads, live AI inference and engineering mutations are disabled. See the
 [launch report](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) for licensing, usage,
