@@ -40,7 +40,7 @@
 <li><a href="#why-this-pushes-the-frontier">Why this pushes the frontier</a></li>
 <li><a href="#why-nothing-like-this-exists">Why nothing like this exists</a></li>
 <li><a href="#the-trust-boundary">The trust boundary</a></li>
-<li><a href="#objections-we-would-raise-ourselves">Objections we would raise ourselves</a></li>
+<li><a href="#objections-we-would-raise-ourselves">Objections we would raise ourselves</a>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;</li>
 </ol>
 
 </td>
@@ -53,7 +53,7 @@
 <li><a href="#verification">Verification</a></li>
 <li><a href="#architecture">Architecture</a></li>
 <li><a href="#design-decisions-and-what-they-cost">Design decisions and what they cost</a></li>
-<li><a href="#security-model">Security model</a></li>
+<li><a href="#security-model">Security model</a>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;</li>
 </ol>
 
 </td>
@@ -67,7 +67,7 @@
 <li><a href="#evidence--reproducibility">Evidence &amp; reproducibility</a></li>
 <li><a href="#scope-honestly">Scope, honestly</a></li>
 <li><a href="#built-during-the-hackathon">Built during the hackathon</a></li>
-<li><a href="#roadmap">Roadmap</a></li>
+<li><a href="#roadmap">Roadmap</a>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;</li>
 </ol>
 
 </td>
@@ -81,7 +81,7 @@
 <li><a href="#the-api-surface">The API surface</a></li>
 <li><a href="#the-whole-thing-in-ninety-seconds">The whole thing in ninety seconds</a></li>
 <li><a href="#glossary">Glossary</a></li>
-<li><a href="#credits">Credits</a></li>
+<li><a href="#credits">Credits</a>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;</li>
 </ol>
 
 </td>
