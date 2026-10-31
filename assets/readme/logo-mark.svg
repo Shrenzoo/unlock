@@ -5,7 +5,7 @@
       /* the top edge parts at the centre: each arm pulls back to its corner */
       @keyframes unlatch-top {
         0%, 6%    { stroke-dashoffset: 0 }
-        24%, 76%  { stroke-dashoffset: 9 }
+        24%, 76%  { stroke-dashoffset: 14 }
         94%, 100% { stroke-dashoffset: 0 }
       }
       /* the bottom edge retracts from the centre into the sides and is gone */
