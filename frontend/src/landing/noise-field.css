@@ -1,0 +1,35 @@
+.landing {
+  --paper: #fff;
+  --paper-2: #f0f2f6;
+  --paper-3: #e4e7ee;
+  --graphite: #030405;
+  --fog: #fff;
+  --fog-2: #c3c8d2;
+  --fog-3: #a0a8b7;
+  isolation: isolate;
+  background: #fff;
+}
+.landing > main, .landing > .footer { position: relative; z-index: 1; }
+.noise-field { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; --field-dark: 0; --field-x: 0px; --field-y: 0px; }
+.noise-field__palette { position: absolute; inset: 0; overflow: hidden; }
+.noise-field__palette--light { background: #fff; }
+.noise-field__palette--dark { background: #030405; opacity: var(--field-dark); }
+.noise-field__pointer { position: absolute; inset: -12%; transform: translate3d(var(--field-x), var(--field-y), 0); }
+.noise-field__cloud { position: absolute; inset: -12%; will-change: transform; animation: field-tide 22s ease-in-out infinite alternate; }
+.noise-field__cloud--blue { background: radial-gradient(ellipse 30% 43% at 79% 38%, #004cff 0%, #004cffb8 23%, #004cff36 51%, transparent 77%); }
+.noise-field__cloud--ink { background: radial-gradient(ellipse 33% 34% at 76% 72%, #030405e8, #03040588 30%, #03040512 64%, transparent 80%); animation-name: field-undertow; animation-duration: 28s; }
+.noise-field__cloud--white { background: radial-gradient(ellipse 30% 36% at 76% 72%, #fff3, #fff1 38%, transparent 76%); animation-name: field-undertow; animation-duration: 28s; }
+.noise-field__palette--dark .noise-field__cloud--blue { opacity: 0.8; }
+.noise-field__grain { position: absolute; inset: 0; opacity: 0.28; mix-blend-mode: soft-light; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Cpath fill='%23888' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); }
+.noise-field[data-paused='true'] .noise-field__cloud { animation-play-state: paused; }
+@keyframes field-tide { from { transform: translate3d(-4%, -3%, 0) rotate(-6deg) scale(1.02); } to { transform: translate3d(6%, 5%, 0) rotate(7deg) scale(1.14); } }
+@keyframes field-undertow { from { transform: translate3d(5%, 3%, 0) rotate(8deg) scale(1.1); } to { transform: translate3d(-6%, -5%, 0) rotate(-9deg) scale(1.02); } }
+@media (max-width: 900px) {
+  .noise-field__cloud--blue { background: radial-gradient(ellipse 55% 34% at 80% 56%, #004cffed, #004cff66 35%, transparent 78%); }
+  .noise-field__cloud--ink { background: radial-gradient(ellipse 48% 26% at 82% 88%, #030405aa, transparent 78%); }
+  .noise-field__cloud--white { background: radial-gradient(ellipse 55% 30% at 85% 80%, #fff3, transparent 78%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .noise-field__cloud { animation: none; will-change: auto; }
+  .noise-field__pointer { transform: none; }
+}

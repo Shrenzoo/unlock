@@ -70,17 +70,22 @@
 /* ── hero ────────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: max(740px, 100svh);
+  height: max(820px, 100svh);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 24px;
-  align-items: end;
-  padding: 96px var(--gutter) var(--s-8);
+  row-gap: 24px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 104px var(--gutter) var(--s-8);
   overflow: hidden;
 }
 .hero__stage {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  grid-column: 6 / -1;
+  grid-row: 1;
+  height: 100%;
+  min-height: 0;
 }
 .hero__stage canvas {
   cursor: grab;
@@ -91,7 +96,16 @@
 .hero__copy {
   position: relative;
   z-index: 2;
-  grid-column: 1 / 7;
+  grid-column: 1 / 6;
+  grid-row: 1 / 3;
+  pointer-events: none;
+}
+.hero__copy::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -70px -80px -60px -100px;
+  background: radial-gradient(ellipse at 35% 50%, #fff 28%, #fffffff2 48%, #ffffff00 73%);
   pointer-events: none;
 }
 .hero__copy a {
@@ -120,20 +134,20 @@
 }
 .hero__fallback {
   position: absolute;
-  inset: 18% var(--gutter) 30% 46%;
+  inset: 10% 8%;
   color: var(--ink-2);
   font-size: var(--t-sm);
 }
 
 /* drawing title block */
 .titleblock {
-  position: absolute;
+  position: relative;
   z-index: 2;
-  right: var(--gutter);
-  bottom: var(--s-8);
-  width: 312px;
-  background: var(--paper);
-  border: 1px solid var(--ink);
+  grid-column: 6 / -1;
+  grid-row: 2;
+  width: 100%;
+  background: #fffffff5;
+  border-top: 1px solid var(--ink);
   font-size: var(--t-xs);
   line-height: 1.35;
 }
@@ -147,6 +161,7 @@
 .titleblock__row--head {
   font-size: var(--t-sm);
   font-weight: 600;
+  justify-content: space-between;
 }
 .titleblock__grid {
   padding: 0;
@@ -179,8 +194,9 @@
 }
 .titleblock__parts button {
   flex: 1;
-  padding: 7px 6px;
-  font-size: 10.5px;
+  min-height: 44px;
+  padding: 8px 6px;
+  font-size: 12px;
   text-align: center;
   transition: background-color var(--d-fast) ease;
 }
@@ -198,7 +214,7 @@
 }
 .titleblock__note {
   padding: 7px 10px;
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 
 /* labels projected from the 3D scene */
@@ -215,85 +231,11 @@
   will-change: transform;
 }
 
-/* callouts drawn over the 3D canvas */
-.callout {
-  position: relative;
-  width: 0;
-  height: 0;
-  opacity: 0;
-  transition: opacity 500ms var(--ease-out);
-  font-size: var(--t-xs);
-  color: var(--ink);
-  white-space: nowrap;
-}
-.callout.is-on {
-  opacity: 1;
-}
-.callout__dot {
-  position: absolute;
-  left: -3px;
-  top: -3px;
-  width: 6px;
-  height: 6px;
-  background: var(--ink);
-  transition: background-color var(--d-ui) ease;
-}
-.callout__leader {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 1px;
-  background: var(--ink);
-  transform-origin: 0 0;
-}
-.callout__label {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 0 0 4px 8px;
-  border-left: 1px solid var(--ink);
-  margin-top: 0;
-}
-.callout__label .mono {
-  font-weight: 500;
-}
-.callout--left .callout__label {
-  padding: 0 8px 4px 0;
-  border-left: 0;
-  border-right: 1px solid var(--ink);
-  text-align: right;
-}
-/* On phones a fixed-length leader pointing left pushes its label off-screen:
-   anchor the label to the right of its dot instead. !important overrides the
-   inline transform written by the projector. */
-@media (max-width: 600px) {
-  .callout--left .callout__leader {
-    display: none;
-  }
-  .callout--left .callout__label {
-    transform: translate(6px, -100%) !important;
-    padding: 0 0 4px 8px;
-    border-right: 0;
-    border-left: 1px solid var(--ink);
-    text-align: left;
-  }
-}
-.callout.is-hot .callout__dot {
-  background: var(--cobalt);
-}
-.callout.is-hot .callout__label .mono {
-  color: var(--cobalt-ink);
-}
-
 /* ── story ───────────────────────────────────────────────────────────── */
 .story {
   position: relative;
   scroll-margin-top: 0;
   height: 620vh;
-  background: var(--graphite);
   color: var(--fog);
 }
 .story__stage {
@@ -305,15 +247,20 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 24px;
-  padding: 0 var(--gutter);
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: 24px;
+  padding: 96px var(--gutter) 28px;
 }
 .story__canvas {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  grid-column: 6 / -1;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
 }
 .story__fallback {
   position: absolute;
-  inset: 20% var(--gutter) 20% 40%;
+  inset: 10%;
   color: var(--fog-2);
 }
 .story__copy {
@@ -321,11 +268,21 @@
   z-index: 2;
   grid-column: 1 / 5;
   align-self: center;
-  height: 340px;
+  grid-row: 1;
+  display: grid;
+  height: auto;
+}
+.story__copy::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -70px -70px -70px -100px;
+  background: radial-gradient(ellipse at 35% 50%, #030405 24%, #030405ed 46%, transparent 74%);
 }
 .story__panel {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  grid-area: 1 / 1;
+  visibility: hidden;
   opacity: 0;
   transform: translateY(14px);
   transition:
@@ -334,6 +291,7 @@
   pointer-events: none;
 }
 .story__panel.is-active {
+  visibility: visible;
   opacity: 1;
   transform: none;
 }
@@ -365,26 +323,27 @@
   color: var(--fog-3);
 }
 .story__rail {
-  position: absolute;
+  position: relative;
   z-index: 2;
-  right: var(--gutter);
-  top: 50%;
-  transform: translateY(-50%);
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: stretch;
 }
 .story__rail ol {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
 }
 .story__rail button {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 6px 0 6px 12px;
+  min-height: 44px;
+  padding: 12px 0;
   font-size: var(--t-sm);
   color: var(--fog-3);
-  box-shadow: inset 1px 0 0 var(--graphite-rule);
+  box-shadow: inset 0 1px 0 var(--graphite-rule);
   transition:
     color var(--d-ui) ease,
     box-shadow var(--d-ui) ease;
@@ -394,7 +353,7 @@
 }
 .story__rail button.is-active {
   color: var(--fog);
-  box-shadow: inset 2px 0 0 #7fa2ff;
+  box-shadow: inset 0 2px 0 #7fa2ff;
 }
 @media (hover: hover) and (pointer: fine) {
   .story__rail button:hover {
@@ -407,21 +366,26 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  padding-left: 8px;
+  padding: 5px 8px;
+  background: #030405e8;
+  line-height: 1.4;
   border-left: 1px solid var(--fog-2);
   font-size: var(--t-xs);
   color: var(--fog-2);
-  white-space: nowrap;
-  transform: translate(10px, -50%);
+  width: max-content;
+  max-width: calc(var(--stage-width, 100vw) - 24px);
+  overflow-wrap: anywhere;
+  --label-shift: 10px;
+  transform: translate(clamp(calc(12px - var(--anchor-x)), var(--label-shift), calc(var(--stage-width) - var(--anchor-x) - 100% - 12px)), -50%);
 }
 .annot .mono {
   color: var(--fog);
 }
 .annot--left {
-  transform: translate(calc(-100% - 10px), -50%);
+  --label-shift: calc(-100% - 10px);
   border-left: 0;
   border-right: 1px solid var(--signal);
-  padding: 0 8px 0 0;
+  padding: 5px 8px;
   text-align: right;
 }
 .annot--signal {
@@ -437,7 +401,7 @@
   color: #9db8ff;
 }
 .annot--dim {
-  transform: translate(-50%, -50%);
+  --label-shift: -50%;
   border: 0;
   padding: 1px 5px;
   background: var(--graphite);
@@ -446,6 +410,7 @@
 
 /* ── workspace preview ───────────────────────────────────────────────── */
 .preview {
+  background: linear-gradient(transparent, #ffffffe6 100px calc(100% - 100px), transparent);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 24px;
@@ -608,6 +573,7 @@
 
 /* ── scope ───────────────────────────────────────────────────────────── */
 .scope {
+  background: linear-gradient(transparent, #ffffffe6 100px calc(100% - 100px), transparent);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 24px;
@@ -653,7 +619,7 @@
 
 /* ── footer ──────────────────────────────────────────────────────────── */
 .footer {
-  background: var(--graphite);
+  background: linear-gradient(transparent, #030405f0 96px, #03040560);
   color: var(--fog);
   padding: var(--s-9) var(--gutter) var(--s-7);
 }
@@ -737,15 +703,16 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    height: auto;
     padding-top: 72px;
     padding-bottom: var(--s-7);
   }
   .hero__stage {
     position: relative;
     order: 2;
-    height: 52svh;
-    min-height: 340px;
-    margin: 0 calc(var(--gutter) * -1);
+    height: clamp(320px, 50svh, 480px);
+    min-height: 0;
+    margin: 0;
   }
   .hero__copy {
     order: 1;
@@ -758,27 +725,50 @@
     bottom: auto;
     width: 100%;
   }
-  .callout__label span:last-child {
-    display: none;
+  .story__stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(200px, 1fr) auto auto;
+    gap: 14px;
+    padding: 76px var(--gutter) 16px;
+  }
+  .story__canvas {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .story__copy {
-    grid-column: 1 / -1;
-    align-self: end;
-    height: 240px;
-    margin-bottom: var(--s-5);
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+    min-height: 214px;
+    margin: 0;
   }
   .story__copy::before {
-    content: '';
-    position: absolute;
-    inset: -48px calc(var(--gutter) * -1) calc(var(--s-5) * -1);
-    background: linear-gradient(transparent, rgba(21, 23, 25, 0.92) 40%);
+    inset: -32px calc(var(--gutter) * -1);
+    background: linear-gradient(transparent, #030405ed 20% 80%, transparent);
+  }
+  .story__panel { display: none; }
+  .story__panel.is-active { display: block; }
+  .story__index { margin-bottom: 8px; }
+  .story__body { font-size: 14px; line-height: 1.45; margin-top: 12px; max-width: 48ch; }
+  .story__note { margin-top: 10px; font-size: 10px; }
+  .story__panel h2 { max-width: 24ch; }
+  .story__rail {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .story__rail ol { gap: 8px; }
+  .story__rail button {
+    flex-direction: column;
+    gap: 4px;
+    padding: 9px 0 0;
+    font-size: 10px;
+    line-height: 1.2;
+    min-height: 48px;
+    align-items: start;
   }
   .story__panel h2 {
     font-size: var(--t-lg);
-  }
-  .story__rail {
-    display: none;
   }
   .annot span:not(.mono) {
     display: none;
@@ -815,5 +805,12 @@
   .footer__meta {
     display: flex;
     flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav, .nav__links a::after, .nav__cta::after, .story__panel,
+  .story__rail button, .titleblock__parts button, .btn--paper .btn__key {
+    transition: none;
   }
 }
