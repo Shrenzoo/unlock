@@ -75,7 +75,7 @@
   <!-- collision sparks where the lift fails -->
   <g class="hit">
     <circle cx="480" cy="256" r="20" fill="none" stroke="#e4602f" stroke-width="2" class="pulse"/>
-    <text x="512" y="214" class="mono" font-size="12" fill="#e4602f">blocked</text>
+    <text x="512" y="272" class="mono" font-size="12" fill="#e4602f">blocked</text>
   </g>
 
   <!-- the bridge bracket: the obstruction -->
