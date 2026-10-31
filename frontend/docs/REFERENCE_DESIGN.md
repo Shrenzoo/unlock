@@ -1,6 +1,9 @@
 # Spacious reference design and continuous motion
 
-Live at <https://unlock-demo.shreyas-pabbathi.workers.dev>, Cloudflare Static Assets
+The later [wave refinement](WAVE_REFINEMENT.md) preserves this layout and records
+current static version `97a79a61`. This report retains the preceding evidence.
+
+Originally published at <https://unlock-demo.shreyas-pabbathi.workers.dev>, Cloudflare Static Assets
 version `0131c15a`, verified 2026-10-31 at 14:30 UTC. The deployed application is
 commit `64cae5c` on `codex/reference-landing`, based on main after merged PR #10.
 Later commits save the acceptance evidence and this report. This branch remains
