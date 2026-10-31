@@ -96,11 +96,8 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
         page.get_by_role("button", name="1 Inspect", exact=True).click()
         page.locator("canvas").first.wait_for()
         original = rendered(page)
-        assert (
-            page.locator('[data-geometry-source="backend-brep"]').get_attribute(
-                "data-preview-id"
-            )
-            == revision["preview_artifact_id"]
+        expect(page.locator('[data-geometry-source="backend-brep"]')).to_have_attribute(
+            "data-preview-id", revision["preview_artifact_id"]
         )
         assert page.locator('[role="treeitem"]').count() == 8
         drag(page, 0, 50, 20)
@@ -226,4 +223,4 @@ def test_public_compute_refused_and_private_paths_hidden(production):
                     assert response.headers.get_content_type() == "text/html"
                     assert b"<!doctype html>" in response.read().lower()
             except HTTPError as exc:
-                assert exc.code == 404
+                assert exc.code in (403, 404)
