@@ -1,5 +1,5 @@
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
-import { useMemo, useRef, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
 import type { BracketParameters, Vec3 } from '@/domain/types'
 import { b02Manifest } from '@/fixtures/b02'
@@ -253,9 +253,10 @@ interface AssemblyProps {
   onSelect?: (id: PartId) => void
   onHover?: (id: PartId | null) => void
   params?: BracketParameters
+  polished?: boolean
 }
 
-export function ModuleAssembly({ view, interactive = false, onSelect, onHover, params }: AssemblyProps) {
+export function ModuleAssembly({ view, interactive = false, onSelect, onHover, params, polished = false }: AssemblyProps) {
   const p = params ?? b02Manifest.template_bindings[0].parameters
   const parts = useMemo(() => buildParts(p), [p])
   const registry = useRef(new Map<PartId, Registered>())
@@ -275,7 +276,8 @@ export function ModuleAssembly({ view, interactive = false, onSelect, onHover, p
         const opacity = s.opacity * (s.fade?.[key] ?? 1)
         m.color.set(spec.color)
         m.metalness = spec.metalness
-        m.roughness = spec.roughness
+        m.roughness = spec.roughness * (polished && spec.metalness > 0.5 ? 0.42 : 1)
+        m.envMapIntensity = polished ? 1.6 : 1.1
         m.emissive.setRGB(0, 0, 0)
         if (s.tone !== 'default') {
           const t = TONE[s.tone]
@@ -374,7 +376,7 @@ export function ModuleAssembly({ view, interactive = false, onSelect, onHover, p
   return (
     <CadSpace>
       {PART_IDS.map((id) => (
-        <PartGroup key={id} id={id} solids={parts[id]} groupRef={register(id)} interactive={interactive} onSelect={onSelect} onHover={onHover} />
+        <PartGroup key={id} id={id} solids={parts[id]} groupRef={register(id)} polished={polished} interactive={interactive} onSelect={onSelect} onHover={onHover} />
       ))}
       {/* sweep probe: target envelope, illustration only */}
       <group ref={probeRef} visible={false}>
@@ -400,6 +402,7 @@ function PartGroup({
   solids,
   groupRef,
   interactive,
+  polished,
   onSelect,
   onHover,
 }: {
@@ -407,20 +410,38 @@ function PartGroup({
   solids: Solid[]
   groupRef: (g: THREE.Group | null) => void
   interactive: boolean
+  polished: boolean
   onSelect?: (id: PartId) => void
   onHover?: (id: PartId | null) => void
 }) {
+  // A cool studio finish for the marketing illustration. Clone render geometry
+  // so its colour attributes never modify the shared CAD-space primitives.
+  const shaded = useMemo(() => solids.map((s) => {
+    if (!polished || !['aluminum', 'steel', 'cap'].includes(s.mat)) return s.geometry
+    const g = s.geometry.clone()
+    const positions = g.getAttribute('position')
+    const colors = new Float32Array(positions.count * 3)
+    const low = new THREE.Color('#7d92b8'), high = new THREE.Color('#f1f6ff'), color = new THREE.Color()
+    for (let i = 0; i < positions.count; i++) {
+      const t = THREE.MathUtils.clamp(0.62 - positions.getX(i) / 260 + positions.getY(i) / 460, 0.12, 0.98)
+      color.copy(low).lerp(high, t)
+      colors.set([color.r, color.g, color.b], i * 3)
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+    return g
+  }), [solids, polished])
+  useEffect(() => () => shaded.forEach((g, i) => { if (g !== solids[i].geometry) g.dispose() }), [shaded, solids])
   // one material per (part, finish) so tone and opacity are independent per part
   const mats = useMemo(() => {
     const m = new Map<Mat, THREE.MeshStandardMaterial>()
     for (const s of solids) {
       if (!m.has(s.mat)) {
         const spec = MATERIALS[s.mat]
-        m.set(s.mat, new THREE.MeshStandardMaterial({ color: spec.color, metalness: spec.metalness, roughness: spec.roughness, envMapIntensity: 1.1 }))
+        m.set(s.mat, new THREE.MeshStandardMaterial({ color: spec.color, metalness: spec.metalness, roughness: spec.roughness, envMapIntensity: 1.1, vertexColors: polished && ['aluminum', 'steel', 'cap'].includes(s.mat) }))
       }
     }
     return m
-  }, [solids])
+  }, [solids, polished])
   const edgeMat = useMemo(() => new THREE.LineBasicMaterial({ color: '#17191b', transparent: true, opacity: 0.3 }), [])
 
   const handlers = interactive
@@ -444,7 +465,7 @@ function PartGroup({
   return (
     <group ref={groupRef} name={id} {...handlers}>
       {solids.map((s, i) => (
-        <mesh key={i} geometry={s.geometry} material={mats.get(s.mat)} userData={{ mat: s.mat, key: s.key }} castShadow receiveShadow>
+        <mesh key={i} geometry={shaded[i]} material={mats.get(s.mat)} userData={{ mat: s.mat, key: s.key }} castShadow receiveShadow>
           <lineSegments geometry={s.edges} material={edgeMat} raycast={noRaycast} />
         </mesh>
       ))}
