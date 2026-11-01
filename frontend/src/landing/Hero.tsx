@@ -178,8 +178,8 @@ function HeroScene({
     const direction = new THREE.Vector3(2.7, 2.2, 3.8).normalize()
     const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), direction).normalize()
     const up = new THREE.Vector3().crossVectors(direction, right)
-    const tanV = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 0.88
-    const tanH = tanV * size.width / size.height * 0.92
+    const tanV = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 0.94
+    const tanH = tanV * size.width / size.height
     const point = new THREE.Vector3()
     let distance = 0
     for (const box of boxes) for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
@@ -187,7 +187,7 @@ function HeroScene({
       const depth = point.dot(direction)
       distance = Math.max(distance, Math.abs(point.dot(up)) / tanV + depth, Math.abs(point.dot(right)) / tanH + depth)
     }
-    cam.position.copy(target).addScaledVector(direction, distance * 1.04)
+    cam.position.copy(target).addScaledVector(direction, distance * 1.02)
     cam.lookAt(target)
     cam.updateProjectionMatrix()
     invalidate()
