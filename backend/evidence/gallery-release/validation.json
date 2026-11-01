@@ -1,0 +1,135 @@
+{
+ "released_at": "2026-11-01T11:47:03Z",
+ "application_commit": "15324be68d04feef709990924c03009397ef0218",
+ "frontend": {
+  "cloudflare_pages_project": "unlock-labs",
+  "production_deployment": "e73c7891",
+  "previous_production_deployment": "2b20b62e",
+  "upload": "dashboard direct upload, Production, zip of frontend/dist (21 files)",
+  "zip_sha256": "0e91e3602522fa02eb592a1b08920e76e3e110cf8715ac2b08e517d0cca6e6cd",
+  "build": "VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run npm run build:public",
+  "served_bundle_matches_local_build": true,
+  "security_headers_present": true
+ },
+ "billing_check_before_cloud_work": {
+  "source": "Modal dashboard, Usage & billing (rounded UI values)",
+  "plan": "Starter",
+  "usage_limit_usd": 30,
+  "spend_limit_usd": 0,
+  "credits_displayed_usd": 29.99,
+  "charges_usd": 0,
+  "rechecked_after_release": "unchanged"
+ },
+ "private_engineering": {
+  "app": "unlock-engineering (deployed)",
+  "gallery_run_app": "ap-HgIADuVeVvxOfvKFtR8Mxm (ephemeral, stopped)",
+  "secret_attached": false,
+  "live_model": false,
+  "jobs": {
+   "B02": {
+    "job_id": "f30b648b8e2f4b4287072c23eb310383",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_s": 67.011,
+    "export_sha256": "61e1b25da45bd0a0a39336b434d8a8e8d865d4f7982f0b311a37f2f28327d856"
+   },
+   "B04": {
+    "job_id": "0f61593869a64892948ffb11d94c78f8",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_s": 98.743,
+    "export_sha256": "adacbaa120c70b6d5794659267404cdea0c9c4c7238f05738ec3d6fe45e27d05"
+   },
+   "B05": {
+    "job_id": "22f4428f951f42a8ab3b937bb7ba41a1",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_s": 56.947,
+    "export_sha256": "b5f41a4c9fcdf1da6ec7f7113105609dee3b354fa0f7c5a110fbdd6e2a34c613"
+   },
+   "B06": {
+    "job_id": "7ead9ac8516647629fca4160fdbc3a90",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_s": 58.895,
+    "export_sha256": "28954fcff1539ca230a8f8bf953cde5058ca23c2d6a8d42de72cf1dc8e3bd45b"
+   },
+   "B07": {
+    "job_id": "16aca150938a4961bb7ad4596052928a",
+    "outcome": "INCOMPLETE_ANALYSIS",
+    "elapsed_s": 54.462,
+    "export_sha256": null
+   },
+   "B08": {
+    "job_id": "20526da7f48e4b3f9614dedccaff4e40",
+    "outcome": "NO_SUPPORTED_CANDIDATE",
+    "elapsed_s": 20.039,
+    "export_sha256": null
+   }
+  },
+  "gallery_id": "a0de2889d0634a48a1eb8ac879341e9e",
+  "cloud_guard": "validate_public_gallery passed before volume.commit()"
+ },
+ "local_revalidation_of_downloaded_gallery": {
+  "guard": {
+   "B02": "VERIFIED_IMPROVEMENT_FOUND",
+   "B04": "VERIFIED_IMPROVEMENT_FOUND",
+   "B05": "VERIFIED_IMPROVEMENT_FOUND",
+   "B06": "VERIFIED_IMPROVEMENT_FOUND",
+   "B07": "INCOMPLETE_ANALYSIS",
+   "B08": "NO_SUPPORTED_CANDIDATE"
+  },
+  "projects": 6,
+  "write_attempts_denied": "28/28",
+  "boundaries": {
+   "unknown_project": 404,
+   "unknown_artifact": 404,
+   "traversal": 404,
+   "bad_origin": 403,
+   "bad_host": 400
+  },
+  "reads_ok": "100/100",
+  "artifacts_hash_checked": "71/71",
+  "export_licensing": {
+   "B02": "notice, attribution and rights line exact",
+   "B04": "notice, attribution and rights line exact",
+   "B05": "notice, attribution and rights line exact",
+   "B06": "notice, attribution and rights line exact",
+   "B07": "no export (no verified redesign)",
+   "B08": "no export (no verified redesign)"
+  },
+  "scan": {
+   "payloads": 162,
+   "known_secret_values": 3,
+   "credential_hits": 0,
+   "email_hits": [
+    "THIRD_PARTY_NOTICES.txt"
+   ],
+   "private_wording_hits": [
+    "three-BDWg0CIq.js"
+   ]
+  }
+ },
+ "public_api": {
+  "app": "unlock-demo",
+  "url": "https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run",
+  "UNLOCK_DEMO_JOB": "a0de2889d0634a48a1eb8ac879341e9e",
+  "UNLOCK_CORS_ORIGINS": "https://unlock-labs.pages.dev,https://unlock-demo.unlock-labs.workers.dev",
+  "mode": "read_only",
+  "provider": "mock",
+  "credentials": "missing",
+  "foreign_origin": 403,
+  "anonymous_post": 403,
+  "rollback_job": "9ad44594b93d4d0b860e8efda623b2d6"
+ },
+ "modal_metered_usage_usd": {
+  "source": "modal billing summary --for 'this month' (preliminary, unrounded)",
+  "before": {
+   "deployed_apps": "0.00547820",
+   "ephemeral_apps": "absent"
+  },
+  "after": {
+   "deployed_apps": "0.00625814",
+   "ephemeral_apps": "0.00788871"
+  },
+  "attributed_to_gallery_run": "0.00788871",
+  "deployed_apps_delta": "0.00077994",
+  "billed": "0.00"
+ }
+}

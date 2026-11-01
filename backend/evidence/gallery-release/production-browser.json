@@ -1,0 +1,82 @@
+{
+  "started_at": "20261101T114537Z",
+  "environment": {
+    "browser": "chromium 156.0.8078.76 (installed Chrome, headless)",
+    "git_commit": "15324be68d04feef709990924c03009397ef0218",
+    "git_branch": "main",
+    "python": "3.12.16",
+    "node": "v26.10.0",
+    "platform": "darwin"
+  },
+  "stacks": {},
+  "tests": {
+    "tests/browser/test_production.py::test_public_recorded_demo_in_real_browser[desktop]": {
+      "outcome": "passed",
+      "duration_s": 11.47,
+      "detail": null
+    },
+    "tests/browser/test_production.py::test_public_recorded_demo_in_real_browser[mobile]": {
+      "outcome": "passed",
+      "duration_s": 9.3,
+      "detail": null
+    },
+    "tests/browser/test_production.py::test_public_compute_refused_and_private_paths_hidden": {
+      "outcome": "passed",
+      "duration_s": 2.68,
+      "detail": null
+    }
+  },
+  "measurements": {},
+  "correlation": {},
+  "production": {
+    "web": "https://unlock-labs.pages.dev",
+    "api": "https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run",
+    "run_id": "run_ccb4db153f284982924fc98d",
+    "export_sha256": "61e1b25da45bd0a0a39336b434d8a8e8d865d4f7982f0b311a37f2f28327d856",
+    "live_model": false
+  },
+  "production_browser": {
+    "desktop": {
+      "viewport": [
+        1600,
+        1000
+      ],
+      "api_reads": 13,
+      "local_requests": [],
+      "artifact_sha256": "61e1b25da45bd0a0a39336b434d8a8e8d865d4f7982f0b311a37f2f28327d856",
+      "download_members": 16,
+      "original_and_revised_rendered": true,
+      "comparison_and_route_playback": true,
+      "navigation_and_reload": true,
+      "uploads_and_compute_disabled": true,
+      "console_and_network_errors": {
+        "console": [],
+        "page": [],
+        "failed": [],
+        "http": []
+      }
+    },
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "api_reads": 13,
+      "local_requests": [],
+      "artifact_sha256": "61e1b25da45bd0a0a39336b434d8a8e8d865d4f7982f0b311a37f2f28327d856",
+      "download_members": 16,
+      "original_and_revised_rendered": true,
+      "comparison_and_route_playback": true,
+      "navigation_and_reload": true,
+      "uploads_and_compute_disabled": true,
+      "console_and_network_errors": {
+        "console": [],
+        "page": [],
+        "failed": [],
+        "http": []
+      }
+    }
+  },
+  "finished_at": "20261101T114703Z",
+  "exit_status": 0
+}

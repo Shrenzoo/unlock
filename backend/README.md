@@ -80,10 +80,12 @@ See [DECISIONS.md](docs/DECISIONS.md) for document hashes, numerical policy, int
 ## Deployment and scope
 
 The [Modal deployment checkpoint](docs/MODAL_DEPLOYMENT.md) prepares private,
-bounded CPU engineering jobs and a public read-only B02 evidence API, plus Vercel
-frontend configuration. A real Modal Linux B02 smoke test and fresh-container
-artifact recovery passed. Public deployment remains pending approval. The local
-interactive API and Meta adapter are retained; public anonymous compute is disabled.
+bounded CPU engineering jobs and a public read-only evidence API. A real Modal
+Linux B02 smoke test and fresh-container artifact recovery passed. The public
+demonstration is live at <https://unlock-labs.pages.dev> and serves the
+six-project [gallery](docs/GALLERY.md#release-record-2026-11-01); see
+[CLOUDFLARE_DEPLOYMENT.md](docs/CLOUDFLARE_DEPLOYMENT.md). The local interactive
+API and Meta adapter are retained; public anonymous compute is disabled.
 
 The separate `Dockerfile` targets native CPU Linux. Docker/Podman was unavailable,
 so that Docker image was **not built or executed**; its runtime and base-image
