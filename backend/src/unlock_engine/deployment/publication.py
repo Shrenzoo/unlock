@@ -12,7 +12,7 @@ from ..contracts import Provenance
 from .snapshot import SnapshotStore
 
 
-def _check_export(store, run, code):
+def _check_export(store, run, code, *, require_rights=True):
     artifact = run["export"]["artifact_id"]
     if run["export"]["roundtrip_status"] != "passed":
         raise ValueError(f"The selected {code} export is not independently verified")
@@ -35,8 +35,7 @@ def _check_export(store, run, code):
                 raise ValueError(
                     f"{code} export licensing notice is missing or changed"
                 )
-        # The original B02 export predates the rights line; its notice is checked above.
-        if code != "B02" and rights_line(Provenance(**GRANTS[code]), None) not in (
+        if require_rights and rights_line(Provenance(**GRANTS[code]), None) not in (
             archive.read("limitations.txt").decode()
         ):
             raise ValueError(f"{code} export limitations do not state its license")
@@ -74,7 +73,9 @@ def validate_public_b02(root):
     # All downloadable blobs, not just the outer ZIP, must retain their identity.
     for path in (root / "artifacts").glob("*/*"):
         store.artifacts.get(path.name)
-    artifact = _check_export(store, run, "B02")
+    # Rollback only: the original standalone B02 export predates the rights
+    # sentence. Its notice bytes are still checked; a gallery requires the sentence.
+    artifact = _check_export(store, run, "B02", require_rights=False)
     return dict(run_id=run["id"], export_sha256=artifact, license="CC-BY-4.0")
 
 

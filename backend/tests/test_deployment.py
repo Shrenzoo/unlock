@@ -243,3 +243,77 @@ def test_gallery_refuses_claimed_success_unlicensed_or_missing_b02(gallery, tmp_
             validate_public_gallery(_tampered(root, tmp_path / edit.__name__, edit))
     with pytest.raises(ValueError, match="more than one job"):
         compose_gallery(sources + sources[-1:], tmp_path / "duplicate")
+
+
+OUTDATED_RIGHTS = "Synthetic fixture rights remain pending author approval.\n"
+
+
+def _outdate_b02_export(root, run_id):
+    """Reword B02's export as the original standalone release did, keeping its
+    inventory hashes self-consistent, and point the run at the rewritten ZIP."""
+    import hashlib
+    import io
+    import zipfile
+
+    from unlock_engine.artifacts import ArtifactStore
+    from unlock_engine.contracts import Provenance
+    from unlock_engine.fixture_license import B02_PROVENANCE, rights_line
+
+    path = root / "snapshot.json"
+    data = json.loads(path.read_bytes())
+    run = next(r["data"] for r in data["records"] if r["id"] == run_id)
+    artifacts = ArtifactStore(root / "artifacts")
+    with zipfile.ZipFile(io.BytesIO(artifacts.get(run["export"]["artifact_id"]))) as z:
+        files = {name: z.read(name) for name in z.namelist()}
+    current = rights_line(Provenance(**B02_PROVENANCE), None)
+    assert current in files["limitations.txt"].decode()
+    files["limitations.txt"] = (
+        files["limitations.txt"].decode().replace(current, OUTDATED_RIGHTS).encode()
+    )
+    bundle = json.loads(files["bundle.json"])
+    digest = hashlib.sha256(files["limitations.txt"]).hexdigest()
+    entry = bundle["files"]["limitations.txt"]
+    bundle["files"]["limitations.txt"] = (
+        dict(entry, sha256=digest) if isinstance(entry, dict) else digest
+    )
+    files["bundle.json"] = json.dumps(bundle, indent=2).encode()
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as z:
+        for name, content in sorted(files.items()):
+            z.writestr(name, content)
+    rewritten = artifacts.put(buffer.getvalue())
+    run["export"]["artifact_id"] = rewritten
+    path.write_text(json.dumps(data))
+    return rewritten
+
+
+def test_outdated_b02_rights_wording_is_valid_only_as_the_standalone_snapshot(
+    completed, gallery, tmp_path
+):
+    import shutil
+
+    root, result = completed
+    standalone = tmp_path / "standalone"
+    shutil.copytree(root, standalone)
+    rewritten = _outdate_b02_export(standalone, result["run_id"])
+    status = json.loads((standalone / "status.json").read_bytes())
+    (standalone / "status.json").write_text(
+        json.dumps(dict(status, export_sha256=rewritten))
+    )
+    # Rollback to the original single-job B02 release stays possible.
+    assert validate_public_b02(standalone)["export_sha256"] == rewritten
+    assert validate_public_snapshot(standalone)["export_sha256"] == rewritten
+
+    gallery_root, demo_runs, _ = gallery
+    composed = tmp_path / "gallery"
+    shutil.copytree(gallery_root, composed)
+    rewritten = _outdate_b02_export(composed, demo_runs["fixture_B02"])
+    members = json.loads((composed / "gallery.json").read_bytes())
+    for member in members["members"]:
+        if member["run_id"] == demo_runs["fixture_B02"]:
+            member["export_sha256"] = rewritten
+    (composed / "gallery.json").write_text(json.dumps(members))
+    # The same wording inside a newly composed gallery is refused.
+    for validate in (validate_public_gallery, validate_public_snapshot):
+        with pytest.raises(ValueError, match="B02 export limitations do not state"):
+            validate(composed)
