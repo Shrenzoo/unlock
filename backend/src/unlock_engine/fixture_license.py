@@ -45,11 +45,31 @@ grant for B02 does not relicense these libraries or their dependencies.
 """
 
 
-def b02_license_files(provenance):
+GALLERY_CODES = ("B04", "B05", "B06", "B07", "B08")
+
+
+def gallery_provenance(code):
+    """The same team grant, recorded 2026-10-31 for the gallery fixtures."""
+    if code not in GALLERY_CODES:
+        raise ValueError(f"{code} has no recorded publication grant")
+    return dict(
+        B02_PROVENANCE,
+        source=(
+            "https://github.com/Shrenzoo/unlock; "
+            f"unlock_engine.fixtures.generate_fixture({code}); deterministic seed 0"
+        ),
+    )
+
+
+GRANTS = {"B02": B02_PROVENANCE} | {c: gallery_provenance(c) for c in GALLERY_CODES}
+
+
+def license_files(provenance):
     """Never apply the team's grant to uploaded CAD or other fixture sources."""
-    if provenance.model_dump() != B02_PROVENANCE:
+    code = next((c for c, p in GRANTS.items() if provenance.model_dump() == p), None)
+    if code is None:
         return {}
     return {
-        "LICENSE-B02.txt": B02_NOTICE.encode(),
-        "THIRD_PARTY_NOTICES.txt": DEPENDENCY_NOTICE.encode(),
+        f"LICENSE-{code}.txt": B02_NOTICE.replace("B02", code).encode(),
+        "THIRD_PARTY_NOTICES.txt": DEPENDENCY_NOTICE.replace("B02", code).encode(),
     }

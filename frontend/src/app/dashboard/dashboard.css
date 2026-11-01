@@ -108,6 +108,29 @@
 .ptable__na {
   font-size: var(--t-xs);
 }
+.ptable__outcome {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+@media (min-width: 901px) {
+  .ptable__outcome {
+    min-width: 9em;
+  }
+}
+.ptable__outcome svg {
+  flex: none;
+  margin-top: 0.2em;
+}
+.ptable__outcome--verified {
+  color: var(--verified-ink);
+}
+.ptable__outcome--refused {
+  color: var(--signal-ink);
+}
+.ptable__outcome--none {
+  color: var(--ink-2);
+}
 .ptable__loading {
   color: var(--ink-3);
 }
@@ -207,6 +230,13 @@
   color: var(--ink-3);
 }
 
+@media (max-width: 1280px) {
+  .ptable th:nth-child(4),
+  .ptable td:nth-child(4) {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .dash__main {
     display: block;
@@ -218,8 +248,8 @@
   .ptable td:nth-child(3),
   .ptable th:nth-child(4),
   .ptable td:nth-child(4),
-  .ptable th:nth-child(5),
-  .ptable td:nth-child(5) {
+  .ptable th:nth-child(6),
+  .ptable td:nth-child(6) {
     display: none;
   }
   .appbar__mode {

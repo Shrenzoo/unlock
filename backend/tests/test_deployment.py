@@ -8,10 +8,15 @@ from fastapi.testclient import TestClient
 
 from unlock_engine.contracts import EngineError
 from unlock_engine.deployment import jobs
-from unlock_engine.deployment.publication import validate_public_b02
+from unlock_engine.deployment.publication import (
+    validate_public_b02,
+    validate_public_gallery,
+    validate_public_snapshot,
+)
 from unlock_engine.deployment.snapshot import (
     RequestLimiter,
     SnapshotStore,
+    compose_gallery,
     create_snapshot_app,
 )
 
@@ -146,3 +151,95 @@ def test_storage_budget_refuses_new_compute(tmp_path, monkeypatch):
     with pytest.raises(EngineError, match="artifact budget"):
         jobs.run_job(tmp_path, uuid.uuid4().hex)
     assert not list(tmp_path.iterdir())
+
+
+@pytest.fixture(scope="module")
+def gallery(completed, tmp_path_factory):
+    """B02 plus a recorded refusal and a recorded no-op, composed like the cloud gallery."""
+    root = tmp_path_factory.mktemp("gallery-jobs")
+    sources = [completed[0]]
+    for code in ("B07", "B08"):
+        id = uuid.uuid4().hex
+        result = jobs.run_job(root, id, fixture=code)
+        assert result["state"] == "completed" and result["export_sha256"] is None
+        sources.append(root / id)
+    destination = root / uuid.uuid4().hex
+    demo_runs = compose_gallery(sources, destination)
+    return destination, demo_runs, sources
+
+
+def test_gallery_publishes_each_project_with_its_pre_registered_outcome(
+    gallery, completed
+):
+    root, demo_runs, _ = gallery
+    published = validate_public_gallery(root)
+    assert published["B02"]["export_sha256"] == completed[1]["export_sha256"]
+    assert published["B07"] == dict(
+        run_id=demo_runs["fixture_B07"],
+        outcome="INCOMPLETE_ANALYSIS",
+        export_sha256=None,
+    )
+    assert published["B08"]["outcome"] == "NO_SUPPORTED_CANDIDATE"
+    assert validate_public_snapshot(root) == published
+    assert validate_public_snapshot(completed[0])["run_id"] == completed[1]["run_id"]
+    store = SnapshotStore(root)
+    refusal = store.get("run", demo_runs["fixture_B07"])
+    assert refusal["baseline"]["status"] == "no_path_supported"
+    assert refusal["candidates"] and not any(
+        c["verified_improvement"] for c in refusal["candidates"]
+    )
+    serviceable = store.get("run", demo_runs["fixture_B08"])
+    assert serviceable["baseline"]["status"] == "feasible"
+    assert [s["component_id"] for s in serviceable["baseline"]["steps"]][-1] == "target"
+    with TestClient(create_snapshot_app(root)) as client:
+        provider = client.get("/health").json()["provider"]
+        assert provider["demo_runs"] == demo_runs
+        assert provider["demo_run_id"] == demo_runs["fixture_B02"]
+        outcomes = {
+            p["fixture_code"]: p["outcome"] for p in client.get("/v1/projects").json()
+        }
+        assert outcomes == dict(
+            B02="VERIFIED_IMPROVEMENT_FOUND",
+            B07="INCOMPLETE_ANALYSIS",
+            B08="NO_SUPPORTED_CANDIDATE",
+        )
+
+
+def _tampered(root, tmp_path, edit):
+    import shutil
+
+    shutil.copytree(root, tmp_path / "copy")
+    path = tmp_path / "copy" / "snapshot.json"
+    data = json.loads(path.read_bytes())
+    edit(data)
+    path.write_text(json.dumps(data))
+    return tmp_path / "copy"
+
+
+def test_gallery_refuses_claimed_success_unlicensed_or_missing_b02(gallery, tmp_path):
+    root, demo_runs, sources = gallery
+
+    def claim_success(data):
+        for r in data["records"]:
+            if r["id"] == demo_runs["fixture_B07"]:
+                r["data"]["outcome"] = "VERIFIED_IMPROVEMENT_FOUND"
+
+    def relicense(data):
+        for r in data["records"]:
+            if r["kind"] == "revision" and r["data"]["project_id"] == "fixture_B08":
+                r["data"]["manifest"]["provenance"]["license"] = (
+                    "pending author approval"
+                )
+
+    def drop_b02(data):
+        data["demo_runs"].pop("fixture_B02")
+
+    for edit, message in (
+        (claim_success, "pre-registered outcome"),
+        (relicense, "CC BY 4.0 grant"),
+        (drop_b02, "B02 included"),
+    ):
+        with pytest.raises(ValueError, match=message):
+            validate_public_gallery(_tampered(root, tmp_path / edit.__name__, edit))
+    with pytest.raises(ValueError, match="more than one job"):
+        compose_gallery(sources + sources[-1:], tmp_path / "duplicate")

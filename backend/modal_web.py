@@ -10,7 +10,9 @@ app = modal.App("unlock-demo")
 job_id = os.environ.get("UNLOCK_DEMO_JOB", "")
 origins = os.environ.get("UNLOCK_CORS_ORIGINS", "")
 if not re.fullmatch(r"[a-f0-9]{32}", job_id):
-    raise ValueError("UNLOCK_DEMO_JOB must select a completed verified B02 job")
+    raise ValueError(
+        "UNLOCK_DEMO_JOB must select a completed B02 job or composed gallery"
+    )
 if not origins or any(
     not value.startswith("https://") or "*" in value for value in origins.split(",")
 ):
@@ -32,8 +34,8 @@ if not origins or any(
 @modal.concurrent(max_inputs=8)
 @modal.asgi_app()
 def web():
-    from unlock_engine.deployment.publication import validate_public_b02
+    from unlock_engine.deployment.publication import validate_public_snapshot
     from unlock_engine.deployment.snapshot import create_snapshot_app
 
-    validate_public_b02("/demo")
+    validate_public_snapshot("/demo")
     return create_snapshot_app("/demo", allowed_hosts=["*.modal.run"])

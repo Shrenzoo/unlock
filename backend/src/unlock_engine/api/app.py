@@ -186,7 +186,11 @@ def create_app(
             provider=dict(
                 c.config.public(),
                 **(
-                    dict(access="read_only", demo_run_id=c.demo_run_id)
+                    dict(
+                        access="read_only",
+                        demo_run_id=c.demo_run_id,
+                        demo_runs=c.demo_runs,
+                    )
                     if read_only
                     else {}
                 ),

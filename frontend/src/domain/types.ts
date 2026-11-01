@@ -317,6 +317,8 @@ export interface ProjectSummary {
   status: 'ready' | 'not_authored'
   provenance: ProvenanceKind
   updated_at: string | null
+  /** Recorded run outcome, reported only by the read-only gallery. */
+  outcome?: string | null
 }
 
 export interface Revision {

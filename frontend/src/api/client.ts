@@ -11,6 +11,8 @@ export interface ServiceHealth {
   credentials: 'configured' | 'missing'
   access?: 'read_only'
   demo_run_id?: string | null
+  /** Read-only gallery: the recorded run that opens with each project. */
+  demo_runs?: Record<string, string>
 }
 
 export interface UnlockApi {

@@ -90,7 +90,7 @@ def test_readonly_recorded_cad_download_without_compute(browser, readonly_web):
         expect(page.get_by_role("button", name="Choose files")).to_be_disabled()
         page.get_by_role("link", name="Open", exact=True).click()
         expect(
-            page.get_by_text("Read-only B02 demonstration.", exact=False)
+            page.get_by_text("Read-only demonstration.", exact=False)
         ).to_be_visible()
         page.get_by_role("button", name="4 Compare", exact=True).click()
         expect(

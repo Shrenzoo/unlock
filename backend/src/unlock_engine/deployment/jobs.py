@@ -17,6 +17,7 @@ from ..api.contracts import DecisionInput, StartRun
 from ..api.coordinator import Coordinator, TERMINAL
 from ..artifacts import atomic_write
 from ..contracts import EngineError, POLICY
+from ..fixture_catalog import EXPECTED, GALLERY, NAMES
 from .snapshot import MAX_JOB_BYTES, MAX_STORAGE_BYTES, save_snapshot, storage_size
 from .status import checked_job_id, read_status as read_status
 
@@ -43,7 +44,14 @@ def validate_export(data):
 
 
 def run_job(
-    root, job_id, *, files=None, target_id="target", live=False, commit=lambda: None
+    root,
+    job_id,
+    *,
+    files=None,
+    fixture="B02",
+    target_id="target",
+    live=False,
+    commit=lambda: None,
 ):
     """One full bounded workflow. No public HTTP route invokes this function.
 
@@ -52,6 +60,8 @@ def run_job(
     The local lock also rejects simultaneous in-process invocations in tests/tools.
     """
     checked_job_id(job_id)
+    if files is None and fixture not in EXPECTED:
+        raise EngineError("INVALID_PACKAGE", "fixture has no pre-registered outcome")
     if not _running.acquire(blocking=False):
         raise EngineError("LIMIT_EXCEEDED", "one engineering job may execute at a time")
     c = None
@@ -62,7 +72,7 @@ def run_job(
     status = dict(
         job_id=job_id,
         state="running",
-        fixture="B02" if files is None else None,
+        fixture=fixture if files is None else None,
         live_model=live,
         run_id=None,
         updated_at=time.time(),
@@ -133,13 +143,15 @@ def run_job(
             )
         c = Coordinator(Path(local), config=config)
         if files is None:
-            c.project("fixture_B02", "Trapped service component", "B02")
+            meta = GALLERY.get(fixture, dict(name=NAMES.get(fixture), description=None))
+            project_id = "fixture_" + fixture
+            c.project(project_id, meta["name"], fixture, meta["description"])
 
-            def fixture(job, cancel):
-                data, blobs = c._native("http_fixture", dict(code="B02"), cancel)
+            def generate(job, cancel):
+                data, blobs = c._native("http_fixture", dict(code=fixture), cancel)
                 c.commit_import(data, blobs, True)
 
-            wait(c.submit("fixture", None, fixture, parent="fixture_B02"))
+            wait(c.submit("fixture", None, generate, parent=project_id))
         else:
             wait(c.import_files("default", job_id, files))
         revision = c.store.list("revision")[-1]
@@ -156,11 +168,27 @@ def run_job(
         wait(ids)
         wait(c.redesign(status["run_id"], "redesign"))
         run = c.store.get("run", status["run_id"])
-        if run["outcome"] != "VERIFIED_IMPROVEMENT_FOUND":
+        expected = EXPECTED.get(fixture) if files is None else None
+        if run["outcome"] != (expected or "VERIFIED_IMPROVEMENT_FOUND"):
             raise EngineError(
                 "VERIFICATION_UNKNOWN",
-                "No independently verified improvement was found",
+                f"Outcome {run['outcome']} differs from the pre-registered {expected}"
+                if expected
+                else "No independently verified improvement was found",
             )
+        if run["outcome"] != "VERIFIED_IMPROVEMENT_FOUND":
+            # A recorded refusal or no-op is the result; nothing is accepted or exported.
+            c.executor.shutdown(wait=True)
+            save_snapshot(c, destination, run_id=run["id"])
+            status.update(
+                state="completed",
+                outcome=run["outcome"],
+                export_sha256=None,
+                elapsed_seconds=round(time.monotonic() - started, 3),
+                artifact_bytes=storage_size(destination),
+            )
+            publish()
+            return status
         candidate = c.store.get("candidate", run["selected_candidate_id"])
         c.decide(
             candidate["id"],

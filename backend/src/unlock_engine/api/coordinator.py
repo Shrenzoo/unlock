@@ -18,6 +18,7 @@ from ..ai.session import Deadline, EngineeringSession
 from ..ai.schemas import Handle
 from pydantic import TypeAdapter
 from ..contracts import EngineError, Manifest, digest
+from ..fixture_catalog import PROJECTS as FIXTURE_PROJECTS
 from ..package import load_files, load_zip
 from ..worker import _run_worker
 from .store import Store
@@ -189,7 +190,7 @@ class Coordinator:
             }
             return data, blobs
 
-    def project(self, id, name, code="LOCAL"):
+    def project(self, id, name, code="LOCAL", description=None):
         try:
             return self.store.get("project", id)
         except EngineError as e:
@@ -199,9 +200,12 @@ class Coordinator:
             id=id,
             fixture_code=code,
             name=name,
-            description="Synthetic engineering fixture"
-            if code != "LOCAL"
-            else "Locally supplied engineering assembly",
+            description=description
+            or (
+                "Synthetic engineering fixture"
+                if code != "LOCAL"
+                else "Locally supplied engineering assembly"
+            ),
             occurrences=None,
             revision=None,
             status="not_authored",
@@ -246,12 +250,8 @@ class Coordinator:
         return record
 
     def seed(self):
-        for code, name in [
-            ("B01", "Accessible cartridge"),
-            ("B02", "Trapped service component"),
-            ("B03", "Tool-access conflict"),
-        ]:
-            project = self.project("fixture_" + code, name, code)
+        for code, name, description in FIXTURE_PROJECTS:
+            project = self.project("fixture_" + code, name, code, description)
             if project["revision"]:
                 continue
 

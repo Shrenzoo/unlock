@@ -35,6 +35,8 @@ class ProjectSummary(Model):
     status: Literal["ready", "not_authored"]
     provenance: Literal["computed_earlier", "illustrative"]
     updated_at: str | None
+    # Recorded run outcome; set only on published read-only gallery projects.
+    outcome: str | None = None
 
 
 class RevisionView(Model):

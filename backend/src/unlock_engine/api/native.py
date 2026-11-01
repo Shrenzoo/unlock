@@ -14,10 +14,10 @@ def run(work: Path, operation):
 
     request = json.loads((work / "request.json").read_text())
     if operation == "http_fixture":
-        from ..fixtures import generate_fixture
+        from ..fixtures import GALLERY, generate_fixture
 
         code = request["code"]
-        if code not in ("B01", "B02", "B03"):
+        if code not in ("B01", "B02", "B03", *GALLERY):
             raise EngineError("INVALID_PACKAGE", "unsupported bundled fixture")
         generate_fixture(work, code)
     revision = import_revision(

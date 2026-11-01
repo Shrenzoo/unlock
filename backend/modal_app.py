@@ -54,7 +54,11 @@ secrets = (
     secrets=secrets,
 )
 def engineering_job(
-    job_id: str, files: dict[str, bytes] | None = None, target_id="target", live=False
+    job_id: str,
+    files: dict[str, bytes] | None = None,
+    target_id="target",
+    live=False,
+    fixture="B02",
 ):
     from unlock_engine.deployment.jobs import run_job
 
@@ -67,6 +71,7 @@ def engineering_job(
         Path("/artifacts"),
         job_id,
         files=files,
+        fixture=fixture,
         target_id=target_id,
         live=live,
         commit=volume.commit,
@@ -95,6 +100,51 @@ def job_status(job_id: str):
         store.artifacts.get(run["export"]["artifact_id"])
         result["persisted_export_integrity"] = "passed"
     return result
+
+
+@app.function(
+    image=image,
+    cpu=(0.25, 0.5),
+    memory=(512, 1024),
+    timeout=120,
+    max_containers=1,
+    min_containers=0,
+    scaledown_window=2,
+    retries=0,
+    volumes={"/artifacts": volume},
+)
+def compose_gallery(gallery_id: str, job_ids: list[str]):
+    """Merge completed fixture jobs and refuse to commit anything that would not publish."""
+    from unlock_engine.deployment.publication import validate_public_gallery
+    from unlock_engine.deployment.snapshot import compose_gallery as compose
+    from unlock_engine.deployment.status import checked_job_id
+
+    volume.reload()
+    root = Path("/artifacts")
+    destination = root / checked_job_id(gallery_id)
+    destination.mkdir(exist_ok=False)
+    compose([root / checked_job_id(id) for id in job_ids], destination)
+    published = validate_public_gallery(destination)
+    volume.commit()
+    return published
+
+
+@app.local_entrypoint()
+def gallery():
+    """Run every licensed fixture privately, one at a time, then compose the gallery."""
+    from unlock_engine.fixture_catalog import EXPECTED
+
+    job_ids = []
+    for code in EXPECTED:
+        job_id = uuid.uuid4().hex
+        result = engineering_job.remote(job_id, fixture=code)
+        print(code, job_id, result["outcome"], result["elapsed_seconds"], "s")
+        job_ids.append(job_id)
+    gallery_id = uuid.uuid4().hex
+    published = compose_gallery.remote(gallery_id, job_ids)
+    for code, row in published.items():
+        print(code, row["outcome"], row["export_sha256"] or "no export")
+    print(f"Gallery ID: {gallery_id}  (set UNLOCK_DEMO_JOB to this value)")
 
 
 @app.local_entrypoint()

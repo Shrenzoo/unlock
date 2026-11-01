@@ -60,7 +60,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
   const restoring = useRef<RunRecord | null>(null)
   useEffect(() => {
     if (!revision) return
-    const id = new URLSearchParams(window.location.search).get('run') ?? health?.demo_run_id
+    const id = new URLSearchParams(window.location.search).get('run') ?? health?.demo_runs?.[projectId] ?? health?.demo_run_id
     if (!id) return
     let live = true
     api.getRun(id).then((r) => {
@@ -69,7 +69,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
       dispatch({ type: 'target', id: r.target_id })
     }).catch(() => { /* an unknown or foreign run leaves a clean workspace */ })
     return () => { live = false }
-  }, [revision, health?.demo_run_id])
+  }, [revision, projectId, health?.demo_runs, health?.demo_run_id])
 
   useEffect(() => {
     stopActive()
