@@ -1,0 +1,115 @@
+{
+ "released_at": "2026-11-01T17:56:00Z",
+ "application_commit": "e3116afc8c82051bdd732f57462c0d92f1ac75ef",
+ "pull_request": 21,
+ "frontend": {
+  "redeployed": false,
+  "note": "No frontend change; Cloudflare Pages unlock-labs keeps serving the build from 80a42ff."
+ },
+ "private_engineering": {
+  "gallery_run_app": "ap-AnJoGrGnnddfddg25Yb9xx (ephemeral, stopped, 0 tasks)",
+  "gallery_run_commit": "cdfa01e92f84ecc877fcf640a3d4ba4f4c1670fd (tree identical to e3116af)",
+  "deployed_app": "unlock-engineering v4 from e3116af (previous v3 from 80a42ff)",
+  "secret_attached": false,
+  "live_model": false,
+  "jobs": {
+   "B02": {
+    "job_id": "efabb903c9474c53a1f2df493be8dd97",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_seconds": 70.705,
+    "export_sha256": "0395c0991b36bb22f15dd90aea001bd741a7345d3de42dc4becc449dacfd76af",
+    "run_id": "run_c615f880bcef434cb06cd3b2",
+    "parts": 8
+   },
+   "B04": {
+    "job_id": "416444f4cb7a4f10a8973e5e21305567",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_seconds": 153.891,
+    "export_sha256": "91f355044d09ce4392d760bc58eda27637e1e6e18cb8b75b2baf197a7756ff7c",
+    "run_id": "run_539eaa2548ce4d33bd5ce65c",
+    "parts": 9
+   },
+   "B05": {
+    "job_id": "de56b63d7d054b8bab4d5623ca38f012",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_seconds": 124.283,
+    "export_sha256": "fb1492f56e2d7780ffa298713f7b8e5035db9ceebe4f52500a8bde64633d276b",
+    "run_id": "run_021723485e294115a44db367",
+    "parts": 9
+   },
+   "B06": {
+    "job_id": "c07edc9617724acba26a7d17596fde1c",
+    "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+    "elapsed_seconds": 135.704,
+    "export_sha256": "cb595354212cdb9cfabedcefdc49b7e1304e3b42e6e1acf176d99d5952a597c7",
+    "run_id": "run_209db0b5b79148a8a094f393",
+    "parts": 9
+   },
+   "B07": {
+    "job_id": "12271a98734442c7a93b6079b24dfc25",
+    "outcome": "INCOMPLETE_ANALYSIS",
+    "elapsed_seconds": 99.916,
+    "export_sha256": null,
+    "run_id": "run_9dbde24e3b2b4187b4d9b9c9",
+    "parts": 9
+   },
+   "B08": {
+    "job_id": "5236786dcc644f9aaffddb2934c9f19f",
+    "outcome": "NO_SUPPORTED_CANDIDATE",
+    "elapsed_seconds": 57.573,
+    "export_sha256": null,
+    "run_id": "run_87bd882436df4c9c995d62c1",
+    "parts": 11
+   }
+  },
+  "redesign_loop_120s_budget": {
+   "B04": {
+    "finished_ms": 73049,
+    "note": "first relief rejected (CONFIRMED_GEOMETRIC_OBSTRUCTION), second verified; previous Modal run finished at 98925 ms"
+   },
+   "B05": {
+    "finished_ms": 39492,
+    "note": "first offset verified; previous Modal run hit LIMIT_EXCEEDED in the constraints phase"
+   },
+   "B06": {
+    "finished_ms": 42768,
+    "note": "first relief verified"
+   },
+   "B07": {
+    "finished_ms": 67167,
+    "note": "two edits rejected with screw1 Z+ TOOL_ACCESS_BLOCKED; second verification ended at 58513 ms; third candidate unchecked at turn_budget"
+   }
+  },
+  "gallery_id": "e972095f8bb145f3979d5f1ad5c9a305",
+  "compose_gallery": "validate_public_gallery passed before the Volume commit"
+ },
+ "public_api": {
+  "app": "unlock-demo v5 from e3116af (previous v4 from 15324be)",
+  "url": "https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run",
+  "unlock_demo_job": "e972095f8bb145f3979d5f1ad5c9a305",
+  "previous_unlock_demo_job": "a0de2889d0634a48a1eb8ac879341e9e",
+  "previous_demo_run_id": "run_ccb4db153f284982924fc98d",
+  "cors_origins": [
+   "https://unlock-labs.pages.dev",
+   "https://unlock-demo.unlock-labs.workers.dev"
+  ],
+  "health": {
+   "status": "ok",
+   "mode": "read_only",
+   "provider": "mock",
+   "credentials": "missing",
+   "access": "read_only"
+  },
+  "checks": {
+   "allowed_origins_echoed": true,
+   "foreign_origin_get": "403",
+   "anonymous_post": "403"
+  }
+ },
+ "acceptance": {
+  "six_projects": "six-projects.json: table rows and workspaces match the API outcome, run and part count on desktop and mobile; 0 non-GET requests",
+  "production_browser_test": "UNLOCK_PRODUCTION_WEB/API set, pytest -m browser tests/browser/test_production.py: 3 passed"
+ },
+ "cost": "Not captured: Modal's metered billing summary lags about an hour. The comparable morning gallery run was metered at under one cent.",
+ "rollback": "UNLOCK_DEMO_JOB=a0de2889d0634a48a1eb8ac879341e9e UNLOCK_CORS_ORIGINS=<same list> modal deploy modal_web.py"
+}

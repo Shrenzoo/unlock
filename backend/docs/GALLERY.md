@@ -278,6 +278,44 @@ $0.00788871 to the ephemeral gallery run; deployed apps rose by $0.00077994
 over the release. The amount billed was $0.00. No Modal containers were left
 running.
 
+## Release record: lighter geometry (2026-11-01)
+
+PR #20's detailed geometry failed its first Modal run (see the corrections
+above), so the public API kept this morning's gallery. The lighter geometry from
+PR #21 was released at 17:56 UTC from `main` at `e3116af`. Raw reports are in
+[evidence/gallery-release-lighter](../evidence/gallery-release-lighter/).
+
+**Private jobs.** `modal run modal_app.py::gallery` (no secret, live inference
+off) in ephemeral app `ap-AnJoGrGnnddfddg25Yb9xx`, from `cdfa01e`, whose tree is
+identical to `e3116af`. The redesign column is time into the 120 s loop:
+
+| Fixture | Job | Outcome | Job time | Redesign loop |
+|:--|:--|:--|--:|:--|
+| B02 | `efabb903…` | Verified improvement | 71 s | unchanged geometry |
+| B04 | `416444f4…` | Verified improvement | 154 s | done at 73 s (99 s with the old detail) |
+| B05 | `de56b63d…` | Verified improvement | 124 s | done at 39 s; the old detail exceeded the 30 s constraints phase |
+| B06 | `c07edc96…` | Verified improvement | 136 s | done at 43 s |
+| B07 | `12271a98…` | Incomplete analysis | 100 s | second rejection at 58.5 s, then the turn budget |
+| B08 | `5236786d…` | No supported candidate | 58 s | no redesign |
+
+`compose_gallery` validated gallery `e972095f8bb145f3979d5f1ad5c9a305`. Then
+`modal deploy modal_app.py` (unlock-engineering v4) and
+`modal deploy modal_web.py` with that gallery and the unchanged origin list
+(unlock-demo v5). The frontend was not redeployed; it has no change.
+
+**Acceptance.** `/health` reports read-only, mock provider, no credentials and
+the six new runs; the two listed origins are echoed, and a foreign origin and an
+anonymous POST both get 403. A read-only pass opened all six projects: each
+table row and workspace shows the API's outcome, run and part count (8, 9, 9, 9,
+9, 11) on desktop and mobile, with only GET requests. `tests/browser/test_production.py`
+against the live URLs: 3 passed.
+
+**Cost.** Not captured; Modal's metered summary lags about an hour. This
+morning's comparable gallery run was metered at under one cent.
+
+Rollback: redeploy `modal_web.py` with `UNLOCK_DEMO_JOB=a0de2889d0634a48a1eb8ac879341e9e`
+(this morning's gallery) and the same origin list.
+
 ## Tests
 
 - `tests/test_gallery.py`: every gallery fixture imports analysis-ready with

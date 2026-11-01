@@ -1,0 +1,96 @@
+{
+ "projects": 6,
+ "pages": {
+  "B02": {
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+   "run": "run_c615f880bcef434cb06cd3b2",
+   "parts_in_tree": 8,
+   "api_parts": 8
+  },
+  "B04": {
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+   "run": "run_539eaa2548ce4d33bd5ce65c",
+   "parts_in_tree": 9,
+   "api_parts": 9
+  },
+  "B05": {
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+   "run": "run_021723485e294115a44db367",
+   "parts_in_tree": 9,
+   "api_parts": 9
+  },
+  "B06": {
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+   "run": "run_209db0b5b79148a8a094f393",
+   "parts_in_tree": 9,
+   "api_parts": 9
+  },
+  "B07": {
+   "outcome": "INCOMPLETE_ANALYSIS",
+   "run": "run_9dbde24e3b2b4187b4d9b9c9",
+   "parts_in_tree": 9,
+   "api_parts": 9
+  },
+  "B08": {
+   "outcome": "NO_SUPPORTED_CANDIDATE",
+   "run": "run_87bd882436df4c9c995d62c1",
+   "parts_in_tree": 11,
+   "api_parts": 11
+  }
+ },
+ "table_desktop": [
+  {
+   "code": "B02",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B04",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B05",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B06",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B07",
+   "outcome": "INCOMPLETE_ANALYSIS"
+  },
+  {
+   "code": "B08",
+   "outcome": "NO_SUPPORTED_CANDIDATE"
+  }
+ ],
+ "non_get_requests_desktop": 0,
+ "table_mobile": [
+  {
+   "code": "B02",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B04",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B05",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B06",
+   "outcome": "VERIFIED_IMPROVEMENT_FOUND"
+  },
+  {
+   "code": "B07",
+   "outcome": "INCOMPLETE_ANALYSIS"
+  },
+  {
+   "code": "B08",
+   "outcome": "NO_SUPPORTED_CANDIDATE"
+  }
+ ],
+ "non_get_requests_mobile": 0,
+ "problems": []
+}
