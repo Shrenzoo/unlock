@@ -28,6 +28,8 @@ from pathlib import Path
 
 import pytest
 
+from unlock_engine.fixture_catalog import PROJECTS as FIXTURE_PROJECTS
+
 BACKEND = Path(__file__).resolve().parents[2]
 ROOT = BACKEND.parent
 FRONTEND = ROOT / "frontend"
@@ -182,9 +184,11 @@ def start_stack(name, api_port, web_port, root, *, provider="mock", backend=True
                 )
             )
             _wait(lambda: _get(api + "/health")[0] == 200, 120, f"{name} backend")
+            # Every bundled fixture, not just the first few: pages assert each row.
             _wait(
                 lambda: (
-                    sum(p["status"] == "ready" for p in stack.get("/v1/projects")) >= 3
+                    sum(p["status"] == "ready" for p in stack.get("/v1/projects"))
+                    >= len(FIXTURE_PROJECTS)
                 ),
                 300,
                 f"{name} bundled fixtures",

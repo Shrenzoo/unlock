@@ -157,8 +157,11 @@ Private smoke without publishing HTTP:
 
 ```sh
 cd backend
-modal run modal_app.py
+modal run modal_app.py::smoke
 ```
+
+`modal_app.py` also defines the `gallery` entrypoint ([GALLERY.md](GALLERY.md)), so
+name the entrypoint explicitly.
 
 For durable job submission after private worker deployment:
 
