@@ -18,6 +18,8 @@ The background now reproduces the reference design's light strokes: its interfac
 erased into two plates (`design/build_field_plates.py`, from `design/field-reference.webp`)
 that a small WebGL shader (`src/landing/lightField.ts`) lays behind the unchanged section
 layout, with slow drift and measured film grain. Without WebGL, CSS shows the same plates.
+The [model layout refinement](docs/MODEL_LAYOUT.md) enlarges both landing assemblies
+and places the larger condensed hero headline at the lower left, preserving that field.
 
 ```bash
 npm install
