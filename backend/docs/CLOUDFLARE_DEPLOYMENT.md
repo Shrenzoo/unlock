@@ -1,16 +1,19 @@
 # Cloudflare and Modal read-only launch
 
 Current website: <https://unlock-labs.pages.dev>, Pages production deployment
-`e1c4326a-98a2-4d25-ae5f-ce8cbf0cdbb9`, application commit `a621071`.
-The [scroll performance and Pages release](../../frontend/docs/SCROLL_PERFORMANCE.md)
-records the current frontend, browser checks and cost observations. The previous
-`unlock-demo.unlock-labs.workers.dev` URL redirects with status 301, preserving
-paths and query parameters (static-only version `73c0fcb6`). Modal serves the same
-licensed B02 job; its exact CORS allowlist contains the Pages and legacy Workers
-origins. No backend application source or billing settings changed for this move.
-After the production tests, Modal displayed a $30 usage limit, $0 spend limit and
-$30.00 credits. Its Oct 1–31 usage report displayed $0.01 total CPU usage; the
-current Usage limit panel displayed $0 usage/charges. These are rounded UI values.
+`2b20b62e-d550-4a36-923b-356d7649c157`, application commit `7e01502`.
+[Judge access](JUDGE_ACCESS.md) now adds a private code flow for bounded uploads
+and fresh offline analysis, following explicit user authorization. The separate
+`unlock-judges` gateway authenticates and owns every private job/result request;
+the public `unlock-demo` API still serves only the same licensed read-only B02
+snapshot. Live AI remains disabled. Existing Workers-to-Pages redirects remain.
+
+The [scroll performance release](../../frontend/docs/SCROLL_PERFORMANCE.md)
+records the preceding frontend and preserved landing detail. After judge
+verification, Modal displayed a $30 usage limit, $0 spend limit and $30.00
+credits; the exact native workflow took 76.325 seconds and used one of six shared
+attempts. No billing settings changed. The judge report distinguishes actual
+job measurements from delayed/rounded billing observations.
 
 The earlier Cloudflare account subdomain rename from `shreyas-pabbathi` to
 `unlock-labs` occurred on 2026-10-31. Historical launch evidence below retains

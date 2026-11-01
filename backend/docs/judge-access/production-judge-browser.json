@@ -1,0 +1,26 @@
+{
+  "web": "https://unlock-labs.pages.dev",
+  "viewports": [
+    {
+      "size": [
+        1440,
+        1000
+      ],
+      "page_errors": [],
+      "overflow": false
+    },
+    {
+      "size": [
+        390,
+        844
+      ],
+      "page_errors": [],
+      "overflow": false
+    }
+  ],
+  "fresh_upload_verified_export": {
+    "sha256": "a8d839005cba947968f4b28a4ae3b3ffbb38df16aa3a2c6cd14921894255b63e",
+    "reload": true
+  },
+  "cross_session_result_refused": true
+}

@@ -1,0 +1,61 @@
+{
+  "started_at": "20261101T032431Z",
+  "environment": {},
+  "stacks": {},
+  "tests": {},
+  "measurements": {},
+  "correlation": {},
+  "production": {
+    "web": "https://unlock-labs.pages.dev",
+    "api": "https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run",
+    "run_id": "run_22762d8604a74b9eac8b1b08",
+    "export_sha256": "473f81514fcb51eb1004d8b16444d7c89ead3a3e6aa1cb56d8b550cc3d032d9a",
+    "live_model": false
+  },
+  "production_browser": {
+    "desktop": {
+      "viewport": [
+        1600,
+        1000
+      ],
+      "api_reads": 13,
+      "local_requests": [],
+      "artifact_sha256": "473f81514fcb51eb1004d8b16444d7c89ead3a3e6aa1cb56d8b550cc3d032d9a",
+      "download_members": 16,
+      "original_and_revised_rendered": true,
+      "comparison_and_route_playback": true,
+      "navigation_and_reload": true,
+      "uploads_and_compute_disabled": true,
+      "console_and_network_errors": {
+        "console": [],
+        "page": [],
+        "failed": [],
+        "http": []
+      }
+    },
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "api_reads": 14,
+      "local_requests": [],
+      "artifact_sha256": "473f81514fcb51eb1004d8b16444d7c89ead3a3e6aa1cb56d8b550cc3d032d9a",
+      "download_members": 16,
+      "original_and_revised_rendered": true,
+      "comparison_and_route_playback": true,
+      "navigation_and_reload": true,
+      "uploads_and_compute_disabled": true,
+      "console_and_network_errors": {
+        "console": [],
+        "page": [],
+        "failed": [],
+        "http": []
+      }
+    }
+  },
+  "assertion_blocks_passed": 3,
+  "finished_at": "2026-11-01T03:25:27.483517+00:00",
+  "runner": "standalone invocation of the existing production assertions",
+  "exit_status": 0
+}
