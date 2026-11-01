@@ -1,0 +1,48 @@
+{
+  "web": "http://127.0.0.1:5189",
+  "viewports": [
+    {
+      "size": [
+        1440,
+        1000
+      ],
+      "buffer": [
+        1080,
+        750
+      ],
+      "idle_changed_fraction": 0.0042048611111111115,
+      "pointer_changed_fraction": 0.25318125,
+      "reduced_changed_fraction": 0.0,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "page_errors": []
+    },
+    {
+      "size": [
+        390,
+        844
+      ],
+      "buffer": [
+        293,
+        633
+      ],
+      "idle_changed_fraction": 0.006015311702515494,
+      "pointer_changed_fraction": 0.7734688297484505,
+      "reduced_changed_fraction": 0.0,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "page_errors": []
+    }
+  ],
+  "webgl_fallback": true
+}

@@ -6,6 +6,7 @@ import { SAMPLE_PROJECT_PATH } from '@/api'
 import { Link } from '@/router'
 import { ModuleAssembly, PART_IDS, createView, type PartId } from '@/three/ModuleAssembly'
 import { Studio } from '@/three/Studio'
+import { WarmShaders } from '@/three/WarmShaders'
 import { AnchorProjector, type Anchor } from '@/three/Anchors'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
 import { hasWebGL } from '@/three/units'
@@ -150,6 +151,7 @@ function HeroScene({
   const motion = useRef({ yaw: 0, pitch: 0, baseYaw: 0, basePitch: 0, px: 0, py: 0, dragging: false })
   const reduced = useReducedMotion()
   const introFinished = useRef(false)
+  const selectPart = useCallback((id: PartId) => onIsolate(isolated === id ? null : id), [isolated, onIsolate])
 
   // Fit the actual render bounds at the fully exploded pose. This is display
   // framing only; it neither changes CAD geometry nor runs engineering tools.
@@ -178,8 +180,8 @@ function HeroScene({
     const direction = new THREE.Vector3(2.7, 2.2, 3.8).normalize()
     const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), direction).normalize()
     const up = new THREE.Vector3().crossVectors(direction, right)
-    const tanV = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 0.88
-    const tanH = tanV * size.width / size.height * 0.92
+    const tanV = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 0.94
+    const tanH = tanV * size.width / size.height
     const point = new THREE.Vector3()
     let distance = 0
     for (const box of boxes) for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
@@ -187,9 +189,10 @@ function HeroScene({
       const depth = point.dot(direction)
       distance = Math.max(distance, Math.abs(point.dot(up)) / tanV + depth, Math.abs(point.dot(right)) / tanH + depth)
     }
-    cam.position.copy(target).addScaledVector(direction, distance * 1.04)
+    cam.position.copy(target).addScaledVector(direction, distance * 1.02)
     cam.lookAt(target)
     cam.updateProjectionMatrix()
+    cam.updateMatrixWorld()
     invalidate()
   }, [camera, size.width, size.height, target, invalidate])
 
@@ -311,13 +314,14 @@ function HeroScene({
       rig.current.rotation.x = m.pitch
     }
     if (Math.abs(ty - m.yaw) > 1e-4 || Math.abs(tp - m.pitch) > 1e-4) invalidate()
-  })
+  }, -1)
 
   return (
     <>
-      <Studio theme="light" polished />
+      <Studio theme="light" polished captureRevision={`${hovered ?? ''}/${isolated ?? ''}`} />
+      <WarmShaders />
       <group ref={rig}>
-        <ModuleAssembly view={view} polished interactive onHover={onHover} onSelect={(id) => onIsolate(isolated === id ? null : id)} />
+        <ModuleAssembly view={view} polished interactive onHover={onHover} onSelect={selectPart} />
         <AnchorProjector anchors={CALLOUTS} targets={labels} />
       </group>
     </>

@@ -2,7 +2,8 @@
 
 React 19 + TypeScript + Vite, with Three.js through React Three Fiber and Drei. GSAP drives the hero reveal and the scroll story; Lenis smooths landing-page scrolling. Everything else is CSS.
 
-Public read-only B02 demonstration: <https://unlock-demo.unlock-labs.workers.dev>.
+Public read-only B02 demonstration: <https://unlock-labs.pages.dev>. The previous
+Workers URL redirects here, including workspace paths and query parameters.
 Its Modal API serves recorded CAD results from an offline scripted decision policy.
 Uploads, live AI inference and engineering mutations are disabled. See the
 [launch report](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) for licensing, usage,
@@ -10,10 +11,18 @@ production browser evidence and deployment settings.
 The [initial UI presentation update](docs/UI_POLISH.md) records the noise field
 and matching favicon. The current [spacious reference design](docs/REFERENCE_DESIGN.md)
 records larger sections, continuously visible idle motion and CAD framing.
-The latest [atmospheric lighting correction](docs/ATMOSPHERIC_LIGHTING.md) replaces
+The [atmospheric lighting correction](docs/ATMOSPHERIC_LIGHTING.md) replaced
 ribbons with irregular cloud lighting while verifying that every measured layout
 position and the existing CAD interactions are preserved. The later
 [story zoom correction](docs/STORY_ZOOM.md) makes the model grow throughout scrolling.
+The background now reproduces the reference design's light strokes: its interface was
+erased into two plates (`design/build_field_plates.py`, from `design/field-reference.webp`)
+that a small WebGL shader (`src/landing/lightField.ts`) lays behind the unchanged section
+layout, with slow drift and measured film grain. Without WebGL, CSS shows the same plates.
+The [model layout refinement](docs/MODEL_LAYOUT.md) enlarges both landing assemblies
+and places the larger condensed hero headline at the lower left, preserving that field.
+The [scroll performance and Pages release](docs/SCROLL_PERFORMANCE.md) records the
+optimized animation work, production checks and current hosting configuration.
 
 ```bash
 npm install
@@ -77,12 +86,20 @@ Build from this directory with the actual backend origin:
 VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run npm run build:public
 ```
 
-Upload only `dist/` to the existing `unlock-demo` Workers Static Assets project.
-For **each** dashboard upload, select Advanced settings → Not found handling →
-single-page-application; the update form defaults to `none`. `wrangler.jsonc`
-records the equivalent CLI configuration. No Worker script or runtime secrets
-are needed. All public builds reject localhost, missing/credential-bearing API
-URLs and illustrative fixture mode. The build preserves dependency notices.
+Upload only the contents of `dist/` to the existing **Pages** project
+`unlock-labs`, selecting Production. Pages supplies SPA fallback when the build
+has no top-level `404.html`. Keep `_headers`, `favicon.svg` and dependency notices
+in the upload. No Functions, runtime secrets or paid services are needed.
+
+The API's exact CORS origins include `https://unlock-labs.pages.dev`; its selected
+B02 job remains unchanged. Public builds reject localhost, missing or
+credential-bearing API URLs and illustrative fixture mode.
+
+`wrangler.jsonc` describes the former Workers Static Assets deployment, which
+now only redirects to Pages. Do not upload the app there for future releases.
+For that legacy redirect, the separately uploaded `_redirects` contains
+`/* https://unlock-labs.pages.dev/:splat 301`. Never include that rule in the
+Pages build itself.
 
 ## Browser acceptance
 

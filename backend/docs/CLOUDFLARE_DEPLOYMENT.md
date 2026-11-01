@@ -1,16 +1,22 @@
 # Cloudflare and Modal read-only launch
 
-Current website: <https://unlock-demo.unlock-labs.workers.dev>. The Cloudflare
-account subdomain was renamed from `shreyas-pabbathi` to `unlock-labs` on
-2026-10-31; historical launch evidence below retains the original URL. The
-same read-only Modal API was redeployed with
-`UNLOCK_CORS_ORIGINS=https://unlock-demo.unlock-labs.workers.dev` and the same
-verified B02 job ID. The new root, Projects and B02 workspace opened in Chrome.
-Before this API update, Projects reported the engine unreachable at the new
-hostname. Modal's usage limit remained $30, spend limit $0, and displayed
-credits $29.99 before the API redeploy; no billing settings were changed.
+Current website: <https://unlock-labs.pages.dev>, Pages production deployment
+`e1c4326a-98a2-4d25-ae5f-ce8cbf0cdbb9`, application commit `a621071`.
+The [scroll performance and Pages release](../../frontend/docs/SCROLL_PERFORMANCE.md)
+records the current frontend, browser checks and cost observations. The previous
+`unlock-demo.unlock-labs.workers.dev` URL redirects with status 301, preserving
+paths and query parameters (static-only version `73c0fcb6`). Modal serves the same
+licensed B02 job; its exact CORS allowlist contains the Pages and legacy Workers
+origins. No backend application source or billing settings changed for this move.
+After the production tests, Modal displayed a $30 usage limit, $0 spend limit and
+$30.00 credits. Its Oct 1–31 usage report displayed $0.01 total CPU usage; the
+current Usage limit panel displayed $0 usage/charges. These are rounded UI values.
 
-Current frontend release: [story zoom correction](../../frontend/docs/STORY_ZOOM.md)
+The earlier Cloudflare account subdomain rename from `shreyas-pabbathi` to
+`unlock-labs` occurred on 2026-10-31. Historical launch evidence below retains
+its original URLs and observations.
+
+Earlier frontend release: [story zoom correction](../../frontend/docs/STORY_ZOOM.md)
 records static version `82642357`, a continuous camera approach and verified
 responsive framing. The [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
 records preceding version `78201c9c`.

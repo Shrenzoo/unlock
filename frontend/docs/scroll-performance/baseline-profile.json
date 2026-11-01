@@ -1,0 +1,285 @@
+{
+  "web": "https://unlock-demo.unlock-labs.workers.dev",
+  "results": [
+    {
+      "frames": 322,
+      "median_ms": 16.699999999999818,
+      "p95_ms": 16.700000000000728,
+      "max_ms": 49.899999999999636,
+      "over_25ms": 1,
+      "over_50ms": 0,
+      "long_tasks": [
+        {
+          "duration": 62,
+          "start": 3812
+        }
+      ],
+      "scroll_y": 7907,
+      "gl_costs": [
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0.10000014305114746,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0.09999990463256836,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        }
+      ],
+      "label": "desktop",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "elapsed_s": 5.389913958963007,
+      "page_errors": [],
+      "metrics": {
+        "TaskDuration": 0.82778,
+        "ScriptDuration": 0.286491,
+        "LayoutDuration": 0.001881,
+        "RecalcStyleDuration": 0.129761,
+        "LayoutCount": 9,
+        "RecalcStyleCount": 601
+      }
+    },
+    {
+      "frames": 323,
+      "median_ms": 16.699999999999818,
+      "p95_ms": 16.700000000000728,
+      "max_ms": 83.30000000000018,
+      "over_25ms": 1,
+      "over_50ms": 1,
+      "long_tasks": [
+        {
+          "duration": 85,
+          "start": 3334.0999999046326
+        }
+      ],
+      "scroll_y": 7909,
+      "gl_costs": [
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        }
+      ],
+      "label": "mobile",
+      "viewport": [
+        390,
+        844
+      ],
+      "elapsed_s": 5.4709602918010205,
+      "page_errors": [],
+      "metrics": {
+        "TaskDuration": 0.8299939999999999,
+        "ScriptDuration": 0.271521,
+        "LayoutDuration": 0.002627,
+        "RecalcStyleDuration": 0.123375,
+        "LayoutCount": 9,
+        "RecalcStyleCount": 547
+      }
+    }
+  ]
+}

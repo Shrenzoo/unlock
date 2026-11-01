@@ -1,10 +1,11 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Line } from '@react-three/drei'
-import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
+import { memo, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import * as THREE from 'three'
 import { CadSpace, ModuleAssembly, createView } from '@/three/ModuleAssembly'
 import { AnchorProjector, type Anchor } from '@/three/Anchors'
 import { Studio } from '@/three/Studio'
+import { WarmShaders } from '@/three/WarmShaders'
 import { FallbackDrawing } from '@/three/FallbackDrawing'
 import { hasWebGL } from '@/three/units'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
@@ -53,6 +54,7 @@ export function Story() {
   const progress = useRef(0)
   const invalidateRef = useRef<() => void>(() => {})
   const [scene, setScene] = useState(0)
+  const activeScene = useRef(0)
   const webgl = useMemo(hasWebGL, [])
   const labels = useRef<Record<string, HTMLElement | null>>({})
   const annots = useRef<Record<string, HTMLElement | null>>({})
@@ -64,12 +66,12 @@ export function Story() {
     const tween = gsap.to(state, {
       p: 1,
       ease: 'none',
-      scrollTrigger: { trigger: el, start: 'top top', end: 'bottom bottom', scrub: reduced ? true : 0.6 },
+      scrollTrigger: { trigger: el, start: 'top top', end: 'bottom bottom', scrub: reduced ? true : 0.25 },
       onUpdate: () => {
         progress.current = state.p
         invalidateRef.current()
         const s = sceneAt(state.p)
-        setScene((prev) => (prev === s ? prev : s))
+        if (activeScene.current !== s) { activeScene.current = s; setScene(s) }
       },
     })
     return () => {
@@ -92,6 +94,7 @@ export function Story() {
         <div className="story__canvas">
           {webgl ? (
             <Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ fov: 30, position: [2.9, 1.65, 3.6], near: 0.05, far: 40 }} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
+              <Studio theme="dark" polished captureRevision={scene} />
               <StoryScene progress={progress} invalidateRef={invalidateRef} labels={labels} annots={annots} />
             </Canvas>
           ) : (
@@ -142,7 +145,7 @@ export function Story() {
   )
 }
 
-function StoryScene({
+const StoryScene = memo(function StoryScene({
   progress,
   invalidateRef,
   labels,
@@ -180,14 +183,17 @@ function StoryScene({
     const vertical = THREE.MathUtils.degToRad(cam.fov)
     const horizontal = 2 * Math.atan(Math.tan(vertical / 2) * aspect)
     const opening = Math.min(1, Math.max(0, (p - 0.1) / 0.14))
-    const radius = THREE.MathUtils.lerp(1.3, 1.0, p)
+    const radius = THREE.MathUtils.lerp(1.2, 0.98, p)
     const needed = radius / Math.sin(Math.min(vertical, horizontal) / 2)
-    target.set(c.target[0], THREE.MathUtils.lerp(0.32, 0.65, opening) + (c.target[1] - 0.3) * 0.25, c.target[2])
+    // Recenter the enlarged assembly once the lifted cover has faded away.
+    const recenter = THREE.MathUtils.smoothstep(p, 0.32, 0.58) * 0.2
+    target.set(c.target[0], THREE.MathUtils.lerp(0.32, 0.65, opening) + (c.target[1] - 0.3) * 0.25 - recenter, c.target[2])
     const dx = c.pos[0] - c.target[0], dy = c.pos[1] - c.target[1], dz = c.pos[2] - c.target[2]
     const k = Math.max(0.52, needed / Math.hypot(dx, dy, dz))
     camera.position.set(target.x + dx * k, target.y + dy * k * 1.12, target.z + dz * k)
     if (cam.view?.enabled) cam.clearViewOffset()
     camera.lookAt(target)
+    camera.updateMatrixWorld()
 
     const show = (key: string, a: number, b: number, fade = 0.015) => {
       const t = Math.min(1, Math.max(0, Math.min((p - a) / fade, (b - p) / fade)))
@@ -208,7 +214,7 @@ function StoryScene({
     show('protected', 0.62, 0.79)
     show('path', 0.8, 1.01)
     show('pathLine', 0.8, 1.01)
-  })
+  }, -1) // Apply the pose/camera before meshes and projected labels consume it.
 
   const line = (key: string) => (l: THREE.Object3D | null) => {
     const mat = (l as THREE.Mesh | null)?.material as THREE.Material | undefined
@@ -232,7 +238,7 @@ function StoryScene({
 
   return (
     <>
-      <Studio theme="dark" polished />
+      <WarmShaders />
       <ModuleAssembly view={view} polished />
       <AnchorProjector anchors={ANNOTS} targets={labels} />
       <CadSpace>
@@ -245,4 +251,4 @@ function StoryScene({
       </CadSpace>
     </>
   )
-}
+})

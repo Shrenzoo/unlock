@@ -17,83 +17,31 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  --field-dark: 0;
-  --field-x: 0px;
-  --field-y: 0px;
-  --flow-travel: clamp(32px, 3.2vw, 64px);
-  --story-top: 100000px;
+  contain: layout paint style;
+  /* where the night plate takes over, and where it hands back (viewport px, set from script) */
+  --dusk: 100000px;
   --story-bottom: 100000px;
   --footer-top: 100000px;
+  --night-mask: linear-gradient(to bottom, transparent var(--dusk), #000 calc(var(--dusk) + 1px), #000 var(--story-bottom), transparent calc(var(--story-bottom) + 160px), transparent var(--footer-top), #000 calc(var(--footer-top) + 1px));
+  --paper-mask: linear-gradient(to bottom, #000 var(--dusk), transparent calc(var(--dusk) + 1px), transparent var(--story-bottom), #000 calc(var(--story-bottom) + 160px), #000 var(--footer-top), transparent calc(var(--footer-top) + 1px));
 }
+/* Without WebGL the same plates are laid out by CSS; the shader canvas covers them otherwise. */
 .noise-field__palette { position: absolute; inset: 0; overflow: hidden; }
-.noise-field__palette--light { background: #f9fcff; }
-.noise-field__palette--dark {
-  background: linear-gradient(to bottom, #002660 calc(var(--story-top) - 24px), #02050b calc(var(--story-top) + 160px));
-  mask-image:
-    linear-gradient(to bottom, transparent calc(var(--story-top) - 100px), #000 calc(var(--story-top) + 24px), #000 calc(var(--story-bottom) - 32px), transparent calc(var(--story-bottom) + 110px)),
-    linear-gradient(to bottom, transparent calc(var(--footer-top) - 100px), #000 calc(var(--footer-top) + 36px));
+.noise-field__palette--light { background: #f9fcff url('./field-hero.webp') center / 100% 100% no-repeat; }
+.noise-field__palette--dark { background: #02050b url('./field-story.webp') center / 100% 100% no-repeat; mask-image: var(--night-mask); }
+@media (max-aspect-ratio: 8/5) {
+  .noise-field__palette--light { background-size: auto 100%; background-position: 36% 0; }
+  .noise-field__palette--dark { background-size: auto 100%; background-position: 70% 0; }
 }
-.noise-field__pointer {
-  position: absolute;
-  inset: -2%;
-  transform: translate3d(var(--field-x), var(--field-y), 0);
-}
-.noise-field__cloud {
-  position: absolute;
-  inset: -2%;
-  will-change: transform;
-
-  animation: field-tide 24s ease-in-out infinite alternate;
-}
-.noise-field__cloud--blue {
-  background: url('./flow-field.svg') center / 100% 100% no-repeat;
-  animation: field-circulation 32s linear -4s infinite;
-}
-.noise-field__cloud--ink {
-  background: url('./flow-atmosphere.svg') center / 100% 100% no-repeat;
-  opacity: 0.14;
-  animation-name: field-undertow;
-  animation-duration: 30s;
-}
-.noise-field__cloud--white {
-  background: #d4e9ff;
-  mask: url('./flow-atmosphere.svg') center / 100% 100% no-repeat;
-  mix-blend-mode: screen;
-  opacity: 0.08;
-  animation-name: field-undertow;
-  animation-duration: 30s;
-}
-.noise-field__palette--dark .noise-field__cloud--blue {
-  opacity: 0.94;
-  mask-image: linear-gradient(to bottom, #000a, #0009 40%, #000 72%, #000b);
-}
+.noise-field__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 400ms ease; }
+.noise-field[data-field='ready'] .noise-field__canvas { opacity: 1; }
+/* Grain measured against the reference: soft-light on paper, overlay on night. */
 .noise-field__grain {
   position: absolute;
   inset: 0;
-  opacity: 0.13;
-  mix-blend-mode: soft-light;
+  opacity: 0.3;
   background-image: url('./flow-grain.svg');
   background-size: 240px 240px;
 }
-.noise-field[data-paused='true'] .noise-field__cloud { animation-play-state: paused; }
-@keyframes field-circulation {
-  from { transform: rotate(0deg) translate3d(var(--flow-travel), 0, 0) rotate(0deg) scale(1.04); }
-  to { transform: rotate(360deg) translate3d(var(--flow-travel), 0, 0) rotate(-360deg) scale(1.04); }
-}
-@keyframes field-tide {
-  from { transform: translate3d(-2%, -2%, 0) rotate(-5deg) scale(1.01); }
-  to { transform: translate3d(3%, 3%, 0) rotate(5deg) scale(1.08); }
-}
-@keyframes field-undertow {
-  from { transform: translate3d(3%, 2%, 0) rotate(4deg); }
-  to { transform: translate3d(-3%, -2%, 0) rotate(-5deg); }
-}
-@media (max-width: 900px) {
-  .noise-field__pointer { inset: -40px; }
-  .noise-field__cloud { inset: -16px; filter: none; }
-  .noise-field__cloud--blue { background-size: 180% 100%; background-position: 56% center; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .noise-field__cloud { animation: none; will-change: auto; }
-  .noise-field__pointer { transform: none; }
-}
+.noise-field__grain--paper { mix-blend-mode: soft-light; mask-image: var(--paper-mask); }
+.noise-field__grain--night { mix-blend-mode: overlay; mask-image: var(--night-mask); }

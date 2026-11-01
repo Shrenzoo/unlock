@@ -1,0 +1,85 @@
+{
+  "web": "http://127.0.0.1:5189",
+  "results": [
+    {
+      "frames": 345,
+      "median_ms": 16.699999999999818,
+      "p95_ms": 16.799999999999272,
+      "max_ms": 33.30000000000018,
+      "over_25ms": 2,
+      "over_50ms": 0,
+      "long_tasks": [],
+      "scroll_y": 7920,
+      "gl_costs": [],
+      "label": "desktop",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "elapsed_s": 5.791854250011966,
+      "page_errors": [],
+      "metrics": {
+        "TaskDuration": 0.853633,
+        "ScriptDuration": 0.257037,
+        "LayoutDuration": 0.001635,
+        "RecalcStyleDuration": 0.143443,
+        "LayoutCount": 9,
+        "RecalcStyleCount": 621
+      }
+    },
+    {
+      "frames": 314,
+      "median_ms": 16.699999999999818,
+      "p95_ms": 16.799999999999727,
+      "max_ms": 100,
+      "over_25ms": 3,
+      "over_50ms": 2,
+      "long_tasks": [
+        {
+          "duration": 61,
+          "start": 3126.899999856949
+        },
+        {
+          "duration": 108,
+          "start": 8310.5
+        }
+      ],
+      "scroll_y": 7920,
+      "gl_costs": [
+        {
+          "name": "compileShader",
+          "ms": 0.09999990463256836,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0.10000014305114746,
+          "scroll": true,
+          "section": "story"
+        }
+      ],
+      "label": "mobile",
+      "viewport": [
+        390,
+        844
+      ],
+      "elapsed_s": 5.386950792046264,
+      "page_errors": [],
+      "metrics": {
+        "TaskDuration": 0.818837,
+        "ScriptDuration": 0.331514,
+        "LayoutDuration": 0.003235,
+        "RecalcStyleDuration": 0.110518,
+        "LayoutCount": 9,
+        "RecalcStyleCount": 517
+      }
+    }
+  ]
+}

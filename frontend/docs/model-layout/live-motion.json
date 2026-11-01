@@ -1,0 +1,48 @@
+{
+  "web": "https://unlock-demo.unlock-labs.workers.dev",
+  "viewports": [
+    {
+      "size": [
+        1440,
+        1000
+      ],
+      "buffer": [
+        1080,
+        750
+      ],
+      "idle_changed_fraction": 0.0039375,
+      "pointer_changed_fraction": 0.25387777777777776,
+      "reduced_changed_fraction": 0.0,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "page_errors": []
+    },
+    {
+      "size": [
+        390,
+        844
+      ],
+      "buffer": [
+        293,
+        633
+      ],
+      "idle_changed_fraction": 0.006443674808603719,
+      "pointer_changed_fraction": 0.7735052861830113,
+      "reduced_changed_fraction": 0.0,
+      "scenes": [
+        "A small module with a part that will fail.",
+        "One failed part. An entire product in the way.",
+        "The straight lift stops after 2.0 mm.",
+        "Change the bracket, not the product.",
+        "A way out."
+      ],
+      "page_errors": []
+    }
+  ],
+  "webgl_fallback": true
+}
