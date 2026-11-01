@@ -1,5 +1,5 @@
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { memo, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import * as THREE from 'three'
 import type { BracketParameters, Vec3 } from '@/domain/types'
 import { b02Manifest } from '@/fixtures/b02'
@@ -258,7 +258,7 @@ interface AssemblyProps {
   polished?: boolean
 }
 
-export function ModuleAssembly({ view, interactive = false, onSelect, onHover, params, polished = false }: AssemblyProps) {
+export const ModuleAssembly = memo(function ModuleAssembly({ view, interactive = false, onSelect, onHover, params, polished = false }: AssemblyProps) {
   const p = params ?? b02Manifest.template_bindings[0].parameters
   const parts = useMemo(() => buildParts(p), [p])
   const registry = useRef(new Map<PartId, Registered>())
@@ -398,7 +398,7 @@ export function ModuleAssembly({ view, interactive = false, onSelect, onHover, p
       </group>
     </CadSpace>
   )
-}
+})
 
 function PartGroup({
   id,

@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => {
     if (api.protocol !== 'https:' || !api.hostname.endsWith('.modal.run') || api.username || api.password || api.search || api.hash || api.pathname !== '/') {
       throw new Error('VITE_UNLOCK_API must be a Modal HTTPS origin without credentials, path, query or fragment.')
     }
+    if (env.VITE_UNLOCK_JUDGE_API) {
+      const judge = new URL(env.VITE_UNLOCK_JUDGE_API)
+      if (judge.protocol !== 'https:' || !judge.hostname.endsWith('.modal.run') || judge.username || judge.password || judge.pathname !== '/' || judge.search || judge.hash) throw new Error('Judge API must be a credential-free HTTPS Modal origin.')
+    }
     if (env.VITE_UNLOCK_MODE === 'fixture') {
       throw new Error('Public builds must use the real read-only engineering API, not illustrative fixture mode.')
     }

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { createLightField, type FieldFrame, type LightField } from './lightField'
+import { watchSectionLayout, type SectionLayout } from './sectionLayout'
 import paperPlate from './field-hero.webp'
 import nightPlate from './field-story.webp'
 import './noise-field.css'
@@ -25,9 +26,7 @@ export function NoiseField() {
     if (!el || !cv) return
     const reduced = matchMedia('(prefers-reduced-motion: reduce)')
     const fine = matchMedia('(hover: hover) and (pointer: fine)')
-    const hero = document.querySelector('.hero')
-    const story = document.getElementById('story')
-    const footer = document.querySelector('.footer')
+    let layout: SectionLayout = { heroTop: 0, storyTop: 1e5, storyBottom: 1e5, footerTop: 1e5 }
     let gl: LightField | null = null
     let plates: { paper: HTMLImageElement; night: HTMLImageElement } | null = null
     let disposed = false
@@ -41,10 +40,9 @@ export function NoiseField() {
       raf = 0
       const dt = Math.min((now - (lastTick || now)) / 1000, 0.1)
       lastTick = now
-      const r = story?.getBoundingClientRect()
-      const f = footer?.getBoundingClientRect()
-      const ht = hero?.getBoundingClientRect().top ?? 0
-      const st = r?.top ?? 1e5, sb = r?.bottom ?? 1e5, ft = f?.top ?? 1e5
+      const scroll = window.scrollY
+      const ht = layout.heroTop - scroll
+      const st = layout.storyTop - scroll, sb = layout.storyBottom - scroll, ft = layout.footerTop - scroll
       const scrolled = ht !== frame.heroTop || st !== frame.storyTop || sb !== frame.storyBottom || ft !== frame.footerTop
       frame.heroTop = ht; frame.storyTop = st; frame.storyBottom = sb; frame.footerTop = ft
 
@@ -100,6 +98,7 @@ export function NoiseField() {
       () => { if (!disposed) { el.dataset.field = 'fallback'; frame.storyTop = NaN; schedule() } },
     )
     schedule()
+    const unwatch = watchSectionLayout((next) => { layout = next; schedule() })
     addEventListener('scroll', schedule, { passive: true })
     addEventListener('resize', resize, { passive: true })
     document.addEventListener('pointermove', move, { passive: true })
@@ -110,6 +109,7 @@ export function NoiseField() {
     cv.addEventListener('webglcontextrestored', start)
     return () => {
       disposed = true
+      unwatch()
       cancelAnimationFrame(raf)
       removeEventListener('scroll', schedule); removeEventListener('resize', resize)
       document.removeEventListener('pointermove', move)

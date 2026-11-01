@@ -1,16 +1,25 @@
 # Cloudflare and Modal read-only launch
 
-Current website: <https://unlock-demo.unlock-labs.workers.dev>. The Cloudflare
-account subdomain was renamed from `shreyas-pabbathi` to `unlock-labs` on
-2026-10-31; historical launch evidence below retains the original URL. The
-same read-only Modal API was redeployed with
-`UNLOCK_CORS_ORIGINS=https://unlock-demo.unlock-labs.workers.dev` and the same
-verified B02 job ID. The new root, Projects and B02 workspace opened in Chrome.
-Before this API update, Projects reported the engine unreachable at the new
-hostname. Modal's usage limit remained $30, spend limit $0, and displayed
-credits $29.99 before the API redeploy; no billing settings were changed.
+Current website: <https://unlock-labs.pages.dev>, Pages production deployment
+`2b20b62e-d550-4a36-923b-356d7649c157`, application commit `7e01502`.
+[Judge access](JUDGE_ACCESS.md) now adds a private code flow for bounded uploads
+and fresh offline analysis, following explicit user authorization. The separate
+`unlock-judges` gateway authenticates and owns every private job/result request;
+the public `unlock-demo` API still serves only the same licensed read-only B02
+snapshot. Live AI remains disabled. Existing Workers-to-Pages redirects remain.
 
-Current frontend release: [story zoom correction](../../frontend/docs/STORY_ZOOM.md)
+The [scroll performance release](../../frontend/docs/SCROLL_PERFORMANCE.md)
+records the preceding frontend and preserved landing detail. After judge
+verification, Modal displayed a $30 usage limit, $0 spend limit and $30.00
+credits; the exact native workflow took 76.325 seconds and used one of six shared
+attempts. No billing settings changed. The judge report distinguishes actual
+job measurements from delayed/rounded billing observations.
+
+The earlier Cloudflare account subdomain rename from `shreyas-pabbathi` to
+`unlock-labs` occurred on 2026-10-31. Historical launch evidence below retains
+its original URLs and observations.
+
+Earlier frontend release: [story zoom correction](../../frontend/docs/STORY_ZOOM.md)
 records static version `82642357`, a continuous camera approach and verified
 responsive framing. The [atmospheric lighting correction](../../frontend/docs/ATMOSPHERIC_LIGHTING.md)
 records preceding version `78201c9c`.

@@ -9,6 +9,7 @@ import { Hero } from './Hero'
 import { NoiseField } from './NoiseField'
 import { Story } from './Story'
 import { scrollToId, startSmoothScroll } from './scroll'
+import { watchSectionLayout, type SectionLayout } from './sectionLayout'
 import './landing.css'
 
 export default function Landing() {
@@ -43,16 +44,18 @@ function Nav() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const story = document.getElementById('story')
-    const footer = document.querySelector('.footer')
+    let layout: SectionLayout = { heroTop: 0, storyTop: Infinity, storyBottom: Infinity, footerTop: Infinity }
+    let wasDark = false, wasScrolled = false
     const onScroll = () => {
-      setScrolled(window.scrollY > 8)
-      const r = story?.getBoundingClientRect()
-      setDark((!!r && r.top <= 32 && r.bottom > 32) || (footer?.getBoundingClientRect().top ?? Infinity) <= 32)
+      const y = window.scrollY
+      const isScrolled = y > 8
+      const isDark = (layout.storyTop <= y + 32 && layout.storyBottom > y + 32) || layout.footerTop <= y + 32
+      if (isScrolled !== wasScrolled) { wasScrolled = isScrolled; setScrolled(isScrolled) }
+      if (isDark !== wasDark) { wasDark = isDark; setDark(isDark) }
     }
-    onScroll()
+    const unwatch = watchSectionLayout((next) => { layout = next; onScroll() })
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => { unwatch(); window.removeEventListener('scroll', onScroll) }
   }, [])
 
   return (

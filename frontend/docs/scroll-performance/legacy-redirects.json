@@ -1,0 +1,17 @@
+[
+  {
+    "path": "/",
+    "status": 301,
+    "location": "https://unlock-labs.pages.dev/"
+  },
+  {
+    "path": "/projects",
+    "status": 301,
+    "location": "https://unlock-labs.pages.dev/projects"
+  },
+  {
+    "path": "/projects/fixture_B02?run=run_22762d8604a74b9eac8b1b08",
+    "status": 301,
+    "location": "https://unlock-labs.pages.dev/projects/fixture_B02?run=run_22762d8604a74b9eac8b1b08"
+  }
+]

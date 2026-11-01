@@ -5,6 +5,8 @@ import { Link, navigate } from '@/router'
 import { Logo } from '@/ui/Logo'
 import { Glyph } from '@/ui/Evidence'
 import './dashboard.css'
+import { JudgeAccess } from './JudgeAccess'
+import { judgeOrigin } from '@/api/judgeSession'
 
 type UploadState =
   | { kind: 'idle' }
@@ -67,7 +69,7 @@ export default function Dashboard() {
         </Link>
         <span className="appbar__crumb">Projects</span>
         <span className="appbar__mode mono" data-connection={api.mode === 'fixture' ? 'fixture' : connection}>
-          {api.mode === 'fixture' ? 'Fixture mode, bundled examples only' : connection === 'connected' ? readOnly ? 'Read-only engineering demonstration' : 'Connected to the engineering service' : connection === 'unreachable' ? 'Engine unreachable' : 'Connecting…'}
+          {api.mode === 'fixture' ? 'Fixture mode, bundled examples only' : connection === 'connected' ? readOnly ? judgeOrigin ? 'Public B02 demo · Judge access available' : 'Read-only engineering demonstration' : 'Connected to the engineering service' : connection === 'unreachable' ? 'Engine unreachable' : 'Connecting…'}
         </span>
       </header>
 
@@ -135,12 +137,12 @@ export default function Dashboard() {
               })}
             </tbody>
           </table>
-          <p className="dash__foot">{readOnly ? 'B02 uses a real synthetic STEP assembly and previously computed verification evidence. Public access is read-only; it runs no CAD jobs or model inference.' : api.mode === 'http' ? 'B01, B02 and B03 use generated synthetic STEP assemblies. Loading and analysis execute on the connected backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
+          <p className="dash__foot">{readOnly ? 'B02 opens real synthetic CAD and previously computed verification evidence. Use Judge access to upload a supported assembly for fresh offline analysis.' : api.mode === 'http' ? 'B01, B02 and B03 use generated synthetic STEP assemblies. Loading and analysis execute on the connected backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
         </section>
 
         <aside className="dash__side" aria-label="Import a package">
-          <h2>Import a package</h2>
-          {readOnly && <p role="status">Uploads are disabled in this public demonstration. Engineering jobs require authenticated access.</p>}
+          {readOnly ? <JudgeAccess /> : <h2>Import a package</h2>}
+          {!readOnly && <>
           <div
             className={`drop ${dragging ? 'is-over' : ''}`}
             onDragOver={(e) => {
@@ -195,6 +197,7 @@ export default function Dashboard() {
             </div>
           )}
 
+          </>}
           <h3>Supported assemblies</h3>
           <dl className="spec">
             <dt>Geometry</dt>
@@ -208,7 +211,7 @@ export default function Dashboard() {
             <dt>Motion</dt>
             <dd>Axis-aligned translations only</dd>
             <dt>Size</dt>
-            <dd>25 MB compressed, 100 MB expanded</dd>
+            <dd>{readOnly ? '10 MiB compressed, 100 MiB expanded' : '25 MB compressed, 100 MB expanded'}</dd>
             <dt>Rejected</dt>
             <dd>Meshes, native CAD files, fused single bodies, flexible parts</dd>
           </dl>

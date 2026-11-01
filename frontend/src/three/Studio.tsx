@@ -1,10 +1,19 @@
 import { ContactShadows, Environment, Lightformer } from '@react-three/drei'
+import { memo } from 'react'
 
 /**
  * Procedural studio: softbox key, strip rim and floor bounce. No HDR download,
  * rendered once into the environment map so demand-mode canvases stay idle.
  */
-export function Studio({ theme, shadow = true, polished = false }: { theme: 'light' | 'dark'; shadow?: boolean; polished?: boolean }) {
+export const Studio = memo(function Studio({ theme, shadow = true, polished = false, captureRevision = 0 }: { theme: 'light' | 'dark'; shadow?: boolean; polished?: boolean; captureRevision?: string | number }) {
+  const dark = theme === 'dark'
+  return <>
+    <Lighting theme={theme} polished={polished} />
+    {shadow && <ContactShadows position={[0, -0.021, 0]} scale={4.2} far={1.2} blur={2.6} opacity={dark ? 0.6 : 0.32} resolution={512} frames={1} color={dark ? '#000000' : '#2a2c2e'} userData={{ captureRevision }} />}
+  </>
+})
+
+const Lighting = memo(function Lighting({ theme, polished }: { theme: 'light' | 'dark'; polished: boolean }) {
   const dark = theme === 'dark'
   return (
     <>
@@ -19,9 +28,6 @@ export function Studio({ theme, shadow = true, polished = false }: { theme: 'lig
         <Lightformer form="rect" intensity={dark ? 2.4 : 1.4} position={[5, 1.2, -2.5]} rotation-y={-Math.PI / 2.4} scale={[6, 0.6, 1]} />
         <Lightformer form="rect" intensity={0.6} position={[0, -3, 0]} rotation-x={-Math.PI / 2} scale={[8, 8, 1]} color={dark ? '#30353a' : '#f2f1ed'} />
       </Environment>
-      {shadow && (
-        <ContactShadows position={[0, -0.021, 0]} scale={4.2} far={1.2} blur={2.6} opacity={dark ? 0.6 : 0.32} resolution={512} frames={1} color={dark ? '#000000' : '#2a2c2e'} />
-      )}
     </>
   )
-}
+})

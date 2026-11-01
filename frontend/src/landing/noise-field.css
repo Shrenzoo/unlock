@@ -17,6 +17,7 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  contain: layout paint style;
   /* where the night plate takes over, and where it hands back (viewport px, set from script) */
   --dusk: 100000px;
   --story-bottom: 100000px;

@@ -92,7 +92,7 @@ export default function Workspace({ projectId }: { projectId: string }) {
     }
     setRun(null)
     // A newly chosen target starts a new analysis; drop the old run from the address.
-    if (state.target && window.location.search.includes('run=')) navigate(window.location.pathname, { replace: true })
+    if (state.target && window.location.search.includes('run=')) { const q = new URLSearchParams(window.location.search); q.delete('run'); navigate(window.location.pathname + (q.size ? '?' + q.toString() : ''), { replace: true }) }
     return stopActive
   }, [state.target, stopActive])
 

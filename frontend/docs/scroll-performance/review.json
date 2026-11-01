@@ -1,0 +1,43 @@
+{
+  "reviewed_at": "2026-11-01T02:11:01.944391+00:00",
+  "source_commit": "a621071",
+  "pages_deployment": "e1c4326a-98a2-4d25-ae5f-ce8cbf0cdbb9",
+  "legacy_redirect_version": "73c0fcb6",
+  "visual_samples": 18,
+  "max_layout_delta_px": 0,
+  "strict_image_target_failed": [
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "pose": 2,
+      "max_layout_delta_px": 0,
+      "mean_rgb_error_0_255": 0.15745416666666667,
+      "changed_fraction_above_8": 0.00544375
+    }
+  ],
+  "visual_review": "Accepted after inspecting amplified difference and final images. The single strict threshold miss is confined to the ground contact shadow; geometry, materials, framing and background remain intact. Shadow resolution remains 512.",
+  "modal": {
+    "plan": "Starter",
+    "usage_limit_usd": 30,
+    "spend_limit_usd": 0,
+    "displayed_credits_usd": 30,
+    "displayed_current_period_usage_usd": 0,
+    "usage_report_cycle": "Oct 1 \u2013 Oct 31, 2026",
+    "usage_report_total_usd": 0.01,
+    "usage_report_cpu_usd": 0.01,
+    "usage_report_egress_gib": 0,
+    "usage_report_deployed_apps_usd": 0,
+    "source": "Native Modal Usage limit and Usage tabs, reloaded after production tests; displayed rounded values only",
+    "billing_changes": false
+  },
+  "cloudflare": {
+    "hosting": "Pages direct upload, static only",
+    "uploaded_files": 21,
+    "served_files": 20,
+    "served_bytes": 1672529,
+    "functions": 0,
+    "paid_changes": false
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "web": "https://unlock-demo.unlock-labs.workers.dev",
+  "application_commit": "e2748ce",
+  "cloudflare_version": "5f566d30",
+  "runner": "standalone invocation of existing test_production.py assertion blocks",
+  "completed_assertion_blocks": [
+    {
+      "viewport": [
+        1600,
+        1000
+      ],
+      "completed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "completed": true
+    },
+    {
+      "name": "public compute refused and private paths hidden",
+      "completed": true
+    }
+  ],
+  "observed_stdout": [
+    "Production browser case passed: (1600, 1000)",
+    "Production browser case passed: (390, 844)",
+    "Public boundary case passed"
+  ],
+  "cleanup": {
+    "stalled_at": "browser.close()",
+    "action": "SIGINT after all assertion blocks completed",
+    "runner_exit_status": 130,
+    "clean_exit": false
+  },
+  "independent_live_landing_and_asset_checks": "passed with normal process exits"
+}

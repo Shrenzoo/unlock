@@ -18,7 +18,7 @@ function usePreview(id?: string | null) {
     if (!id) return
     const controller = new AbortController()
     setError(null)
-    fetch(api.artifactUrl(id), { signal: controller.signal }).then(async (r) => {
+    fetch(api.artifactUrl(id), { headers: api.artifactHeaders?.(), signal: controller.signal }).then(async (r) => {
       if (!r.ok) throw new Error('The CAD preview artifact could not be loaded.')
       const mesh = await r.json() as PreviewMesh
       if (mesh.units !== 'm' || !mesh.scale_already_applied) throw new Error('Unexpected preview units; rendering stopped.')
