@@ -5,13 +5,14 @@ import { ApiError, type ServiceHealth, type UnlockApi } from './client'
  * FastAPI adapter for the endpoints in PRD §20. Not exercised in this build:
  * set VITE_UNLOCK_API to the coordinator origin to enable it.
  */
-export function createHttpApi(base: string): UnlockApi {
-  const url = (p: string) => `${base.replace(/\/$/, '')}${p}`
+export function createHttpApi(source: string | (() => string), auth: () => Record<string, string> = () => ({})): UnlockApi {
+  const base = () => typeof source === 'string' ? source : source()
+  const url = (p: string) => `${base().replace(/\/$/, '')}${p}`
 
   async function call<T>(path: string, init?: RequestInit): Promise<T> {
     const res = await fetch(url(path), {
       ...init,
-      headers: { Accept: 'application/json', ...(init?.body && !(init.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}), ...init?.headers },
+      headers: { ...auth(), Accept: 'application/json', ...(init?.body && !(init.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}), ...init?.headers },
     })
     if (!res.ok) {
       const envelope = (await res.json().catch(() => null)) as ErrorEnvelope | null
@@ -27,7 +28,8 @@ export function createHttpApi(base: string): UnlockApi {
 
   return {
     mode: 'http',
-    origin: base.replace(/\/$/, ''),
+    get origin() { return base().replace(/\/$/, '') },
+    artifactHeaders: auth,
     health: async () => (await call<{ provider: ServiceHealth }>('/health')).provider,
     listProjects: () => call<ProjectSummary[]>('/v1/projects'),
     latestRevisionId: async (projectId) => {

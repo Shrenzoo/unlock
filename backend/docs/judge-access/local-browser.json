@@ -1,0 +1,26 @@
+{
+  "web": "http://127.0.0.1:5189",
+  "viewports": [
+    {
+      "size": [
+        1440,
+        1000
+      ],
+      "page_errors": [],
+      "overflow": false
+    },
+    {
+      "size": [
+        390,
+        844
+      ],
+      "page_errors": [],
+      "overflow": false
+    }
+  ],
+  "fresh_upload_verified_export": {
+    "sha256": "dec7e09fb4b97df8ce2af485b4b67a1d752803a01ae208d0b36f2cd1271f90a9",
+    "reload": true
+  },
+  "cross_session_result_refused": true
+}

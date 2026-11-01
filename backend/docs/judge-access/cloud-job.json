@@ -1,0 +1,11 @@
+{
+  "job_id": "f61e030dad7f2ad9efd4bc5d3bff8bf9",
+  "state": "completed",
+  "phase": "export",
+  "outcome": "VERIFIED_IMPROVEMENT_FOUND",
+  "error": null,
+  "elapsed_seconds": 76.325,
+  "artifact_bytes": 1784243,
+  "export_sha256": "a8d839005cba947968f4b28a4ae3b3ffbb38df16aa3a2c6cd14921894255b63e",
+  "shared_attempts_remaining": 5
+}

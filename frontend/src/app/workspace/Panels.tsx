@@ -1,3 +1,5 @@
+import { downloadPrivateArtifact } from '@/api/artifactDownload'
+import { judgeJob } from '@/api/judgeSession'
 import { useEffect, useRef, type Dispatch, type ReactNode } from 'react'
 import type { Axis, Candidate, CheckRecord, Component, PlanResult, Revision, RunRecord, StageEvent } from '@/domain/types'
 import { CheckResultTag, Glyph, ProvenanceTag } from '@/ui/Evidence'
@@ -55,7 +57,7 @@ export function EvidencePanel(props: PanelProps) {
   useEffect(() => { scroller.current?.scrollTo({ top: 0 }) }, [state.mode])
   return (
     <aside className="panel" aria-label="Evidence">
-      {props.health?.access === 'read_only' && <p className="panel__fine" role="status">Read-only demonstration. Real CAD, analysis and any verified export were computed earlier. The recorded decision policy is identified in the evidence.</p>}
+      {props.health?.access === 'read_only' && <p className="panel__fine" role="status">{judgeJob() ? 'Judge analysis result. Fresh CAD checks are complete; this view preserves the computed evidence. The offline decision policy is identified in the evidence.' : 'Read-only demonstration. Real CAD, analysis and any verified export were computed earlier. The recorded decision policy is identified in the evidence.'}</p>}
       {state.notice && (
         <div className={`panel__notice panel__notice--${state.notice.tone}`} role={state.notice.tone === 'refuse' ? 'alert' : 'status'}>
           <Glyph kind={state.notice.tone === 'refuse' ? 'fail' : 'pass'} />
@@ -489,6 +491,7 @@ function CandidateDetail({ c, run, revision, dispatch }: { c: Candidate; run: Ru
                     dispatch({ type: 'mode', mode: 'analyze' })
                     dispatch({ type: 'witness', id: run.evidence_refs?.[id] ?? id })
                   } else if (api.mode === 'http' && run.ai_report_artifact_id) {
+                    if (judgeJob()) { void downloadPrivateArtifact(run.ai_report_artifact_id, 'unlock-decision-report.html').catch(error => window.alert(error.message)); return }
                     window.open(api.artifactUrl(run.ai_report_artifact_id) + '#' + encodeURIComponent(run.evidence_refs?.[id] ?? id), '_blank', 'noopener')
                   }
                 }}
@@ -706,7 +709,7 @@ function ExportPanel({ run, state, health, onExport }: PanelProps) {
           </button>
           {exported && (
             // A plain link: the browser treats the attachment as a download, so no popup blocker can swallow it.
-            <a className="btn btn--primary btn--sm" href={api.artifactUrl(exported.artifact_id)} download data-testid="export-download" data-artifact-id={exported.artifact_id}>
+            <a className="btn btn--primary btn--sm" href={api.artifactUrl(exported.artifact_id)} onClick={e => { if (judgeJob()) { e.preventDefault(); void downloadPrivateArtifact(exported.artifact_id).catch(error => window.alert(error.message)) } }} download data-testid="export-download" data-artifact-id={exported.artifact_id}>
               Download checked package (ZIP)
             </a>
           )}

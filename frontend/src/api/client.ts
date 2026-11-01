@@ -36,6 +36,7 @@ export interface UnlockApi {
   getRun(runId: string): Promise<RunRecord>
   cancelJob(jobId: string): Promise<void>
   artifactUrl(id: string): string
+  artifactHeaders?(): Record<string, string>
   decide(candidateId: string, decision: 'accept' | 'reject', inputHash: string): Promise<{ review_event_id: string }>
   requestExport(candidateId: string): Promise<{ job_id: string }>
 }

@@ -1,0 +1,36 @@
+{
+  "pages_deployment": "2b20b62e-d550-4a36-923b-356d7649c157",
+  "application_commit": "7e01502",
+  "backend_commit": "88cc667",
+  "full_backend_suite": {
+    "passed": 342,
+    "deselected": 27,
+    "warnings": 17,
+    "elapsed_seconds": 826.48
+  },
+  "final_security_checks": {
+    "passed": 6,
+    "deselected": 1
+  },
+  "typescript": "passed",
+  "ruff": "passed",
+  "credentials_in_public_build": 0,
+  "modal": {
+    "plan": "Starter",
+    "displayed_credits_usd": 30,
+    "usage_limit_usd": 30,
+    "spend_limit_usd": 0,
+    "displayed_current_usage_usd": 0,
+    "displayed_current_charges_usd": 0,
+    "billing_changes": false,
+    "source": "Reloaded native Modal Usage limit panel after real cloud job; rounded/delayed UI values"
+  },
+  "cloud_verification_jobs": 1,
+  "shared_attempts_remaining": 5,
+  "limitations": [
+    "Cloud startup can exceed five seconds; browser checks allow startup time.",
+    "The initial live upload test referenced temporary fixtures removed by pytest cleanup; stable fixtures were regenerated and the full live test passed.",
+    "Full production private-result workflow tested at desktop size; mobile judge sign-in and cross-session denial tested separately; public B02 viewer and comparison tested at desktop and mobile.",
+    "Judge uploads and results remain private on the existing Volume until operator cleanup; sessions expire after two hours."
+  ]
+}

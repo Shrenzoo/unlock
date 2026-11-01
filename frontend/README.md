@@ -5,7 +5,11 @@ React 19 + TypeScript + Vite, with Three.js through React Three Fiber and Drei. 
 Public read-only B02 demonstration: <https://unlock-labs.pages.dev>. The previous
 Workers URL redirects here, including workspace paths and query parameters.
 Its Modal API serves recorded CAD results from an offline scripted decision policy.
-Uploads, live AI inference and engineering mutations are disabled. See the
+Anonymous uploads and engineering mutations are disabled. Judges can enter a
+private code on Projects to upload supported CAD packages for bounded fresh
+offline analysis. Live AI inference remains disabled. See the
+[judge access report](../backend/docs/JUDGE_ACCESS.md) for session ownership, quotas
+and actual cloud/browser verification, and the
 [launch report](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) for licensing, usage,
 production browser evidence and deployment settings.
 The [initial UI presentation update](docs/UI_POLISH.md) records the noise field
@@ -83,7 +87,8 @@ comes from `fixtures/b02.ts`; import, review decisions and export throw
 Build from this directory with the actual backend origin:
 
 ```bash
-VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run npm run build:public
+VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run \
+VITE_UNLOCK_JUDGE_API=https://shreyas-pabbathi--unlock-judges-web.us-east.modal.run npm run build:public
 ```
 
 Upload only the contents of `dist/` to the existing **Pages** project
@@ -91,7 +96,9 @@ Upload only the contents of `dist/` to the existing **Pages** project
 has no top-level `404.html`. Keep `_headers`, `favicon.svg` and dependency notices
 in the upload. No Functions, runtime secrets or paid services are needed.
 
-The API's exact CORS origins include `https://unlock-labs.pages.dev`; its selected
+The judge API is separately deployed with its code hash in a server-side Secret.
+Never put the code, session token or any Modal/API token in a VITE variable.
+The public API's exact CORS origins include `https://unlock-labs.pages.dev`; its selected
 B02 job remains unchanged. Public builds reject localhost, missing or
 credential-bearing API URLs and illustrative fixture mode.
 
