@@ -6,6 +6,16 @@ the six-project gallery `a0de2889d0634a48a1eb8ac879341e9e`; the
 [gallery release record](GALLERY.md#release-record-2026-11-01) lists its jobs,
 checks and cost. The licensed B02 job below remains the rollback.
 
+[Judge access](JUDGE_ACCESS.md) adds a private code flow for bounded uploads
+and fresh offline analysis, following explicit user authorization. The separate
+`unlock-judges` gateway authenticates and owns every private job/result request;
+the public `unlock-demo` API serves only the licensed read-only snapshots. Live
+AI remains disabled. It was first published as Pages deployment
+`2b20b62e-d550-4a36-923b-356d7649c157` (application commit `7e01502`). After
+judge verification, Modal displayed a $30 usage limit, $0 spend limit and $30.00
+credits; the exact native workflow took 76.325 seconds and used one of six
+shared attempts.
+
 Previous website release: Pages production deployment
 `e1c4326a-98a2-4d25-ae5f-ce8cbf0cdbb9`, application commit `a621071`.
 The [scroll performance and Pages release](../../frontend/docs/SCROLL_PERFORMANCE.md)
