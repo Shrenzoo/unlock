@@ -10,7 +10,7 @@ let lenis: Lenis | null = null
 /** Smooth scrolling for the landing page only; the workspace keeps native scroll. */
 export function startSmoothScroll() {
   if (prefersReducedMotion() || lenis) return () => {}
-  lenis = new Lenis({ duration: 1.1, easing: (t) => 1 - Math.pow(1 - t, 4) })
+  lenis = new Lenis({ duration: 0.8, easing: (t) => 1 - Math.pow(1 - t, 4) })
   lenis.on('scroll', ScrollTrigger.update)
   const tick = (time: number) => lenis?.raf(time * 1000)
   gsap.ticker.add(tick)
