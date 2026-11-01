@@ -104,8 +104,8 @@ is a composed snapshot of one completed private job per fixture, B02 included.
 `validate_public_gallery` refuses to serve unless every project has one recorded
 offline run, a recorded grant and its expected outcome, verified exports pass
 their member-hash and licensing checks, and refusals carry no export. A
-single-job B02 snapshot is still accepted, so the current deployment keeps
-working until the gallery replaces it.
+single-job B02 snapshot is still accepted, which kept the earlier deployment
+working until the gallery replaced it and keeps it available for rollback.
 
 Order matters. The new frontend works against the current single-B02 API (it
 falls back to `demo_run_id`, and the Result column shows "—"), so release it
@@ -141,9 +141,66 @@ first; switching the API afterwards then has no broken window.
    recorded run, then run the production browser test (`UNLOCK_PRODUCTION_WEB`
    and `UNLOCK_PRODUCTION_API` set, `pytest -m browser tests/browser/test_production.py`).
 
-Rollback: redeploy `modal_web.py` with the previous B02 job ID. The guard still
-accepts that original single-job snapshot, and the new frontend falls back to
-`demo_run_id`.
+Rollback: redeploy `modal_web.py` with the previous B02 job ID,
+`UNLOCK_DEMO_JOB=9ad44594b93d4d0b860e8efda623b2d6`. The guard still accepts that
+original single-job snapshot, and the new frontend falls back to `demo_run_id`.
+
+## Release record (2026-11-01)
+
+Released 2026-11-01 from `main` at `15324be` (PR #18), following the steps above.
+Raw reports are in [evidence/gallery-release](../evidence/gallery-release/).
+
+**Before.** Cloudflare was still serving an older build (production deployment
+`2b20b62e`) without the Result column, and the API served the single B02 job.
+The Modal dashboard showed Starter, a $30 usage limit, a $0 spend limit, $29.99
+credits and $0 charges before any cloud work, and the same afterwards.
+
+**Frontend.** `npm run build:public` with the production API origin, uploaded as
+a zip of `dist/` (21 files) through the dashboard to `unlock-labs`, Production:
+deployment `e73c7891`. The served Dashboard chunk is byte-identical to the local
+build; `/`, `/projects` and deep links return the app, and the `_headers`
+security headers are present.
+
+**Private jobs.** `modal deploy modal_app.py` (no secret, live inference off),
+then `modal run modal_app.py::gallery` in ephemeral app
+`ap-HgIADuVeVvxOfvKFtR8Mxm`:
+
+| Fixture | Job | Outcome | Time | Export SHA-256 |
+|:--|:--|:--|--:|:--|
+| B02 | `f30b648b…` | Verified improvement | 67 s | `61e1b25d…` |
+| B04 | `0f615938…` | Verified improvement | 99 s | `adacbaa1…` |
+| B05 | `22f4428f…` | Verified improvement | 57 s | `b5f41a4c…` |
+| B06 | `7ead9ac8…` | Verified improvement | 59 s | `28954fcf…` |
+| B07 | `16aca150…` | Incomplete analysis | 54 s | none |
+| B08 | `20526da7…` | No supported candidate | 20 s | none |
+
+Every outcome matched its pre-registered expectation; full IDs and hashes are in
+`validation.json`. `compose_gallery` validated gallery
+`a0de2889d0634a48a1eb8ac879341e9e` before committing it to the Volume.
+
+**Independent check.** The gallery was downloaded from the Volume and validated
+locally: the guard accepted all six outcomes; 100/100 reads; 71/71 artifacts
+hash-exact; 28/28 write attempts refused; unknown project and artifact,
+traversal, foreign origin and foreign host rejected; the four exports carry exact
+notice, attribution and rights-line files. A scan of 162 public payloads found no
+known credential value. Its only email matches are dependency authors already in
+`THIRD_PARTY_NOTICES.txt`, and its only "signature" match is three.js code.
+
+**Public API.** `modal deploy modal_web.py` with that gallery and the unchanged
+origin list `https://unlock-labs.pages.dev,https://unlock-demo.unlock-labs.workers.dev`.
+`/health` reports read-only, mock provider, no credentials and one recorded run
+per project; a foreign origin and an anonymous POST both get 403.
+
+**Acceptance.** `tests/browser/test_production.py` against the live URLs:
+3 passed. A separate read-only pass opened all six projects: each table row and
+workspace shows the API's recorded outcome and run, the part tree matches the
+API, and only GET requests were made, on desktop and mobile. Each workspace
+was also checked in a real Chrome window and renders its BRep model.
+
+**Cost.** Modal's metered summary (preliminary and unrounded) attributes
+$0.00788871 to the ephemeral gallery run; deployed apps rose by $0.00077994
+over the release. The amount billed was $0.00. No Modal containers were left
+running.
 
 ## Tests
 
