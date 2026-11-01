@@ -34,7 +34,7 @@ GALLERY = dict(
         name="Service hatch behind a shield",
         description="Hatch screw sits under a fixed shield; no permitted edit can free it",
         expected="INCOMPLETE_ANALYSIS",
-        explanation="screw1 retains the hatch; the driver axis above it crosses the fixed 0.2 mm shield at z=35. The bridge is the only editable part and is not in the way, so the verifier rejects each bracket edit with screw1 TOOL_ACCESS_BLOCKED. First registered as NO_VERIFIED_IMPROVEMENT; the first run showed the controller's 6-turn budget leaves the third constructed candidate unchecked, so the honest recorded outcome is INCOMPLETE_ANALYSIS.",
+        explanation="screw1 retains the hatch; the driver axis above it crosses the 0.2 mm top of the fixed shield can at z=35. The bridge is the only editable part and is not in the way, so the verifier rejects each bracket edit with screw1 TOOL_ACCESS_BLOCKED. First registered as NO_VERIFIED_IMPROVEMENT; the first run showed the controller's 6-turn budget leaves the third constructed candidate unchecked, so the honest recorded outcome is INCOMPLETE_ANALYSIS.",
     ),
     B08=dict(
         name="Filter cartridge, already serviceable",

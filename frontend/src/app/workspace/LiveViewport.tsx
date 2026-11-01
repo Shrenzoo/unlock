@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type Dispatch, type MutableRefObj
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import * as THREE from 'three'
 import { api } from '@/api'
-import type { PlanResult, PreviewMesh, Revision, RunRecord, Vec3 } from '@/domain/types'
+import type { ComponentRole, PlanResult, PreviewMesh, Revision, RunRecord, Vec3 } from '@/domain/types'
 import { hasWebGL } from '@/three/units'
 import { selectedCandidate, type Action, type WorkspaceState } from './model'
 
@@ -39,6 +39,10 @@ function offsetsFor(plan: PlanResult | null | undefined, position: number) {
   })
   return offsets
 }
+
+/** Neutral tones by role so part detail reads; hue stays reserved for evidence (target, obstruction, change). */
+const NEUTRAL = '#aeb5b6'
+const ROLE_TONE: Partial<Record<ComponentRole, string>> = { electronics: '#8a9390', fastener: '#cdd2d4' }
 
 function Part({ component, color, opacity, offset, visible, dispatch }: { component: PreviewMesh['components'][number]; color: string; opacity: number; offset: Vec3; visible: boolean; dispatch: Dispatch<Action> }) {
   const geometry = useMemo(() => {
@@ -106,6 +110,7 @@ function SyncControls({ links, index, busy }: { links: MutableRefObject<Array<Li
 
 export function LiveViewport({ revision, run, state, dispatch }: Props) {
   const original = usePreview(revision.preview_artifact_id)
+  const roles = useMemo(() => new Map(revision.manifest.components.map((c) => [c.id, c.role])), [revision])
   const candidate = selectedCandidate(run, state)
   const revised = usePreview(candidate?.preview_artifact_id)
   const compare = state.mode === 'compare'
@@ -147,7 +152,7 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
         {mesh.components.map((c) => {
           const id = c.occurrence_id
           const selected = state.selected === id || state.hovered === id
-          const color = witness?.obstacle_ids.includes(id) ? '#c78a28' : selected ? '#63a3c0' : state.target === id ? '#4287b4' : revisedSide && candidate?.diff?.changed_component_id === id ? candidate.state === 'checked' ? '#6a9b7a' : '#6b9baf' : '#aeb5b6'
+          const color = witness?.obstacle_ids.includes(id) ? '#c78a28' : selected ? '#63a3c0' : state.target === id ? '#4287b4' : revisedSide && candidate?.diff?.changed_component_id === id ? candidate.state === 'checked' ? '#6a9b7a' : '#6b9baf' : ROLE_TONE[roles.get(id) as ComponentRole] ?? NEUTRAL
           return <Part key={id} component={c} color={color} opacity={state.xray && state.target !== id ? 1 - state.xray * 0.85 : 1} offset={offsets[id] ?? [0, 0, 0]} visible={!state.hidden.includes(id) && !witness?.removed_ids?.includes(id) && (!state.isolated || state.isolated === id)} dispatch={dispatch} />
         })}
       </group>

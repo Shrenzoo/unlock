@@ -30,11 +30,68 @@ As in B02, parts float with at least 2 mm clearance (simplified workholding).
 Resting parts directly on the base produced tangent contacts the engine refuses
 without a declared contact, which is correct behaviour, so the layouts avoid it.
 The bracket stays at the world origin because the offline policy maps BRep
-witness coordinates straight onto the template domain. Cylinders are centred on
-their placement; boxes are placed by their lower corner.
+witness coordinates straight onto the template domain. Every part is placed by
+the lower corner of its bounding box.
 
 These are synthetic examples, not validated products. Shared constructor and
 simplified mating mean they cannot establish industrial generalization.
+
+## Detailed geometry (2026-11-01)
+
+The first gallery used plain blocks and cylinders, so the five products looked
+alike. `fixture_parts.py` now builds each part as one closed, detailed solid:
+
+| Fixture | Product | Parts beyond target, bracket and screws |
+|:--|:--|:--|
+| B04 | Pump skid | Slotted chassis with recessed bay; foot-mounted motor with terminal box; horizontal coolant tank on saddles; two bulkhead ports with hex nuts and barbs; controller board |
+| B05 | Battery bay | Second module; two saddle racks; monitor board; power connector; bolted fuse carrier; wiring duct |
+| B06 | Sensor housing | Rounded housing plate; pedestal mount; cable gland; top-hat rail; signal board; whip antenna; two-cell holder |
+| B07 | Relay panel | Shield can over the hatch screw; service bay under the hatch; relay; terminal block; screw standoff |
+| B08 | Air purifier | Filter tray; axial fan; vented side walls; control board; power inlet; screw standoffs |
+
+The targets carry detail too (pump head and handle, terminal posts and vents,
+lens bezel, counterbored hatch, pleated filter media). The viewer also tints
+electronics a darker neutral and fasteners a lighter one, so detail reads without
+borrowing the colours that carry evidence. Three rules kept every pre-registered
+outcome intact:
+
+- **Targets keep their registered boxes exactly.** The planner certifies motion
+  with bounding boxes, so a target's detail lives inside the box its outcome was
+  registered with. `tests/test_gallery.py` pins all five.
+- **No fixed part's box crosses a moving path.** A box overlapping the upward
+  sweep of a target, a screw or the driver turns a certified answer into
+  "unknown". Supports stop below the parts they hold (cradles, tray, pedestal,
+  standoffs, service bay), and the test checks every fixture.
+- **Detail must fit the verifier's time budget.** The redesign loop has 120 s and
+  each verifier phase 30 s. Import, verification and preview evaluate exact BRep
+  distance for every pair of parts, and that is slow between many parallel flat
+  faces (fins, louvers, combs) or parallel cylinders. So repeated detail uses
+  few round features, the motor, screws and tank axes differ, and the B07 shield
+  is a plain can. The first detailed draft was too heavy: B04 and B05 ran out of
+  time and ended `INCOMPLETE_ANALYSIS`, and the runner refused to record them.
+
+Two outcomes are time-sensitive by construction, so their fixtures stay lighter.
+B04 must verify its second relief inside the 120 s budget. B07 must finish its
+second verification with more than 10 s left, or the toolbox withholds a retry,
+the scripted policy stops, and the run records `NO_VERIFIED_IMPROVEMENT` instead
+of `INCOMPLETE_ANALYSIS`. A 12-part B07 did exactly that once, at 116 s, during a
+full test run on a busy machine; the 10-part B07 finished that verification at
+78 s under a load average of 15 to 20 on 10 cores.
+
+Final geometry, and `pytest -m gallery` times on this Mac while other applications
+kept the load average between 9 and 28 (the engine is single-threaded; Modal
+previously ran these jobs within about 10% of an idle local run):
+
+| Fixture | Parts | Faces | Preview triangles | Job | Outcome |
+|:--|--:|--:|--:|--:|:--|
+| B04 | 10 | 277 | 30,160 | 152 s | Verified improvement (second relief) |
+| B05 | 12 | 400 | 31,268 | 150 s | Verified improvement (strap moved) |
+| B06 | 11 | 286 | 31,142 | 116 s | Verified improvement |
+| B07 | 10 | 215 | 20,914 | 99 s | Incomplete analysis (turn budget) |
+| B08 | 12 | 396 | 37,046 | 57 s | No supported candidate (3-step route) |
+
+The first gallery had 39 to 64 faces per fixture and about 2,000 to 3,600 preview
+triangles. B02 is the team's own licensed geometry and is unchanged.
 
 ## Corrections made on the way, recorded rather than hidden
 
@@ -205,7 +262,9 @@ running.
 ## Tests
 
 - `tests/test_gallery.py`: every gallery fixture imports analysis-ready with
-  5–12 parts and its grant, and differs from B02. Default suite.
+  5–12 parts and its grant, and differs from B02. Each target keeps its
+  registered box, no fixed part's box crosses a moving or driver path, and each
+  fixture carries at least 200 faces. Default suite.
 - `tests/test_deployment.py`: composes B02 + B07 + B08, checks the guard, the
   per-project recorded runs and outcomes over HTTP, and tampering refusals
   (claimed success, relicensing, missing B02, duplicate project). It also proves

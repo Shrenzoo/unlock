@@ -10,6 +10,7 @@ from .contracts import Binding, Manifest
 from .geometry import bounds
 from .fixture_catalog import GALLERY as CATALOG
 from .fixture_license import B02_PROVENANCE
+from .fixture_parts import PARTS
 from .templates import SERVER_DOMAINS, construct
 
 
@@ -225,25 +226,58 @@ def generate_fixture(directory: Path, code="B02", *, held_out=False):
     return directory
 
 
-# Gallery fixtures: original synthetic layouts around the same bridge constructor.
+# Gallery fixtures: original synthetic products around the same bridge constructor.
 # Names and pre-registered outcomes live in fixture_catalog. Parts are
-# (id, display name, role, shape spec, lower corner in mm; cylinders centred).
+# (id, display name, role, shape spec, lower corner in mm); a spec names a
+# fixture_parts builder and its arguments. Targets keep the exact boxes their
+# outcomes were registered with. No fixed part's box may cross the upward path
+# of a target, a screw or the driver: the planner certifies motion with boxes,
+# so such an overlap would turn a certified result into "unknown".
 GALLERY = dict(
     B04=dict(
         bridge=dict(span=112, web_underside_height_mm=44),
-        target=("Pump cartridge", "service_module", ("box", 20, 10, 22), (-10, -5, 14)),
+        target=("Pump cartridge", "service_module", ("cartridge", {}), (-10, -5, 14)),
         parts=[
-            ("base", "Pump chassis", "chassis", ("box", 190, 124, 3), (-95, -62, -10)),
-            ("motor", "Drive motor", "electronics", ("cyl", 14, 30), (-74, 34, -5)),
-            ("inlet", "Inlet port", "chassis", ("cyl", 6, 14), (76, 34, -5)),
-            ("outlet", "Outlet port", "chassis", ("cyl", 6, 14), (76, -34, -5)),
+            (
+                "base",
+                "Pump chassis",
+                "chassis",
+                (
+                    "plate",
+                    dict(
+                        w=190,
+                        d=124,
+                        corner=8,
+                        holes=[(6, 6, 3), (184, 6, 3), (6, 118, 3), (184, 118, 3)],
+                        slots=[(95, 12, 70, 6, 0)],
+                        pockets=[(95, 62, 36, 26, 1.0)],
+                    ),
+                ),
+                (-95, -62, -10),
+            ),
+            ("motor", "Drive motor", "electronics", ("motor", {}), (-90, 22, -5)),
+            ("inlet", "Inlet port", "chassis", ("port", {}), (76, 25, -5)),
+            ("outlet", "Outlet port", "chassis", ("port", {}), (76, -41, -5)),
             (
                 "controller",
                 "Controller board",
                 "electronics",
-                ("box", 26, 18, 2),
-                (-30, 38, -4),
+                (
+                    "pcb",
+                    dict(
+                        w=34,
+                        d=24,
+                        parts=[
+                            ("ic", 5, 5, 9, 7, 1.4),
+                            ("cap", 27, 7, 2.6, 6),
+                            ("cap", 27, 15, 2, 4.5),
+                            ("conn", 5, 16, 12, 5, 4),
+                        ],
+                    ),
+                ),
+                (-12, 34, -4),
             ),
+            ("reservoir", "Coolant tank", "chassis", ("tank", {}), (28, 26, -5)),
         ],
         screws=[(-84, -50, -5), (84, 50, -5)],
         envelope=([-100, -70, -15], [100, 70, 60]),
@@ -251,23 +285,66 @@ GALLERY = dict(
     B05=dict(
         bridge=dict(span=128, web_depth_mm=24, web_underside_height_mm=30),
         templates=("T02",),
-        target=("Battery pack", "service_module", ("box", 44, 22, 16), (-22, 4, 10)),
+        target=("Battery pack", "service_module", ("battery", {}), (-22, 4, 10)),
         parts=[
-            ("base", "Battery tray", "chassis", ("box", 180, 130, 3), (-90, -65, -10)),
             (
-                "spare",
-                "Second pack",
-                "electronics",
-                ("box", 44, 22, 16),
-                (-22, -52, 10),
+                "base",
+                "Battery tray",
+                "chassis",
+                (
+                    "plate",
+                    dict(
+                        w=180,
+                        d=130,
+                        corner=10,
+                        holes=[
+                            (7, 7, 3.2),
+                            (173, 7, 3.2),
+                            (7, 123, 3.2),
+                            (173, 123, 3.2),
+                        ],
+                        slots=[(150, 45 + 10 * i, 14, 3, 90) for i in range(5)],
+                        pockets=[(90, 80, 52, 30, 0.8), (90, 24, 52, 30, 0.8)],
+                    ),
+                ),
+                (-90, -65, -10),
             ),
-            ("bms", "Monitor board", "electronics", ("box", 30, 20, 2), (-80, -50, -5)),
+            ("spare", "Second pack", "electronics", ("battery", {}), (-22, -52, 10)),
+            ("cradle", "Pack cradle", "chassis", ("cradle", {}), (-24, 2, -5)),
+            ("spare_cradle", "Spare cradle", "chassis", ("cradle", {}), (-24, -54, -5)),
+            (
+                "bms",
+                "Monitor board",
+                "electronics",
+                (
+                    "pcb",
+                    dict(
+                        w=30,
+                        d=20,
+                        parts=[
+                            ("ic", 4, 5, 10, 6, 1.2),
+                            ("ic", 17, 5, 6, 6, 1.0),
+                            ("header", 4, 14, 6, 2.54),
+                            ("cap", 26, 9, 2, 5),
+                        ],
+                    ),
+                ),
+                (-82, -50, -5),
+            ),
             (
                 "connector",
                 "Pack connector",
                 "electronics",
-                ("box", 10, 8, 8),
-                (30, -40, -5),
+                ("connector", {}),
+                (30, -42, -5),
+            ),
+            ("fuse", "Main fuse", "electronics", ("fuse_holder", {}), (30, 30, -5)),
+            (
+                "duct",
+                "Wiring duct",
+                "chassis",
+                ("duct", dict(length=100)),
+                (-50, 46, -5),
             ),
         ],
         screws=[(-80, 55, -5), (80, -55, -5)],
@@ -276,17 +353,60 @@ GALLERY = dict(
     B06=dict(
         bridge=dict(span=80, web_depth_mm=60, web_underside_height_mm=28),
         binding=dict(maximum_cut_volume_mm3=1200),
-        target=("Sensor pod", "service_module", ("box", 14, 4, 10), (-7, -22, 12)),
+        target=("Sensor pod", "service_module", ("sensor_pod", {}), (-7, -22, 12)),
         parts=[
-            ("base", "Sensor housing", "chassis", ("box", 130, 96, 3), (-65, -48, -10)),
-            ("gland", "Cable gland", "chassis", ("cyl", 4, 10), (52, 30, -5)),
-            ("rail", "Mounting rail", "chassis", ("box", 90, 6, 4), (-45, 38, -5)),
+            (
+                "base",
+                "Sensor housing",
+                "chassis",
+                (
+                    "plate",
+                    dict(
+                        w=130,
+                        d=96,
+                        corner=22,
+                        holes=[
+                            (12, 48, 2.6),
+                            (118, 48, 2.6),
+                            (34, 10, 2.6),
+                            (96, 10, 2.6),
+                            (34, 86, 2.6),
+                            (96, 86, 2.6),
+                        ],
+                        pockets=[(65, 26, 34, 14, 0.8)],
+                    ),
+                ),
+                (-65, -48, -10),
+            ),
+            ("mount", "Sensor mount", "chassis", ("pedestal", {}), (-10, -26, -5)),
+            ("gland", "Cable gland", "chassis", ("gland", {}), (46, 24, -5)),
+            ("rail", "Mounting rail", "chassis", ("hat_rail", {}), (-45, 37, -5)),
             (
                 "board",
                 "Signal board",
                 "electronics",
-                ("box", 20, 14, 2),
-                (-60, -40, -5),
+                (
+                    "pcb",
+                    dict(
+                        w=26,
+                        d=18,
+                        parts=[
+                            ("ic", 4, 5, 8, 6, 1.2),
+                            ("cap", 18, 6, 1.8, 4),
+                            ("header", 4, 13, 6, 2.54),
+                            ("conn", 19, 9, 6, 5, 4),
+                        ],
+                    ),
+                ),
+                (-60, -42, -5),
+            ),
+            ("antenna", "Antenna", "electronics", ("antenna", {}), (30, -43, -5)),
+            (
+                "cells",
+                "Battery holder",
+                "electronics",
+                ("battery_holder", {}),
+                (6, 13, -5),
             ),
         ],
         screws=[(-58, 40, -5), (58, -40, -5)],
@@ -294,41 +414,133 @@ GALLERY = dict(
     ),
     B07=dict(
         bridge=dict(span=96),
-        target=("Service hatch", "cover", ("box", 20, 10, 2), (55, 35, 20)),
+        target=("Service hatch", "cover", ("hatch", {}), (55, 35, 20)),
         parts=[
-            ("base", "Panel chassis", "chassis", ("box", 150, 110, 3), (-75, -55, -10)),
-            ("shield", "EMI shield", "chassis", ("box", 12, 12, 0.2), (-66, 29, 35)),
-            ("relay", "Relay", "electronics", ("box", 14, 14, 12), (-30, 40, -5)),
+            (
+                "base",
+                "Panel chassis",
+                "chassis",
+                (
+                    "plate",
+                    dict(
+                        w=160,
+                        d=110,
+                        corner=4,
+                        holes=[(6, 6, 3), (154, 6, 3), (6, 104, 3), (154, 104, 3)],
+                    ),
+                ),
+                (-80, -55, -10),
+            ),
+            # B07's outcome depends on its second verification finishing with
+            # more than 10 s of the redesign budget left, so it stays lighter.
+            ("shield", "EMI shield", "chassis", ("shield_can", {}), (-71, 22.6, -5)),
+            ("bay", "Service bay", "chassis", ("enclosure", {}), (52, 31.5, -5)),
+            ("relay", "Relay", "electronics", ("relay", {}), (-32, 34, -5)),
             (
                 "terminal",
                 "Terminal block",
                 "electronics",
-                ("box", 24, 10, 8),
-                (10, -50, -5),
+                ("terminal_block", dict(n=4)),
+                (12, -52, -5),
+            ),
+            (
+                "post1",
+                "Standoff 1",
+                "chassis",
+                ("standoff", dict(h=13)),
+                (-62.88675, 32.5, -6),
             ),
         ],
         screws=[(-60, 35, 8), (60, -35, 8)],
         retainers=("screw1",),
-        envelope=([-80, -60, -15], [80, 60, 50]),
+        envelope=([-85, -60, -15], [85, 60, 50]),
     ),
     B08=dict(
         target=(
             "Filter cartridge",
             "service_module",
-            ("box", 40, 24, 14),
+            ("filter_cartridge", {}),
             (-20, -12, 2),
         ),
         parts=[
-            ("base", "Purifier base", "chassis", ("box", 150, 100, 3), (-75, -50, -10)),
-            ("fan", "Fan", "electronics", ("cyl", 14, 12), (50, 28, -5)),
-            ("wall_left", "Left wall", "chassis", ("box", 4, 80, 24), (-72, -40, -5)),
-            ("wall_right", "Right wall", "chassis", ("box", 4, 80, 24), (68, -40, -5)),
+            (
+                "base",
+                "Purifier base",
+                "chassis",
+                (
+                    "plate",
+                    dict(
+                        w=150,
+                        d=100,
+                        corner=12,
+                        holes=[(6, 6, 3), (144, 6, 3), (6, 94, 3), (144, 94, 3)],
+                        slots=[(124, 72 + 5 * i, 22, 3, 0) for i in range(5)],
+                    ),
+                ),
+                (-75, -50, -10),
+            ),
+            (
+                "tray",
+                "Filter tray",
+                "chassis",
+                ("cradle", dict(w=44, d=30, h=6, saddles=3)),
+                (-22, -15, -5),
+            ),
+            ("fan", "Fan", "electronics", ("fan", {}), (34, 18, -5)),
+            (
+                "wall_left",
+                "Left wall",
+                "chassis",
+                ("vented_wall", dict(lip=1)),
+                (-72, -40, -5),
+            ),
+            (
+                "wall_right",
+                "Right wall",
+                "chassis",
+                ("vented_wall", dict(lip=-1)),
+                (66, -40, -5),
+            ),
             (
                 "board",
                 "Control board",
                 "electronics",
-                ("box", 24, 14, 2),
-                (-55, 25, -5),
+                (
+                    "pcb",
+                    dict(
+                        w=30,
+                        d=20,
+                        parts=[
+                            ("ic", 5, 6, 9, 7, 1.4),
+                            ("cap", 20, 6, 2.2, 5),
+                            ("cap", 25, 6, 1.6, 3.5),
+                            ("header", 4, 15, 5, 2.54),
+                            ("sink", 17, 11, 8, 4, 4, 4),
+                        ],
+                    ),
+                ),
+                (-60, 24, -5),
+            ),
+            (
+                "inlet",
+                "Power inlet",
+                "electronics",
+                ("power_inlet", {}),
+                (-58, -48, -5),
+            ),
+            (
+                "post1",
+                "Standoff 1",
+                "chassis",
+                ("standoff", dict(h=9)),
+                (-34.88675, -2.5, -6),
+            ),
+            (
+                "post2",
+                "Standoff 2",
+                "chassis",
+                ("standoff", dict(h=9)),
+                (29.11325, -2.5, -6),
             ),
         ],
         screws=[(-32, 0, 4), (32, 0, 4)],
@@ -339,8 +551,10 @@ GALLERY = dict(
 
 
 def _shape(spec):
-    kind, *size = spec
-    return cq.Solid.makeBox(*size) if kind == "box" else cq.Solid.makeCylinder(*size)
+    kind, *args = spec
+    if kind == "box":
+        return cq.Solid.makeBox(*args)
+    return PARTS[kind](**args[0])
 
 
 def generate_gallery_fixture(directory: Path, code):
