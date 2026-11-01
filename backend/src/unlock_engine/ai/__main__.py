@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 
 from ..artifacts import atomic_write
+from ..fixture_catalog import GALLERY
 
 
 def _write(path: Path, data):
@@ -87,7 +88,9 @@ def main(argv=None):
     )
     smoke.add_argument("--fixture", default="B01", choices=["B01", "B02", "B03"])
     demo = sub.add_parser("demo", help="end-to-end redesign run on a synthetic fixture")
-    demo.add_argument("--fixture", default="B02", choices=["B01", "B02", "B03"])
+    demo.add_argument(
+        "--fixture", default="B02", choices=["B01", "B02", "B03", *sorted(GALLERY)]
+    )
     demo.add_argument("--target", default="target")
     demo.add_argument(
         "--offline",

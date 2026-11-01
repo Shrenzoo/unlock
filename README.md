@@ -615,14 +615,19 @@ One run on one synthetic fixture is a protocol check, not a statistical comparis
 
 What the run *does* establish, unambiguously: **a frontier model drove a real CAD redesign loop, was caught by its own guardrails mid-run, recovered, and produced a physically real, independently verified improvement in 48 seconds.**
 
+### A second live run: the battery bay (B05)
+
+On 2026-11-01 one authorised live run, with the same limits and prompt, gave Muse Spark 1.3 the B05 battery bay, where a retaining strap blocks the pack. Muse inspected the obstruction, the allowed edits, the removal analysis and the bounds of the pack and strap, then proposed moving the strap −12 mm, citing valid evidence on the first attempt. All 7 tool calls passed validation, and the edit verified in 73.3 s: `VERIFIED_IMPROVEMENT_FOUND`, nothing cut. The offline scripted policy picks the same offset, so again Muse matched rather than beat the deterministic path. Full record: [`backend/docs/LIVE_B05_REDESIGN.md`](backend/docs/LIVE_B05_REDESIGN.md).
+
 ### API usage
 
 | | Requests | Input tokens | Output tokens | Total | Latency |
 |:--|--:|--:|--:|--:|--:|
 | Tool-calling check (B01) | 2 | 2,903 | 411 (199 reasoning) | 3,314 | 5.77 s |
 | Full redesign (B02) | 6 | 28,272 (16,068 cached) | 2,850 (1,596 reasoning) | 31,122 | 20.0 s model / 48.1 s wall |
+| Full redesign (B05) | 6 | 29,621 (14,803 cached) | 3,013 (1,822 reasoning) | 32,634 | 16.8 s model / 73.3 s wall |
 
-Estimated **$0.0054** and **$0.0298** respectively at Meta's public Standard list price. Both figures are list-price estimates from [Meta's published pricing](https://dev.meta.ai/docs/pricing-rate-limits), not account-verified charges — the API reports no credit balance. Reported rate limits: 3,000 requests and 4,000,000 tokens per minute.
+Estimated **$0.0054**, **$0.0298** and **$0.0335** respectively at Meta's public Standard list price. Both figures are list-price estimates from [Meta's published pricing](https://dev.meta.ai/docs/pricing-rate-limits), not account-verified charges — the API reports no credit balance. Reported rate limits: 3,000 requests and 4,000,000 tokens per minute.
 
 ---
 
