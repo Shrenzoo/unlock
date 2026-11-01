@@ -43,14 +43,14 @@ alike. `fixture_parts.py` now builds each part as one closed, detailed solid:
 
 | Fixture | Product | Parts beyond target, bracket and screws |
 |:--|:--|:--|
-| B04 | Pump skid | Slotted chassis with recessed bay; foot-mounted motor with terminal box; horizontal coolant tank on saddles; two bulkhead ports with hex nuts and barbs; controller board |
-| B05 | Battery bay | Second module; two saddle racks; monitor board; power connector; bolted fuse carrier; wiring duct |
-| B06 | Sensor housing | Rounded housing plate; pedestal mount; cable gland; top-hat rail; signal board; whip antenna; two-cell holder |
-| B07 | Relay panel | Shield can over the hatch screw; service bay under the hatch; relay; terminal block; screw standoff |
-| B08 | Air purifier | Filter tray; axial fan; vented side walls; control board; power inlet; screw standoffs |
+| B04 | Pump skid | Slotted chassis with recessed bay; foot-mounted motor with terminal box; horizontal coolant tank on saddles; two bulkhead ports with hex nuts and barbs |
+| B05 | Battery bay | Second module resting on the tray; saddle rack; monitor board; power connector |
+| B06 | Sensor housing | Rounded housing plate; pedestal mount; cable gland; signal board; whip antenna |
+| B07 | Relay panel | Shield can over the hatch screw; service bay under the hatch; relay; terminal block |
+| B08 | Air purifier | Filter tray; axial fan; vented side walls; control board; screw standoffs |
 
-The targets carry detail too (pump head and handle, terminal posts and vents,
-lens bezel, counterbored hatch, pleated filter media). The viewer also tints
+The targets carry detail too (pump head and handle, terminal posts on a recessed
+lid, lens bezel and LED, counterbored hatch, pleated filter media). The viewer also tints
 electronics a darker neutral and fasteners a lighter one, so detail reads without
 borrowing the colours that carry evidence. Three rules kept every pre-registered
 outcome intact:
@@ -69,6 +69,8 @@ outcome intact:
   few round features, the motor, screws and tank axes differ, and the B07 shield
   is a plain can. The first detailed draft was too heavy: B04 and B05 ran out of
   time and ended `INCOMPLETE_ANALYSIS`, and the runner refused to record them.
+  The budget that matters is Modal's single CPU, not this Mac's (see the
+  corrections below).
 
 Two outcomes are time-sensitive by construction, so their fixtures stay lighter.
 B04 must verify its second relief inside the 120 s budget. B07 must finish its
@@ -78,17 +80,17 @@ of `INCOMPLETE_ANALYSIS`. A 12-part B07 did exactly that once, at 116 s, during 
 full test run on a busy machine; the 10-part B07 finished that verification at
 78 s under a load average of 15 to 20 on 10 cores.
 
-Final geometry, and `pytest -m gallery` times on this Mac while other applications
-kept the load average between 9 and 28 (the engine is single-threaded; Modal
-previously ran these jobs within about 10% of an idle local run):
+Final geometry, sized for Modal, and offline `run_job` times on this Mac while
+other applications kept the load average between 5 and 10 (the engine is
+single-threaded):
 
 | Fixture | Parts | Faces | Preview triangles | Job | Outcome |
 |:--|--:|--:|--:|--:|:--|
-| B04 | 10 | 277 | 30,160 | 152 s | Verified improvement (second relief) |
-| B05 | 12 | 400 | 31,268 | 150 s | Verified improvement (strap moved) |
-| B06 | 11 | 286 | 31,142 | 116 s | Verified improvement |
-| B07 | 10 | 215 | 20,914 | 99 s | Incomplete analysis (turn budget) |
-| B08 | 12 | 396 | 37,046 | 57 s | No supported candidate (3-step route) |
+| B04 | 9 | 211 | 19,200 | 120 s | Verified improvement (second relief) |
+| B05 | 9 | 227 | 16,672 | 148 s | Verified improvement (strap moved) |
+| B06 | 9 | 212 | 25,462 | 127 s | Verified improvement |
+| B07 | 9 | 192 | 17,988 | 109 s | Incomplete analysis (turn budget) |
+| B08 | 11 | 334 | 31,622 | 68 s | No supported candidate (3-step route) |
 
 The first gallery had 39 to 64 faces per fixture and about 2,000 to 3,600 preview
 triangles. B02 is the team's own licensed geometry and is unchanged.
@@ -112,6 +114,23 @@ triangles. B02 is the team's own licensed geometry and is unchanged.
   collision, so the move was reported `unknown` and the baseline stayed
   `incomplete`. Screws moved to x = ±32 mm, giving the handle box 4 mm of
   clearance; the route is now certified.
+- **Detailed geometry on Modal:** the first detailed geometry (10 to 12 parts,
+  215 to 400 faces) passed every local run but not Modal. B04 verified with 21 s
+  of its 120 s budget left. B05's first verification stopped with
+  `LIMIT_EXCEEDED: native constraints phase exceeded its deadline`, the run
+  ended `INCOMPLETE_ANALYSIS`, and nothing was published. A private profile on
+  the deployed image measured B05's import at 12.1 s and static verification at
+  15.8 s in one process, about 1.7× this Mac. Inside a job every native step
+  re-imports the revision in a fresh worker that shares the one CPU with the
+  orchestrator, which roughly doubles that again. Each redesign fixture was cut
+  to 9 parts (B04 controller board; B05 fuse carrier, wiring duct and spare
+  rack, with the spare module now resting on the tray; B06 rail and cell holder;
+  B07 the standoff hidden inside the can; B08 power inlet), and repeated detail
+  was thinned: fewer vents, fan blades, pleats, grooves, header pins and bolt
+  holes. Timed back to back on this Mac, B05's static verification fell from
+  about 10 s to 5.1 s and its import from about 7 s to 3.2 s; B04, B06 and B07
+  fell by 15 to 30%. The face floor in `tests/test_gallery.py` moved from 200 to
+  180 to admit B07's 192 faces.
 
 In each case the job runner refused to complete because the recorded outcome
 differed from the expectation. Nothing was relabelled.
@@ -264,7 +283,7 @@ running.
 - `tests/test_gallery.py`: every gallery fixture imports analysis-ready with
   5–12 parts and its grant, and differs from B02. Each target keeps its
   registered box, no fixed part's box crosses a moving or driver path, and each
-  fixture carries at least 200 faces. Default suite.
+  fixture carries at least 180 faces. Default suite.
 - `tests/test_deployment.py`: composes B02 + B07 + B08, checks the guard, the
   per-project recorded runs and outcomes over HTTP, and tampering refusals
   (claimed success, relicensing, missing B02, duplicate project). It also proves

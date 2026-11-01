@@ -150,7 +150,7 @@ An engineering tool that overstates its own certainty is more dangerous than no 
 
 ### Six projects, six different answers
 
-The demo opens with a gallery of original synthetic assemblies. Each one ran the full pipeline, from STEP import to independent verification and checked export, and each result matched an outcome written down before the run. The gallery products are detailed models, 10 to 12 parts each: a pump skid with motor, coolant tank and bulkhead ports; a battery bay with racked modules, monitor board and fuse; a sensor housing with antenna and cable gland; a relay panel with a shield can, service bay and terminal block; an air purifier with fan, vented walls and a pleated filter.
+The demo opens with a gallery of original synthetic assemblies. Each one ran the full pipeline, from STEP import to independent verification and checked export, and each result matched an outcome written down before the run. The gallery products are detailed models, 9 to 11 parts each: a pump skid with motor, coolant tank and bulkhead ports; a battery bay with a racked module, monitor board and connector; a sensor housing with antenna and cable gland; a relay panel with a shield can, service bay and terminal block; an air purifier with fan, vented walls and a pleated filter.
 
 | Fixture | Assembly | What the engine recorded |
 |:--|:--|:--|
