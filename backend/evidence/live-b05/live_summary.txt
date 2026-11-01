@@ -1,0 +1,8 @@
+UNLOCK AI run run_789e002df8dc4aec  [live_model]
+  outcome     VERIFIED_IMPROVEMENT_FOUND  (stop: turn_budget)
+  why         cand_da9877d1295f (T02 {'offset_y_mm': -12.0}) passed independent verification and the planner comparison: Original: No feasible route under supported operations. Revised: Feasible supported route.
+  target      target  revision rev_d7588c87b5d56169
+  baseline    no_path_supported complete=True geometric blocks=[('target', 'Z+', 'CONFIRMED_GEOMETRIC_OBSTRUCTION')]
+  candidate 1 T02 {'offset_y_mm': -12.0} -> VERIFIED_IMPROVEMENT  revised=feasible reverse=passed metrics=[0, 0, 0, 1]
+  usage       turns=6 tool_calls=7 candidates=1 tokens in/out=29621/3013 cost=None total=73.344s
+  limits      Structural strength and fatigue; Electrical safety; Manufacturing feasibility; Restored product function

@@ -1,5 +1,7 @@
 # First live AI-driven CAD redesign — B02, Muse Spark 1.3
 
+A second live run, on the B05 battery bay, is recorded in [LIVE_B05_REDESIGN.md](LIVE_B05_REDESIGN.md).
+
 Executed October 29, 2026 (UTC 2026-10-30T01:59) on `feature/live-b02-redesign`.
 **Outcome: `VERIFIED_IMPROVEMENT_FOUND`.** Muse Spark 1.3 investigated the real
 obstruction, chose its own supported T01 relief, and the trusted constructor
