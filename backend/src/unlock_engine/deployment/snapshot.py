@@ -69,19 +69,21 @@ def compose_gallery(sources, destination: Path):
         if provider is not None and store.data["provider"] != provider:
             raise ValueError("gallery jobs used different decision policies")
         provider = store.data["provider"]
-        for row in store.data["records"]:
-            if records.setdefault(row["id"], row) != row:
-                raise ValueError(f"conflicting record {row['id']}")
-        events.extend(store.data["events"])
         run = store.get("run", status["run_id"])
         project = store.get("revision", run["revision_id"])["project_id"]
         if project in demo_runs:
             raise ValueError(f"{project} appears in more than one job")
         demo_runs[project] = run["id"]
+        for row in store.data["records"]:
+            if records.setdefault(row["id"], row) != row:
+                raise ValueError(f"conflicting record {row['id']}")
+        events.extend(store.data["events"])
         for p in (source / "artifacts").glob("*/*"):
             target.put(store.artifacts.get(p.name))
         members.append(status)
-        records[project]["data"]["outcome"] = run["outcome"]
+    # Stamp outcomes only after every job's rows were compared unmodified.
+    for project, run_id in demo_runs.items():
+        records[project]["data"]["outcome"] = records[run_id]["data"]["outcome"]
     payload = dict(
         version=1,
         provider=provider,
