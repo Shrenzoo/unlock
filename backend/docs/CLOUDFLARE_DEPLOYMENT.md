@@ -1,10 +1,12 @@
 # Cloudflare and Modal read-only launch
 
 Current website: <https://unlock-labs.pages.dev>, Pages production deployment
-`e73c7891`, application commit `15324be`, released 2026-11-01. Modal now serves
-the six-project gallery `a0de2889d0634a48a1eb8ac879341e9e`; the
-[gallery release record](GALLERY.md#release-record-2026-11-01) lists its jobs,
-checks and cost. The licensed B02 job below remains the rollback.
+`0509045b`, application commit `58e7d93`, released 2026-11-01 with judge access
+restored. Modal serves the six-project gallery `e972095f8bb145f3979d5f1ad5c9a305`;
+the [lighter gallery release record](GALLERY.md#release-record-lighter-geometry-2026-11-01)
+lists its jobs and checks. Earlier the same day, `e73c7891` (`15324be`) published
+gallery `a0de2889d0634a48a1eb8ac879341e9e`. The licensed B02 job below remains
+the original rollback.
 
 [Judge access](JUDGE_ACCESS.md) adds a private code flow for bounded uploads
 and fresh offline analysis, following explicit user authorization. The separate

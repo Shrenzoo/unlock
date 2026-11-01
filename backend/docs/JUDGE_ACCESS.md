@@ -154,3 +154,15 @@ Evidence: [verification summary](judge-access/verification.json),
 [desktop](judge-access/desktop-judge-access.png),
 [mobile](judge-access/mobile-judge-access.png),
 [private comparison](judge-access/private-comparison.png).
+
+## Restored on main: 2026-11-01
+
+PR #15 was based on `feature/light-stroke-background`, which reached `main`
+through PR #14 first, so this feature never reached `main`. The 2026-11-01
+gallery releases rebuilt the frontend from `main` and replaced `2b20b62e`,
+removing the code form; the gateway itself stayed deployed and kept refusing
+unauthenticated requests. PR #23 merged it into `main`, and Pages production
+deployment `0509045b` (application commit `58e7d93`, both API origins set)
+serves it again. No judge attempt was used to verify the restoration: the form
+was checked in the production browser test, and the gateway answered an
+unauthenticated session request with 401 and the Pages origin.
