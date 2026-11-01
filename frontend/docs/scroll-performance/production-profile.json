@@ -1,0 +1,107 @@
+{
+  "web": "https://unlock-labs.pages.dev",
+  "results": [
+    {
+      "frames": 367,
+      "median_ms": 16.699999999999818,
+      "p95_ms": 16.700000000000728,
+      "max_ms": 33.30000000000018,
+      "over_25ms": 1,
+      "over_50ms": 0,
+      "long_tasks": [],
+      "scroll_y": 7920,
+      "gl_costs": [],
+      "label": "desktop",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "elapsed_s": 6.11925800004974,
+      "page_errors": [],
+      "metrics": {
+        "TaskDuration": 0.937814,
+        "ScriptDuration": 0.275262,
+        "LayoutDuration": 0.002409,
+        "RecalcStyleDuration": 0.161092,
+        "LayoutCount": 9,
+        "RecalcStyleCount": 654
+      }
+    },
+    {
+      "frames": 447,
+      "median_ms": 16.699999999999818,
+      "p95_ms": 16.799999999999272,
+      "max_ms": 66.70000000000073,
+      "over_25ms": 7,
+      "over_50ms": 2,
+      "long_tasks": [
+        {
+          "duration": 64,
+          "start": 3090.699999809265
+        },
+        {
+          "duration": 57,
+          "start": 6175.5
+        },
+        {
+          "duration": 60,
+          "start": 6473.799999952316
+        }
+      ],
+      "scroll_y": 7920,
+      "gl_costs": [
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "compileShader",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        },
+        {
+          "name": "linkProgram",
+          "ms": 0,
+          "scroll": true,
+          "section": "story"
+        }
+      ],
+      "label": "mobile",
+      "viewport": [
+        390,
+        844
+      ],
+      "elapsed_s": 7.681110208155587,
+      "page_errors": [],
+      "metrics": {
+        "TaskDuration": 1.588177,
+        "ScriptDuration": 0.6659849999999999,
+        "LayoutDuration": 0.00328,
+        "RecalcStyleDuration": 0.222836,
+        "LayoutCount": 9,
+        "RecalcStyleCount": 716
+      }
+    }
+  ]
+}
