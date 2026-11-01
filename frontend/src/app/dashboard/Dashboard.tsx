@@ -6,6 +6,24 @@ import { Logo } from '@/ui/Logo'
 import { Glyph } from '@/ui/Evidence'
 import './dashboard.css'
 
+/** Recorded engine outcomes in plain words; colour follows the evidence rules. */
+const OUTCOMES: Record<string, { tone: string; glyph: 'pass' | 'fail' | 'unknown' | 'not_applicable'; text: string }> = {
+  VERIFIED_IMPROVEMENT_FOUND: { tone: 'verified', glyph: 'pass', text: 'Verified improvement' },
+  NO_VERIFIED_IMPROVEMENT: { tone: 'refused', glyph: 'fail', text: 'No verified improvement' },
+  INCOMPLETE_ANALYSIS: { tone: 'none', glyph: 'unknown', text: 'Not proven, no claim made' },
+  NO_SUPPORTED_CANDIDATE: { tone: 'none', glyph: 'not_applicable', text: 'No supported candidate' },
+}
+
+function Outcome({ outcome }: { outcome?: string | null }) {
+  if (!outcome) return <span className="ptable__na">—</span>
+  const o = OUTCOMES[outcome] ?? { tone: 'none', glyph: 'not_applicable' as const, text: outcome.replaceAll('_', ' ').toLowerCase() }
+  return (
+    <span className={`ptable__outcome ptable__outcome--${o.tone}`} data-outcome={outcome}>
+      <Glyph kind={o.glyph} /> {o.text}
+    </span>
+  )
+}
+
 type UploadState =
   | { kind: 'idle' }
   | { kind: 'invalid'; errors: Array<{ field: string; message: string }> }
@@ -95,6 +113,7 @@ export default function Dashboard() {
                   Parts
                 </th>
                 <th scope="col">Revision</th>
+                <th scope="col">Result</th>
                 <th scope="col">Data</th>
                 <th scope="col">
                   <span className="visually-hidden">Action</span>
@@ -104,7 +123,7 @@ export default function Dashboard() {
             <tbody>
               {projects === null && (
                 <tr>
-                  <td colSpan={6} className="ptable__loading" aria-busy={connection === 'checking'}>
+                  <td colSpan={7} className="ptable__loading" aria-busy={connection === 'checking'}>
                     {connection === 'unreachable' ? 'No projects: the engineering service is not reachable.' : 'Loading projects…'}
                   </td>
                 </tr>
@@ -120,6 +139,7 @@ export default function Dashboard() {
                     </td>
                     <td className="num mono">{p.occurrences ?? '—'}</td>
                     <td className="mono">{p.revision?.slice(0, 12) ?? '—'}</td>
+                    <td><Outcome outcome={p.outcome} /></td>
                     <td>{ready ? <span className="tag tag--hatched">{p.provenance === 'illustrative' ? 'Illustrative' : 'Computed CAD'}</span> : <span className="tag">{api.mode === 'http' ? 'Not ready yet' : 'Not authored yet'}</span>}</td>
                     <td className="ptable__action">
                       {ready ? (
@@ -135,7 +155,7 @@ export default function Dashboard() {
               })}
             </tbody>
           </table>
-          <p className="dash__foot">{readOnly ? 'B02 uses a real synthetic STEP assembly and previously computed verification evidence. Public access is read-only; it runs no CAD jobs or model inference.' : api.mode === 'http' ? 'B01, B02 and B03 use generated synthetic STEP assemblies. Loading and analysis execute on the connected backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
+          <p className="dash__foot">{readOnly ? 'Each fixture is a real synthetic STEP assembly with previously computed analysis, redesign and verification evidence. Results are what the engine recorded, refusals included. Public access is read-only; it runs no CAD jobs or model inference.' : api.mode === 'http' ? 'Every fixture is a generated synthetic STEP assembly. Loading and analysis execute on the connected backend.' : 'Illustrative mode uses prepared UI records; it performs no engineering computation.'}</p>
         </section>
 
         <aside className="dash__side" aria-label="Import a package">

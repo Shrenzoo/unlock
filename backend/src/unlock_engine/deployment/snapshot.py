@@ -56,6 +56,50 @@ def save_snapshot(coordinator, destination: Path, *, run_id=None):
     atomic_write(destination / "snapshot.json", encoded)
 
 
+def compose_gallery(sources, destination: Path):
+    """Merge completed fixture jobs into one snapshot; bytes are re-hashed on copy."""
+    records, events, demo_runs, members, provider = {}, [], {}, [], None
+    destination = Path(destination)
+    target = ArtifactStore(destination / "artifacts")
+    for source in map(Path, sources):
+        status = json.loads((source / "status.json").read_bytes())
+        if status.get("state") != "completed" or not status.get("fixture"):
+            raise ValueError(f"{source.name} is not a completed fixture job")
+        store = SnapshotStore(source)
+        if provider is not None and store.data["provider"] != provider:
+            raise ValueError("gallery jobs used different decision policies")
+        provider = store.data["provider"]
+        for row in store.data["records"]:
+            if records.setdefault(row["id"], row) != row:
+                raise ValueError(f"conflicting record {row['id']}")
+        events.extend(store.data["events"])
+        run = store.get("run", status["run_id"])
+        project = store.get("revision", run["revision_id"])["project_id"]
+        if project in demo_runs:
+            raise ValueError(f"{project} appears in more than one job")
+        demo_runs[project] = run["id"]
+        for p in (source / "artifacts").glob("*/*"):
+            target.put(store.artifacts.get(p.name))
+        members.append(status)
+        records[project]["data"]["outcome"] = run["outcome"]
+    payload = dict(
+        version=1,
+        provider=provider,
+        demo_run_id=demo_runs.get("fixture_B02"),
+        demo_runs=demo_runs,
+        records=list(records.values()),
+        events=events,
+    )
+    atomic_write(
+        destination / "snapshot.json", json.dumps(payload, allow_nan=False).encode()
+    )
+    atomic_write(
+        destination / "gallery.json",
+        json.dumps(dict(members=members), indent=2).encode(),
+    )
+    return demo_runs
+
+
 class SnapshotStore:
     def __init__(self, root):
         root = Path(root)
@@ -127,6 +171,16 @@ class SnapshotCoordinator:
     def __init__(self, root):
         self.store = SnapshotStore(root)
         self.demo_run_id = self.store.data["demo_run_id"]
+        # A single-job snapshot predates the gallery; its one run opens its project.
+        self.demo_runs = self.store.data.get("demo_runs") or (
+            {
+                self.store.get(
+                    "revision", self.store.get("run", self.demo_run_id)["revision_id"]
+                )["project_id"]: self.demo_run_id
+            }
+            if self.demo_run_id
+            else {}
+        )
         provider = self.store.data["provider"]
         self.config = SimpleNamespace(public=lambda: dict(provider))
         self.limiter = RequestLimiter()

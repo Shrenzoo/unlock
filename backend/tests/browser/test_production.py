@@ -90,7 +90,7 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
         page.get_by_role("link", name="Explore UNLOCK", exact=True).click()
         page.wait_for_url("**/projects/fixture_B02*")
         expect(
-            page.get_by_text("Read-only B02 demonstration.", exact=False)
+            page.get_by_text("Read-only demonstration.", exact=False)
         ).to_be_visible()
 
         page.get_by_role("button", name="1 Inspect", exact=True).click()
@@ -189,12 +189,15 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
         # Reload the deep link through Cloudflare, then navigate using real UI links.
         page.reload()
         expect(
-            page.get_by_text("Read-only B02 demonstration.", exact=False)
+            page.get_by_text("Read-only demonstration.", exact=False)
         ).to_be_visible()
         page.get_by_role("link", name="Back to projects").click()
         page.wait_for_url("**/projects")
         expect(page.get_by_role("button", name="Choose files")).to_be_disabled()
-        assert page.locator("tbody tr").count() == 1
+        # One row per published project: B02 alone, or the composed gallery.
+        projects = json.loads(urlopen(api + "/v1/projects", timeout=30).read())
+        assert page.locator("tbody tr").count() == len(projects) >= 1
+        assert "fixture_B02" in {p["id"] for p in projects}
         assert page.evaluate(
             "() => document.scrollingElement.scrollWidth <= innerWidth + 1"
         )

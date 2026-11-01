@@ -13,7 +13,7 @@ backend/.venv/bin/python -m unlock_engine.api --port 8000
 cd frontend && npm run dev -- --host 127.0.0.1 --port 5183 --strictPort
 ```
 
-Open http://localhost:5183/projects. B01/B02/B03 use actual synthetic STEP inputs.
+Open http://localhost:5183/projects. B01–B08 use actual synthetic STEP inputs.
 The default provider is direct Meta Model API, model `muse-spark-1.3`; explicit
 `AI_PROVIDER=mock` runs the real geometry pipeline with a labeled scripted policy.
 Passing reports cover only their listed geometry and supported motion checks.
@@ -73,7 +73,7 @@ Preview meshes use world **metres**, `scale_already_applied=true`, and stable se
 
 `evidence/demo/summary.json` contains real source/candidate hashes, the obstruction witness, parameters, per-constraint verification, timings and export bundle reference. The ZIP includes original/revised assembly STEP, changed-part STEP, revised manifest, parameters, differences, paths, verification, round-trip report, preview and limitations. Bytes are addressed by SHA-256. Full assembly failures produce a labeled changed-part-only bundle.
 
-Fixture source is `fixtures.py`; generated inputs and analytic oracles are in `evidence/fixtures`. B01 has an accessible cartridge segment; B02 has a fixed bridge obstruction and an actual T01 improvement; B03 has a thin tool obstruction. Held-out B02 changes span and target dimensions. These fixtures simplify mating and workholding. They are synthetic examples, not validated products. The original B02 and its generated demonstration assets are licensed under CC BY 4.0 following the [recorded contributor authorization](docs/B02_PROVENANCE.md). Other fixtures retain their existing provenance. Historical artifacts are unchanged; only regenerated, verified B02 evidence may be published.
+Fixture source is `fixtures.py`; generated inputs and analytic oracles are in `evidence/fixtures`. B01 has an accessible cartridge segment; B02 has a fixed bridge obstruction and an actual T01 improvement; B03 has a thin tool obstruction. Held-out B02 changes span and target dimensions. These fixtures simplify mating and workholding. They are synthetic examples, not validated products. The original B02 and its generated demonstration assets are licensed under CC BY 4.0 following the [recorded contributor authorization](docs/B02_PROVENANCE.md). Gallery fixtures B04–B08 carry the same grant, recorded in [GALLERY.md](docs/GALLERY.md) with their pre-registered outcomes. B01, B03 and the held-out variant retain their existing provenance. Historical artifacts are unchanged; only regenerated, verified B02 evidence may be published.
 
 See [DECISIONS.md](docs/DECISIONS.md) for document hashes, numerical policy, interpretation and requirement mapping. See [HANDOFF.md](docs/HANDOFF.md) for executed commands and measured results.
 

@@ -148,6 +148,21 @@ This matters as much as what it does. A passing report is a geometry result for 
 
 An engineering tool that overstates its own certainty is more dangerous than no tool at all. Every number in UNLOCK is either computed, or explicitly labelled as not computed.
 
+### Six projects, six different answers
+
+The demo opens with a gallery of original synthetic assemblies. Each one ran the full pipeline, from STEP import to independent verification and checked export, and each result matched an outcome written down before the run.
+
+| Fixture | Assembly | What the engine recorded |
+|:--|:--|:--|
+| `B02` | Trapped service component | **Verified improvement.** A 24 × 12 mm relief through the bridge web frees the module. |
+| `B04` | Pump cartridge under a crossbar | **Verified improvement.** The smallest relief still blocks the lift and is rejected; the next size is verified. |
+| `B05` | Battery pack under a strap | **Verified improvement, nothing cut.** Only the "move the strap" template is allowed; a 12 mm offset clears the pack. |
+| `B06` | Sensor pod under a light bracket | **Verified improvement.** A 1,200 mm³ material budget leaves only the smallest reliefs; the first one passes. |
+| `B07` | Service hatch behind a shield | **Not proven, no claim made.** The hatch screw is under a fixed shield. The verifier rejects every bracket edit as `TOOL_ACCESS_BLOCKED`, and the run ends without a result. |
+| `B08` | Filter cartridge, already serviceable | **Nothing to redesign.** Two screws, then a straight lift, certified as is. |
+
+The bottom two rows matter as much as the top four: UNLOCK says when it cannot prove a fix, and when no fix is needed. How each fixture differs, the rights record and three corrections made along the way are in [backend/docs/GALLERY.md](backend/docs/GALLERY.md).
+
 ---
 
 ## Why this pushes the frontier
@@ -785,7 +800,7 @@ cp -n .env.example .env          # then add your key, see below
 .venv/bin/python -m unlock_engine.api --port 8000
 ```
 
-B01/B02/B03 import once, on first startup — real synthetic STEP assemblies, generated and parsed through the isolated worker. Expect the first start to take a little longer.
+B01–B08 import once, on first startup — real synthetic STEP assemblies, generated and parsed through the isolated worker. Expect the first start to take a little longer.
 
 ### 2 — Frontend
 
@@ -894,7 +909,7 @@ AI_PROVIDER=mock .venv/bin/python -m unlock_engine.api --port 8000 &
 cd ../frontend && npm ci && npm run dev -- --host 127.0.0.1 --port 5183 --strictPort &
 ```
 
-Expect the first backend start to take a minute or two — B01/B02/B03 are real STEP assemblies being generated and parsed, not fixtures loaded from a table.
+Expect the first backend start to take a minute or two — B01–B08 are real STEP assemblies being generated and parsed, not fixtures loaded from a table.
 
 ### Minute 1 — watch it fail honestly
 
@@ -1133,7 +1148,7 @@ A project about verified claims should make verified claims about itself. Here i
 | **Restored product function** | A relief that frees a fan does not guarantee the repaired machine works. Nothing here claims otherwise. |
 | **Manufacturability** | A verified relief is geometrically valid. Whether it can be cast, machined or moulded is not assessed. |
 | **A hosted, multi-user product** | Not yet, and deliberately. Read-only cloud scaffolding exists, but a preflight review blocked publication pending fixture redistribution rights. Auth and ownership remain open work. |
-| **A benchmark** | One fixture, one live run. The two deterministic controls make it a protocol check, not a leaderboard entry. |
+| **A benchmark** | One live run, on B02. The gallery's other five fixtures ran under the offline scripted policy and show engine behaviour across layouts, not model performance. The two deterministic controls make it a protocol check, not a leaderboard entry. |
 
 ### The honest headline
 

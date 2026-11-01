@@ -55,7 +55,7 @@ export function EvidencePanel(props: PanelProps) {
   useEffect(() => { scroller.current?.scrollTo({ top: 0 }) }, [state.mode])
   return (
     <aside className="panel" aria-label="Evidence">
-      {props.health?.access === 'read_only' && <p className="panel__fine" role="status">Read-only B02 demonstration. Real CAD and verified exports were computed earlier. The recorded decision policy is identified in the evidence.</p>}
+      {props.health?.access === 'read_only' && <p className="panel__fine" role="status">Read-only demonstration. Real CAD, analysis and any verified export were computed earlier. The recorded decision policy is identified in the evidence.</p>}
       {state.notice && (
         <div className={`panel__notice panel__notice--${state.notice.tone}`} role={state.notice.tone === 'refuse' ? 'alert' : 'status'}>
           <Glyph kind={state.notice.tone === 'refuse' ? 'fail' : 'pass'} />
