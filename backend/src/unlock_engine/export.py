@@ -22,7 +22,7 @@ from .geometry import (
     volume,
 )
 from .preview import preview_meshes
-from .fixture_license import license_files
+from .fixture_license import license_files, rights_line
 from .service import Candidate, Revision, shapes_hash
 from .verification import UNVERIFIED, verify_candidate
 
@@ -195,7 +195,11 @@ def export_bundle(revision: Revision, candidate: Candidate, output_root: Path):
             + "Unverified: "
             + "; ".join(UNVERIFIED)
             + ".\nOriginal source and constructor parameters are included; STEP does not preserve native feature history or mates.\n"
-            + "Runtime: CadQuery 2.6.1, cadquery-ocp 7.8.1.1.post1, policy_v1.\nRedistribution rights for fixtures must be confirmed before publication.\n"
+            + "Runtime: CadQuery 2.6.1, cadquery-ocp 7.8.1.1.post1, policy_v1.\n"
+            + rights_line(
+                revision.manifest.provenance,
+                "Redistribution rights for fixtures must be confirmed before publication.\n",
+            )
         )
         save("limitations.txt", summary.encode())
         save(

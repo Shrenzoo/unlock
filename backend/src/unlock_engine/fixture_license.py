@@ -47,9 +47,33 @@ grant for B02 does not relicense these libraries or their dependencies.
 
 GALLERY_CODES = ("B04", "B05", "B06", "B07", "B08")
 
+# Written contributor authorization recorded 2026-10-31; the records are private.
+GALLERY_NOTICE = """UNLOCK original {code} synthetic CAD demonstration
+Copyright 2026 the UNLOCK team (Shreyas Pabbathi and his brother).
+
+The team's original {code} geometry and its generated demonstration assets,
+including original STEP geometry, previews, manifests, paths, engineering
+evidence and, where a verified redesign exists, revised STEP geometry, are
+licensed under Creative Commons Attribution 4.0 International (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+Legal terms: https://creativecommons.org/licenses/by/4.0/legalcode
+Source: https://github.com/Shrenzoo/unlock
+Public release under this license was authorized in writing by the
+fixture's contributors. The geometry was authored with AI assistance.
+
+Attribute the UNLOCK team, retain the license link, and identify modifications.
+Any revised assembly and changed bracket are adaptations of the original {code}.
+See template_parameters.json and geometry_difference.json for the actual changes.
+No endorsement, physical safety, fitness or manufacturing approval is implied.
+
+This grant covers the team's original {code} demonstration assets, not application
+source code, third-party software, trademarks, other fixtures or private CAD.
+Third-party software retains its own terms; see THIRD_PARTY_NOTICES.txt.
+"""
+
 
 def gallery_provenance(code):
-    """The same team grant, recorded 2026-10-31 for the gallery fixtures."""
+    """B04–B08: the team's CC BY 4.0 grant, under written contributor authorization."""
     if code not in GALLERY_CODES:
         raise ValueError(f"{code} has no recorded publication grant")
     return dict(
@@ -64,12 +88,26 @@ def gallery_provenance(code):
 GRANTS = {"B02": B02_PROVENANCE} | {c: gallery_provenance(c) for c in GALLERY_CODES}
 
 
+def granted_code(provenance):
+    """The fixture whose exact recorded grant this provenance carries, if any."""
+    return next((c for c, p in GRANTS.items() if provenance.model_dump() == p), None)
+
+
 def license_files(provenance):
     """Never apply the team's grant to uploaded CAD or other fixture sources."""
-    code = next((c for c, p in GRANTS.items() if provenance.model_dump() == p), None)
+    code = granted_code(provenance)
     if code is None:
         return {}
+    notice = B02_NOTICE if code == "B02" else GALLERY_NOTICE.format(code=code)
     return {
-        f"LICENSE-{code}.txt": B02_NOTICE.replace("B02", code).encode(),
+        f"LICENSE-{code}.txt": notice.encode(),
         "THIRD_PARTY_NOTICES.txt": DEPENDENCY_NOTICE.replace("B02", code).encode(),
     }
+
+
+def rights_line(provenance, pending):
+    """Export limitation text: the actual grant, or the caller's pending wording."""
+    code = granted_code(provenance)
+    if code is None:
+        return pending
+    return f"Fixture geometry and evidence: CC BY 4.0; see LICENSE-{code}.txt and attribution.txt.\n"

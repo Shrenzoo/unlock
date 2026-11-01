@@ -61,17 +61,41 @@ differed from the expectation. Nothing was relabelled.
 
 ## Rights
 
-The account holder chose on 2026-10-31 to give B04–B08 and their generated
-evidence the same CC BY 4.0 team grant recorded for B02 in
-[B02_PROVENANCE.md](B02_PROVENANCE.md). The fixtures were written in this task
-with AI assistance, on top of the team's bridge constructor. The co-author's
-agreement recorded for B02 was not separately re-confirmed for B04–B08; confirm
-it before treating the grant as covering all rightsholders. B01, B03 and the
-held-out B02 variant keep their pending provenance and are not published.
+Recorded 2026-10-31. This is the account holder's authorization record, in the
+same form as [B02_PROVENANCE.md](B02_PROVENANCE.md); it is not an independent
+legal title search.
 
-`fixture_license.GRANTS` is the only list the publication guard accepts. Each
-gallery export carries `LICENSE-B0x.txt` and `THIRD_PARTY_NOTICES.txt` naming its
-own fixture. B02's notice bytes are unchanged.
+The account holder chose on 2026-10-31 to release B04–B08 and their generated
+demonstration evidence under the team's CC BY 4.0 grant, and then reported that
+**written authorization from the relevant contributors** had been obtained for
+that public release. The written authorization is held privately by the UNLOCK
+team. Its correspondence and signatures are deliberately not stored in this
+repository, its evidence or any export; this record states only that it exists.
+
+The fixtures were written in this task with AI assistance, on top of the team's
+bridge constructor; no third-party CAD or geometry was imported. Attribution
+follows B02: "the UNLOCK team (Shreyas Pabbathi and his brother)", source
+`https://github.com/Shrenzoo/unlock`, with the generating call and seed. B01,
+B03 and the held-out B02 variant keep their pending provenance and are not
+published.
+
+Where the licensing information appears:
+
+- **Every published revision** carries the grant in its manifest `provenance`
+  (author, `CC-BY-4.0`, source), served by `/v1/revisions` and in the
+  downloadable `manifest.json`.
+- **Verified exports** (B02, B04, B05, B06) contain `attribution.txt`,
+  `LICENSE-B0x.txt` and `THIRD_PARTY_NOTICES.txt` in their hashed inventory, and
+  `limitations.txt` names the license file instead of "rights pending".
+- **B07 and B08** have no export, since no revised geometry was verified. Their
+  original STEP, manifest and preview are published with the manifest grant.
+
+`fixture_license.GRANTS` is the only list the publication guard accepts. The
+guard compares each export's notice bytes with `license_files` and refuses a
+gallery export whose `limitations.txt` does not state its license. B02's notice
+bytes are unchanged. The single-job B02 snapshot deployed before the gallery
+still says "rights remain pending" in `limitations.txt`; the regenerated B02 in
+the gallery corrects that.
 
 ## Publishing the gallery
 
@@ -83,28 +107,43 @@ their member-hash and licensing checks, and refusals carry no export. A
 single-job B02 snapshot is still accepted, so the current deployment keeps
 working until the gallery replaces it.
 
-From `backend/`, with the Modal CLI authenticated to the `shreyas-pabbathi`
-workspace:
+Order matters. The new frontend works against the current single-B02 API (it
+falls back to `demo_run_id`, and the Result column shows "—"), so release it
+first; switching the API afterwards then has no broken window.
 
-```sh
-# 1. Redeploy private jobs so the cloud image contains the gallery fixtures.
-modal deploy modal_app.py
-# 2. Run all six fixtures privately, one at a time, and compose the gallery.
-#    Prints one line per fixture and finally "Gallery ID: <32 hex>". ~10 CPU-minutes.
-PYTHONPATH=src modal run modal_app.py::gallery
-# 3. Point the public read-only API at the gallery. Reuse the exact origin list
-#    of the current deployment (it must include https://unlock-labs.pages.dev).
-UNLOCK_DEMO_JOB=<gallery id> UNLOCK_CORS_ORIGINS=<current origin list> \
-modal deploy modal_web.py
-```
+1. Frontend, from `frontend/`: build with the production API origin, then
+   upload only the `dist/` contents to the Pages project `unlock-labs`
+   (Production). Pages serves the SPA by default because the build has no
+   `404.html`; keep `_headers` and `THIRD_PARTY_NOTICES.txt`, and do not add the
+   legacy `_redirects` rule.
 
-Rollback: redeploy `modal_web.py` with the previous B02 job ID; the guard still
-accepts a single-job B02 snapshot, and the frontend falls back to `demo_run_id`.
+   ```sh
+   VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run npm run build:public
+   ```
 
-Then rebuild and upload the frontend as in
-[CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) (`npm run build:public`,
-upload `dist`, Not found handling → single-page-application) and check
-`/projects` shows six rows and `/projects/fixture_B07` opens its recorded run.
+2. Modal, from `backend/`, in the separate tooling environment
+   (`pip install -r requirements-modal.txt`), authenticated to the
+   `shreyas-pabbathi` workspace:
+
+   ```sh
+   # Keep the deployed private worker current with the gallery fixtures.
+   modal deploy modal_app.py
+   # Run all six fixtures privately, one at a time, compose and validate the
+   # gallery. Prints one line per fixture, then "Gallery ID: <32 hex>".
+   PYTHONPATH=src modal run modal_app.py::gallery
+   # Point the public read-only API at the gallery. Reuse the exact origin list
+   # of the current deployment (it must include https://unlock-labs.pages.dev).
+   UNLOCK_DEMO_JOB=<gallery id> UNLOCK_CORS_ORIGINS=<current origin list> \
+     modal deploy modal_web.py
+   ```
+
+3. Check `/projects` shows six rows and `/projects/fixture_B07` opens its
+   recorded run, then run the production browser test (`UNLOCK_PRODUCTION_WEB`
+   and `UNLOCK_PRODUCTION_API` set, `pytest -m browser tests/browser/test_production.py`).
+
+Rollback: redeploy `modal_web.py` with the previous B02 job ID. The guard still
+accepts that original single-job snapshot, and the new frontend falls back to
+`demo_run_id`.
 
 ## Tests
 
@@ -112,6 +151,8 @@ upload `dist`, Not found handling → single-page-application) and check
   5–12 parts and its grant, and differs from B02. Default suite.
 - `tests/test_deployment.py`: composes B02 + B07 + B08, checks the guard, the
   per-project recorded runs and outcomes over HTTP, and tampering refusals
-  (claimed success, relicensing, missing B02, duplicate project). Default suite.
+  (claimed success, relicensing, missing B02, duplicate project). It also proves
+  B02 export wording without the CC BY 4.0 rights sentence is refused inside a
+  gallery yet still valid as the original standalone B02 snapshot. Default suite.
 - `pytest -m gallery`: the full offline run of B04–B08 against their expected
   outcomes, about 8 minutes.

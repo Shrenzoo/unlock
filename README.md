@@ -1147,7 +1147,7 @@ A project about verified claims should make verified claims about itself. Here i
 | **Torque, cables, clips, adhesives or wiring** | Disassembly is modelled as rigid-body extraction. Soft and electrical systems are not represented. |
 | **Restored product function** | A relief that frees a fan does not guarantee the repaired machine works. Nothing here claims otherwise. |
 | **Manufacturability** | A verified relief is geometrically valid. Whether it can be cast, machined or moulded is not assessed. |
-| **A hosted, multi-user product** | Not yet, and deliberately. Read-only cloud scaffolding exists, but a preflight review blocked publication pending fixture redistribution rights. Auth and ownership remain open work. |
+| **A hosted, multi-user product** | Not yet, and deliberately. A read-only public demonstration serves only fixtures released under CC BY 4.0 with their contributors' authorization; it accepts no uploads and runs no jobs. Auth and ownership remain open work. |
 | **A benchmark** | One live run, on B02. The gallery's other five fixtures ran under the offline scripted policy and show engine behaviour across layouts, not model performance. The two deterministic controls make it a protocol check, not a leaderboard entry. |
 
 ### The honest headline

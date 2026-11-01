@@ -71,6 +71,17 @@
 .ptable td:first-child {
   padding-left: 0;
 }
+@media (max-width: 560px) {
+  .ptable th,
+  .ptable td {
+    padding-left: var(--s-2);
+    padding-right: var(--s-2);
+  }
+  .ptable th:last-child,
+  .ptable td:last-child {
+    padding-right: 0;
+  }
+}
 .ptable .num {
   text-align: right;
 }

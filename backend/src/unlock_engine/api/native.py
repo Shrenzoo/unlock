@@ -37,6 +37,7 @@ def run(work: Path, operation):
         return dict(inventory=inv)
     if operation == "http_export":
         from ..export import export_bundle
+        from ..fixture_license import rights_line
         from ..planning.problem import Problem
         from ..planning.service import plan_problem
         from ..planning.contracts import SearchPolicy
@@ -87,7 +88,11 @@ def run(work: Path, operation):
             + bundle["roundtrip_status"]
             + "\nFull deterministic removal replay and reverse insertion passed for the frozen target.\n"
             "Strength, electrical safety, manufacturing feasibility and restored product function were not assessed.\n"
-            "STEP does not preserve native feature history or mates. Synthetic fixture rights remain pending author approval.\n"
+            "STEP does not preserve native feature history or mates.\n"
+            + rights_line(
+                revision.manifest.provenance,
+                "Synthetic fixture rights remain pending author approval.\n",
+            )
         ).encode()
         record = dict(
             status=bundle["status"],
