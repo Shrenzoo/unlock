@@ -73,7 +73,7 @@ def plate(w, d, t=3, corner=6, holes=(), slots=(), pockets=()):
     return settle(cut(rounded(w, d, t, corner), *tools))
 
 
-def vented_wall(t=4, d=80, h=24, columns=7, lip=1):
+def vented_wall(t=4, d=80, h=24, columns=5, lip=1):
     """Side panel with two rows of round vents and a stiffening lip on one face."""
     lip_x = t if lip > 0 else -2
     wall = fuse(box(t, d, h), box(2, d, 2, lip_x, 0, h - 2), box(2, d, 2, lip_x, 0, 0))
@@ -84,23 +84,6 @@ def vented_wall(t=4, d=80, h=24, columns=7, lip=1):
         for z in (h * 0.36, h * 0.66)
     ]
     return settle(cut(wall, *vents))
-
-
-def hat_rail(length=90, width=7.5, height=4, t=0.8, channel=5):
-    """Top-hat mounting rail with a slotted base."""
-    a, b = (width - channel) / 2, (width + channel) / 2
-    rail = fuse(
-        box(length, a + t, t, 0, 0, height - t),
-        box(length, width - b + t, t, 0, b - t, height - t),
-        box(length, t, height, 0, a, 0),
-        box(length, t, height, 0, b - t, 0),
-        box(length, channel, t, 0, a, 0),
-    )
-    slots = []
-    for i in range(int(length // 15)):
-        s = cq.Workplane().slot2D(8, 2.2).extrude(t + 2).val()
-        slots.append(s.translate(V(7.5 + i * 15, width / 2, -1)))
-    return settle(cut(rail, *slots))
 
 
 def standoff(across_flats=5, h=12):
@@ -218,37 +201,21 @@ def motor(length=44, r=12):
         cyl(1.8, 3, x0 + 8, yc + 6.5, zc + r + 2, (0, 1, 0)),
     )
     cradles = [box(6, 2 * r - 4, zc, x, yc - r + 2, 0) for x in (14, length)]
-    bolts = [
-        cyl(1.8, 5, x, y, -1)
-        for x in (14, length + 10)
-        for y in (yc - r - 1.5, yc + r + 1.5)
-    ]
-    foot = cut(box(length + 4, 2 * r + 10, 3, 10, yc - r - 5, 0), *bolts)
+    foot = box(length + 4, 2 * r + 10, 3, 10, yc - r - 5, 0)
     return settle(fuse(can, band, front, shaft, rear, tbox, *cradles, foot))
 
 
 def battery(w=44, d=22, h=16):
-    """Battery module: rounded case, recessed lid with vents, two terminal posts."""
+    """Battery module: rounded case, recessed lid, two terminal posts."""
     case = cut(
-        rounded(w, d, h - 2.5, 2.5),
-        rounded(w - 5, d - 5, 1.5, 1.5, 2.5, 2.5, h - 3.3),
-        box(w * 0.5, 1, 2.5, w * 0.25, -0.2, h * 0.35),
-        box(w * 0.5, 1, 2.5, w * 0.25, d - 0.8, h * 0.35),
+        rounded(w, d, h - 2.5, 2.5), rounded(w - 5, d - 5, 1.5, 1.5, 2.5, 2.5, h - 3.3)
     )
-    vents = [
-        cyl(1.4, 0.6, w * 0.38 + i * 6, d / 2 + j * 5 - 2.5, h - 3.3)
-        for i in range(2)
-        for j in range(2)
-    ]
-    posts = [
-        fuse(hexagon(5.5, 0.8, x, d / 2, h - 2.5), cyl(2.2, 2.5, x, d / 2, h - 2.5))
-        for x in (5.5, w - 5.5)
-    ]
-    return settle(fuse(case, *vents, *posts))
+    posts = [cyl(2.2, 3.3, x, d / 2, h - 3.3) for x in (5.5, w - 5.5)]
+    return settle(fuse(case, *posts))
 
 
 def relay(w=14, d=14, h=12):
-    """Plug-in relay: chamfered cover, label recess, polarity dot, round pins, test button."""
+    """Plug-in relay: chamfered cover, label recess and round pins."""
     body = (
         cq.Workplane()
         .box(w, d, h - 3, centered=False)
@@ -257,18 +224,10 @@ def relay(w=14, d=14, h=12):
         .val()
         .translate(V(0, 0, 3))
     )
-    body = cut(
-        body, rounded(w - 5, d - 6, 1, 1, 2.5, 3, h - 0.4), cyl(0.5, 1, 2, 2, h - 0.5)
-    )
-    spots = (
-        (2.5, 2.5),
-        (w - 2.5, 2.5),
-        (2.5, d - 2.5),
-        (w - 2.5, d - 2.5),
-        (w / 2, d / 2),
-    )
+    body = cut(body, rounded(w - 5, d - 6, 1, 1, 2.5, 3, h - 0.4))
+    spots = ((2.5, 2.5), (w - 2.5, 2.5), (2.5, d - 2.5), (w - 2.5, d - 2.5))
     pins = [cyl(0.45, 3.4, x, y, 0) for x, y in spots]
-    return settle(fuse(body, *pins, cyl(1.4, 0.8, w - 3, 3, h - 0.4)))
+    return settle(fuse(body, *pins))
 
 
 def terminal_block(n=6, pitch=4, d=10, h=8):
@@ -296,7 +255,7 @@ def terminal_block(n=6, pitch=4, d=10, h=8):
     return settle(fuse(body, *screws, marker))
 
 
-def fan(size=30, depth=12, blades=7):
+def fan(size=30, depth=12, blades=5):
     """Axial fan: frame with venturi bore and corner holes, hub, struts, pitched blades."""
     c = size / 2
     bore = c - 1.2
@@ -352,21 +311,6 @@ def antenna(height=40):
     )
 
 
-def battery_holder(cells=2, r=4.6, length=24):
-    """Cradle with cylindrical cells and end contacts."""
-    pitch = 2 * r + 1.5
-    w = cells * pitch + 1.5
-    ys = [1.5 + r + i * pitch for i in range(cells)]
-    cradle = cut(
-        box(length + 6, w, r + 1),
-        *[cyl(r + 0.2, length, 3, y, r + 2, (1, 0, 0)) for y in ys],
-    )
-    ends = [box(1.5, w, 2 * r + 2, x, 0, 0) for x in (0, length + 4.5)]
-    cells_ = [cyl(r, length - 1, 3.5, y, r + 2, (1, 0, 0)) for y in ys]
-    caps = [cyl(r * 0.35, 1.2, 2.5, y, r + 2, (1, 0, 0)) for y in ys]
-    return settle(fuse(cradle, *ends, *cells_, *caps))
-
-
 def connector(w=12, d=10, h=9):
     """Power connector housing with two contact sockets, a latch and a cable boot."""
     body = cq.Workplane().box(w, d, h, centered=False).edges("|Y").chamfer(0.8).val()
@@ -383,56 +327,12 @@ def connector(w=12, d=10, h=9):
     return settle(fuse(body, *contacts, latch, boot))
 
 
-def fuse_holder(length=22, w=9):
-    """Bolted fuse carrier: base, end blocks, cartridge fuse with caps and nuts."""
-    base = cut(
-        box(length, w, 2.5),
-        cyl(1.4, 4, 2.5, w / 2, -1),
-        cyl(1.4, 4, length - 2.5, w / 2, -1),
-    )
-    ends = [box(4, w, 7, x, 0, 0) for x in (4, length - 8)]
-    body = cyl(2.6, length - 13, 6.5, w / 2, 7.5, (1, 0, 0))
-    caps = [cyl(3.0, 2, x, w / 2, 7.5, (1, 0, 0)) for x in (6.5, length - 8.5)]
-    nuts = [hexagon(4, 1.5, x, w / 2, 7) for x in (6, length - 6)]
-    return settle(fuse(base, *ends, body, *caps, *nuts))
-
-
-def duct(length=110, w=8, h=8):
-    """Wiring duct, open on top, with round cable exits through both walls."""
-    body = cut(box(length, w, h), box(length + 2, w - 2, h, -1, 1, 1))
-    exits = [
-        cyl(1.8, w + 2, 10 + i * 20, -1, h * 0.62, (0, 1, 0))
-        for i in range(int((length - 10) // 20))
-    ]
-    return settle(cut(body, *exits))
-
-
-def power_inlet(w=20, d=12, h=14):
-    """Panel power inlet: body, flange with holes, keyed socket and three pins."""
-    flange = cut(
-        box(w + 6, 2, h + 4, -3, 0, -2),
-        *[cyl(1.3, 4, x, -1, h / 2, (0, 1, 0)) for x in (-1, w + 1)],
-    )
-    outline = [(4, 3), (16, 3), (16, 9), (13, 11), (7, 11), (4, 9)]
-    socket = (
-        cq.Workplane("XZ")
-        .polyline(outline)
-        .close()
-        .extrude(-7)
-        .val()
-        .translate(V(0, -1, 0))
-    )
-    body = cut(fuse(box(w, d, h, 0, 2, 0), flange), socket)
-    pins = [box(1, 4, 2.4, x, 2, z) for x, z in ((6.5, 5), (12.5, 5), (9.5, 7.5))]
-    return settle(fuse(body, *pins))
-
-
 # --- fluid -------------------------------------------------------------------
 
 
 def tank(r=11, length=30):
-    """Horizontal coolant tank along +Y on two saddles: chamfered heads, band, filler cap,
-    sight window and outlet. Its axis is deliberately unlike the motor's and the screws'."""
+    """Horizontal coolant tank along +Y on two saddles: chamfered heads, filler cap and
+    outlet. Its axis is deliberately unlike the motor's and the screws'."""
     xc, zc = r + 2, r + 3
     shell = (
         cq.Workplane()
@@ -441,9 +341,7 @@ def tank(r=11, length=30):
         .chamfer(2.5)
         .val()
     )
-    shell = cut(shell, box(2, 12, 5, xc + r - 1.2, length / 2 - 6, zc - 2.5))
     saddles = [box(2 * xc, 4, zc, 0, y, 0) for y in (5, length - 9)]
-    band = cyl(r + 0.8, 3, xc, length / 2 - 1.5, zc, (0, 1, 0))
     neck = fuse(
         cyl(3.5, 4, xc, length * 0.3, zc + r - 1),
         cyl(4.5, 3, xc, length * 0.3, zc + r + 3),
@@ -452,19 +350,13 @@ def tank(r=11, length=30):
         cyl(2, 6, xc + r - 1, length * 0.75, zc - 4, (1, 0, 0)),
         cyl(2.6, 1.2, xc + r + 3, length * 0.75, zc - 4, (1, 0, 0)),
     )
-    return settle(fuse(shell, *saddles, band, neck, outlet))
+    return settle(fuse(shell, *saddles, neck, outlet))
 
 
 def port(r=4, length=18):
-    """Bulkhead pipe port along +X: bolted mounting block, hex nut, pipe, barb, bore."""
+    """Bulkhead pipe port along +X: mounting block, hex nut, pipe, barb, bore."""
     c = r + 4
-    block = cut(
-        box(8, 2 * c, 2 * c),
-        *[
-            cyl(1.2, 10, -1, y, z, (1, 0, 0))
-            for y, z in ((2.5, 2.5), (2 * c - 2.5, 2 * c - 2.5))
-        ],
-    )
+    block = box(8, 2 * c, 2 * c)
     nut = (
         cq.Workplane("YZ")
         .polygon(6, (2 * r + 3) / math.cos(math.pi / 6))
@@ -485,7 +377,6 @@ def port(r=4, length=18):
 def cartridge(w=20, d=10, h=22):
     """Pump cartridge: chamfered body, cross-axis pump head, ports, lifting handle."""
     body = cq.Workplane().box(w, d, 15, centered=False).edges("|Z").chamfer(1.2).val()
-    body = cut(body, *[cyl(0.45, w - 4, 2, 0, z, (1, 0, 0)) for z in (4, 7, 10)])
     head = cyl(4.5, d - 1, w / 2, 0.5, 15, (0, 1, 0))
     ports = [
         fuse(hexagon(3.6, 1.2, x, d / 2, 15), cyl(1.4, 3.5, x, d / 2, 15))
@@ -508,12 +399,11 @@ def sensor_pod(w=14, d=4, h=10):
     )
     led = cyl(0.6, 0.6, 2.5, 1.2, 6.2, (0, -1, 0))
     boss = fuse(cyl(1.4, 2.5, w / 2, 2.3, h - 2.5), cyl(1.65, 0.6, w / 2, 2.3, h - 2.5))
-    ribs = [box(0.5, d - 1.2, 0.5, x, 1.2, 0.8) for x in (1.5, w - 2)]
-    return settle(fuse(body, bezel, led, boss, *ribs))
+    return settle(fuse(body, bezel, led, boss))
 
 
 def hatch(w=20, d=10, t=2):
-    """Service hatch: rounded plate, counterbored holes, finger grip, stiffening grooves."""
+    """Service hatch: rounded plate, counterbored holes and a finger grip."""
     body = cq.Workplane().box(w, d, t, centered=False).edges("|Z").fillet(1).val()
     holes = [
         fuse(cyl(0.9, t + 2, x, d / 2, -1), cyl(1.7, 1, x, d / 2, t - 0.8))
@@ -526,11 +416,10 @@ def hatch(w=20, d=10, t=2):
         .val()
         .translate(V(w / 2, d - 2.2, t - 0.8))
     )
-    grooves = [cyl(0.35, w - 8, 4, y, t, (1, 0, 0)) for y in (2.5, 4.2)]
-    return settle(cut(body, *holes, grip, *grooves))
+    return settle(cut(body, *holes, grip))
 
 
-def filter_cartridge(w=40, d=24, h=14, pleats=10):
+def filter_cartridge(w=40, d=24, h=14, pleats=8):
     """Filter cartridge: rim frame, pleated media, support bars, pull tab."""
     rim_h = h - 2
     frame = cut(box(w, d, rim_h), box(w - 4, d - 4, rim_h + 2, 2, 2, -1))
@@ -560,7 +449,6 @@ def filter_cartridge(w=40, d=24, h=14, pleats=10):
 PARTS = dict(
     plate=plate,
     vented_wall=vented_wall,
-    hat_rail=hat_rail,
     standoff=standoff,
     cradle=cradle,
     pedestal=pedestal,
@@ -574,11 +462,7 @@ PARTS = dict(
     fan=fan,
     gland=gland,
     antenna=antenna,
-    battery_holder=battery_holder,
     connector=connector,
-    fuse_holder=fuse_holder,
-    duct=duct,
-    power_inlet=power_inlet,
     tank=tank,
     port=port,
     cartridge=cartridge,
