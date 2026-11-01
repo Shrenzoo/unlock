@@ -61,17 +61,41 @@ differed from the expectation. Nothing was relabelled.
 
 ## Rights
 
-The account holder chose on 2026-10-31 to give B04–B08 and their generated
-evidence the same CC BY 4.0 team grant recorded for B02 in
-[B02_PROVENANCE.md](B02_PROVENANCE.md). The fixtures were written in this task
-with AI assistance, on top of the team's bridge constructor. The co-author's
-agreement recorded for B02 was not separately re-confirmed for B04–B08; confirm
-it before treating the grant as covering all rightsholders. B01, B03 and the
-held-out B02 variant keep their pending provenance and are not published.
+Recorded 2026-10-31. This is the account holder's authorization record, in the
+same form as [B02_PROVENANCE.md](B02_PROVENANCE.md); it is not an independent
+legal title search.
 
-`fixture_license.GRANTS` is the only list the publication guard accepts. Each
-gallery export carries `LICENSE-B0x.txt` and `THIRD_PARTY_NOTICES.txt` naming its
-own fixture. B02's notice bytes are unchanged.
+The account holder chose on 2026-10-31 to release B04–B08 and their generated
+demonstration evidence under the team's CC BY 4.0 grant, and then reported that
+**written authorization from the relevant contributors** had been obtained for
+that public release. The written authorization is held privately by the UNLOCK
+team. Its correspondence and signatures are deliberately not stored in this
+repository, its evidence or any export; this record states only that it exists.
+
+The fixtures were written in this task with AI assistance, on top of the team's
+bridge constructor; no third-party CAD or geometry was imported. Attribution
+follows B02: "the UNLOCK team (Shreyas Pabbathi and his brother)", source
+`https://github.com/Shrenzoo/unlock`, with the generating call and seed. B01,
+B03 and the held-out B02 variant keep their pending provenance and are not
+published.
+
+Where the licensing information appears:
+
+- **Every published revision** carries the grant in its manifest `provenance`
+  (author, `CC-BY-4.0`, source), served by `/v1/revisions` and in the
+  downloadable `manifest.json`.
+- **Verified exports** (B02, B04, B05, B06) contain `attribution.txt`,
+  `LICENSE-B0x.txt` and `THIRD_PARTY_NOTICES.txt` in their hashed inventory, and
+  `limitations.txt` names the license file instead of "rights pending".
+- **B07 and B08** have no export, since no revised geometry was verified. Their
+  original STEP, manifest and preview are published with the manifest grant.
+
+`fixture_license.GRANTS` is the only list the publication guard accepts. The
+guard compares each export's notice bytes with `license_files` and refuses a
+gallery export whose `limitations.txt` does not state its license. B02's notice
+bytes are unchanged. The single-job B02 snapshot deployed before the gallery
+still says "rights remain pending" in `limitations.txt`; the regenerated B02 in
+the gallery corrects that.
 
 ## Publishing the gallery
 

@@ -7,7 +7,7 @@ from pathlib import Path
 import zipfile
 
 from ..fixture_catalog import EXPECTED
-from ..fixture_license import B02_PROVENANCE, GRANTS, license_files
+from ..fixture_license import B02_PROVENANCE, GRANTS, license_files, rights_line
 from ..contracts import Provenance
 from .snapshot import SnapshotStore
 
@@ -35,6 +35,11 @@ def _check_export(store, run, code):
                 raise ValueError(
                     f"{code} export licensing notice is missing or changed"
                 )
+        # The original B02 export predates the rights line; its notice is checked above.
+        if code != "B02" and rights_line(Provenance(**GRANTS[code]), None) not in (
+            archive.read("limitations.txt").decode()
+        ):
+            raise ValueError(f"{code} export limitations do not state its license")
     return artifact
 
 
