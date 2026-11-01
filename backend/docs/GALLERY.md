@@ -187,14 +187,18 @@ Order matters. The new frontend works against the current single-B02 API (it
 falls back to `demo_run_id`, and the Result column shows "—"), so release it
 first; switching the API afterwards then has no broken window.
 
-1. Frontend, from `frontend/`: build with the production API origin, then
-   upload only the `dist/` contents to the Pages project `unlock-labs`
+1. Frontend, from `frontend/` on `main`: build with both production origins,
+   then upload only the `dist/` contents to the Pages project `unlock-labs`
    (Production). Pages serves the SPA by default because the build has no
    `404.html`; keep `_headers` and `THIRD_PARTY_NOTICES.txt`, and do not add the
-   legacy `_redirects` rule.
+   legacy `_redirects` rule. Omitting `VITE_UNLOCK_JUDGE_API`, or building from a
+   branch without [judge access](JUDGE_ACCESS.md), removes the judge code form
+   from the live site; that happened on 2026-11-01 (see below).
 
    ```sh
-   VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run npm run build:public
+   VITE_UNLOCK_API=https://shreyas-pabbathi--unlock-demo-web.us-east.modal.run \
+   VITE_UNLOCK_JUDGE_API=https://shreyas-pabbathi--unlock-judges-web.us-east.modal.run \
+   npm run build:public
    ```
 
 2. Modal, from `backend/`, in the separate tooling environment
@@ -315,6 +319,16 @@ morning's comparable gallery run was metered at under one cent.
 
 Rollback: redeploy `modal_web.py` with `UNLOCK_DEMO_JOB=a0de2889d0634a48a1eb8ac879341e9e`
 (this morning's gallery) and the same origin list.
+
+**Judge access restored.** Both 2026-11-01 frontend releases (`e73c7891`, then
+`0e79f662`) were built from `main`, which did not yet contain judge access: PR #15
+had been merged into its stale base branch instead. That removed the judge code
+form, although the `unlock-judges` gateway stayed deployed. PR #23 brought judge
+access to `main` (`58e7d93`), and Pages production deployment `0509045b` serves
+that build with both origins. All 20 served files match the local build; the
+production browser test, which now requires the judge form, passed 3/3, and the
+six projects still match the API with only GET requests. The gateway was not
+redeployed.
 
 ## Tests
 
