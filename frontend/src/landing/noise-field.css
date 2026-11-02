@@ -27,8 +27,10 @@
 }
 /* Without WebGL the same plates are laid out by CSS; the shader canvas covers them otherwise. */
 .noise-field__palette { position: absolute; inset: 0; overflow: hidden; }
-.noise-field__palette--light { background: #f9fcff url('./field-hero.webp') center / 100% 100% no-repeat; }
-.noise-field__palette--dark { background: #02050b url('./field-story.webp') center / 100% 100% no-repeat; mask-image: var(--night-mask); }
+/* Same grade as gradePaper / gradeNight in lightField.ts, so the shader fades in without a shift. */
+.noise-field__palette--light { background: #f9fcff url('./field-hero.webp') center / 100% 100% no-repeat; filter: saturate(0.9); }
+.noise-field__palette--light::after { content: ''; position: absolute; inset: 0; background: #f9fcff; opacity: 0.5; mask-image: linear-gradient(#000 76%, transparent); }
+.noise-field__palette--dark { background: #02050b url('./field-story.webp') center / 100% 100% no-repeat; mask-image: var(--night-mask); filter: saturate(0.72) brightness(0.78); }
 @media (max-aspect-ratio: 8/5) {
   .noise-field__palette--light { background-size: auto 100%; background-position: 36% 0; }
   .noise-field__palette--dark { background-size: auto 100%; background-position: 70% 0; }

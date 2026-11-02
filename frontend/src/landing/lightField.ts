@@ -39,6 +39,20 @@ uniform float uTime;
 uniform vec2 uShift;        // CSS px
 uniform vec4 uEdges;        // hero top, story top, story bottom, footer top (CSS px from viewport top)
 
+// The plates are painted in full-chroma cobalt. Grade them softer so the field reads as
+// light behind the content: ease the chroma (CSS saturate(), so the fallback plates in
+// noise-field.css match), then lift paper toward white and dim the night glow. The paper
+// plate's dark horizon (its bottom fifth) takes the night grade, so the seam stays whole.
+const vec3 LUMA = vec3(0.213, 0.715, 0.072);
+const vec3 PAPER = vec3(0.976, 0.988, 1.0);   // #f9fcff
+const float PAPER_SATURATE = 0.9;
+const float PAPER_LIFT = 0.5;
+const float NIGHT_SATURATE = 0.72;
+const float NIGHT_BRIGHTNESS = 0.78;
+vec3 gradePaper(vec3 c) { return mix(mix(vec3(dot(c, LUMA)), c, PAPER_SATURATE), PAPER, PAPER_LIFT); }
+vec3 gradeNight(vec3 c) { return mix(vec3(dot(c, LUMA)), c, NIGHT_SATURATE) * NIGHT_BRIGHTNESS; }
+vec3 gradeField(vec3 c, float v) { return mix(gradePaper(c), gradeNight(c), smoothstep(0.76, 1.0, v)); }
+
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
   p += dot(p, p + 45.32);
@@ -67,15 +81,17 @@ void main() {
   // the hero plate fills the first screen and scrolls with the hero; night takes over at
   // its bottom edge (or the story's top, if sooner), where the two plates were one image
   float dusk = min(st, heroTop + H);
-  vec3 paper = texture2D(uPaper, drift(vec2(up, (y - heroTop) / max(dusk - heroTop, 1.0)), t)).rgb;
+  float vp = (y - heroTop) / max(dusk - heroTop, 1.0);
+  vec3 paper = gradeField(texture2D(uPaper, drift(vec2(up, vp), t)).rgb, vp);
   // story plate stays with the pinned stage, then leaves with the section
   float stage = min(max(dusk, 0.0), sb - H);
-  vec3 night = texture2D(uNight, drift(vec2(un, (y - stage) / H), t)).rgb;
+  vec3 night = gradeNight(texture2D(uNight, drift(vec2(un, (y - stage) / H), t)).rgb);
   // between story and footer the paper plate returns mirrored: horizon, open paper, horizon
   float k = clamp((y - sb) / max(ft - sb, 1.0), 0.0, 1.0);
-  vec3 after = texture2D(uPaper, drift(vec2(up, abs(1.0 - 2.0 * k)), t)).rgb;
+  float va = abs(1.0 - 2.0 * k);
+  vec3 after = gradeField(texture2D(uPaper, drift(vec2(up, va), t)).rgb, va);
   // the footer picks the night plate up again from its top row
-  vec3 footer = texture2D(uNight, drift(vec2(un, (y - ft) / H), t)).rgb;
+  vec3 footer = gradeNight(texture2D(uNight, drift(vec2(un, (y - ft) / H), t)).rgb);
 
   vec3 col = y < dusk ? paper : y < sb ? night : y < ft ? after : footer;
   // a soft handover where the story gives way to paper again
