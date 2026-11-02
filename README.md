@@ -9,6 +9,16 @@
 </p>
 
 <p align="center">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/readme/hero-poster-dark.png">
+    <source media="(prefers-reduced-motion: reduce)" srcset="assets/readme/hero-poster-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/hero-light.gif">
+    <img src="assets/readme/hero-light.gif" width="100%" alt="Real CAD render of the B05 battery bay. A battery pack cannot lift out: its ghost rises into a fixed strap, and the overlap glows orange. Four allowed strap positions appear, and the strap moves 12 millimetres. A verifier passes twelve checks, the strap turns green, and the pack lifts straight out.">
+  </picture>
+</p>
+
+<p align="center">
   <strong>A broken part shouldn't make a product disposable.</strong><br>
   UNLOCK reads a CAD assembly, finds exactly what stops a failed part from coming out, lets Meta's Muse Spark 1.3 propose a constrained design change, builds that change in real CAD, and checks the result with a verifier the model cannot influence.
 </p>
