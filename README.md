@@ -130,3 +130,76 @@ Three decisions follow from that.
 None of the parts are new on their own. Disassembly planning, tool-access analysis and redesign for part access all have substantial prior art, and [our own requirements document](backend/docs/source/UNLOCK_PRD.txt) says novelty is not established. What UNLOCK contributes is a working combination: a frontier model driving real CAD redesign, inside a system where nothing it says can make a result pass.
 
 More in [design decisions](docs/design-decisions.md) and [objections we would raise ourselves](docs/objections.md).
+
+## 05 · The AI agent
+
+The agent is [Muse Spark 1.3](https://dev.meta.ai/docs/models) through the direct Meta Model API, using native tool calling with `tool_choice="auto"`. SDK retries are off, so one [bounded controller](backend/src/unlock_engine/ai/controller.py) owns every retry and every budget.
+
+### Eight tools
+
+[`TOOL_ARGS`](backend/src/unlock_engine/ai/schemas.py#L65) is the complete list. There is no shell, Python, URL or filesystem tool, and no accept or export tool. Each definition sent to the model is generated from the same schema that later validates the call.
+
+| Tool | What it runs | Live use |
+|:--|:--|:--:|
+| `inspect_assembly` | Validated manifest and measured inventory | B01, B05 |
+| `inspect_constraints` | Frozen constraints, regions, keep-outs, envelope | Offline only |
+| `analyze_removal` | The deterministic baseline plan for the frozen target | B05 |
+| `inspect_blocker` | One rejection's certificates and BRep witness | B02, B05 |
+| `list_interventions` | Server templates and the exact values allowed | B02, B05 |
+| `construct_candidate` | The trusted constructor, in a fresh worker. The original revision never changes | B02, B05 |
+| `verify_candidate` | Rebuild, mandatory checks, replanning, replay, reverse insertion | B02, B05 |
+| `compare_candidates` | The planner's comparison under the same frozen policy | B02, B05 |
+
+### What stops it
+
+Every call goes through one [dispatcher](backend/src/unlock_engine/ai/toolbox.py#L298), in this order:
+
+| Gate | Rule | On failure |
+|:--|:--|:--|
+| Allowlist | The tool must be one of the eight | `TOOL_NOT_ALLOWED`, never dispatched |
+| Schema | Strict parsing: no extra properties, wrong types, NaN or unknown enums | `SCHEMA_ERROR`, one repair allowed per run |
+| Identity | Project, revision and target must equal the frozen run | `STALE_EVIDENCE` |
+| Evidence | Every cited handle was issued by this run, and at least one is a `rej_`, `plan_` or `ver_` | `INVALID_PROPOSAL`, construction does not start |
+| Domain | The template is enabled and every value is on the server's list | `INVALID_PROPOSAL` |
+| Budget | 3 candidates, 12 tool calls, 6 turns, 16,000 output tokens (4,096 per turn), 120 s | `BUDGET_EXHAUSTED`, then the run stops |
+
+[These ceilings](backend/src/unlock_engine/ai/toolbox.py#L40) raise an error if set higher, and output tokens are reserved before each request. Failures return typed feedback with measured values copied from engine records, so the model can respond to numbers and not to prose. Constraints are frozen under the revision hash and read-only, so a proposal can't relax them.
+
+### A real run
+
+This is the B02 run as recorded. It includes the moment the model got something wrong.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant M as Muse Spark 1.3
+    participant D as Dispatcher
+    participant E as CAD engine
+    Note over D,E: Stage A, no model: import and baseline search
+    D->>M: Frozen context: IDs, bounds, rejections, budgets
+    M->>D: inspect_blocker, list_interventions
+    D->>E: Validated calls
+    E-->>M: Witness at (0, −20, 36) mm, allowed values
+    M->>D: construct_candidate T01 24×12, citing ev_ handles
+    D-->>M: INVALID_PROPOSAL: construction did not start
+    M->>D: construct_candidate T01 40×16, citing rej_17a84dbaf811
+    D->>E: Trusted constructor, fresh worker
+    E-->>M: Candidate built, 2,560 mm³ removed
+    M->>D: verify_candidate
+    D->>E: Rebuild, checks, replan, replay, reverse
+    E-->>M: Checks passed, route feasible
+    M->>D: compare_candidates
+    E-->>M: verified_improvement: true
+    M-->>D: Closing message
+    Note over D: Stored with authority: none
+```
+
+The refused 24×12 was in fact the smallest design that works. It was refused for its citations, and the refusal message didn't say the same values could be resubmitted, so Muse moved to a larger cut. [That was our defect](docs/build-log.md#defects-worth-reading), fixed in `fffc1e4` with a regression test.
+
+### Where the model matters, and where it doesn't
+
+Muse decides what to inspect, which edit to try, and how to size it. On B05 its recorded rationale reads: *"Witness y=8 vs target y 4-26 overlaps bridge y -12..12; shift web -12 to clear Z+ path."*
+
+It does not beat a good rule on these fixtures. On B02 a deterministic `geometry_ranked` selector found a verified design with less material removed, in half the time, for free. On B05 the offline scripted policy picks the same offset. What the live runs show is that a frontier model can work inside this boundary and reach a verified result on two assemblies with two different edit types. How it compares on constraints a hand-written rule doesn't anticipate has not been measured.
+
+Full budgets, decision tables and token usage are in [the agent loop](docs/agent-loop.md).
