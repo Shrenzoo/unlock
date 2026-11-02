@@ -91,7 +91,8 @@ def check_local():
                     problems.append(f"{rel}: {target} is past the end of the file")
             elif dest.suffix == ".md" and fragment not in anchors(dest):
                 problems.append(f"{rel}: no heading for #{fragment} in {dest.name}")
-        for img in re.findall(r"<img\b[^>]*>", path.read_text()):
+        prose = INLINE_CODE.sub("", FENCE.sub("", path.read_text()))
+        for img in re.findall(r"<img\b[^>]*>", prose):
             if 'alt="' not in img or 'alt=""' in img:
                 problems.append(f"{rel}: image without alt text: {img[:70]}")
     return problems, external
