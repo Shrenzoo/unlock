@@ -31,19 +31,21 @@ MARK_STYLE = """
 .arm{animation:unlatch-top 4.6s cubic-bezier(.65,0,.35,1) infinite}
 .base{animation:unlatch-bottom 4.6s cubic-bezier(.65,0,.35,1) infinite}
 .sq{transform-origin:60px 65px;animation:float-up 4.6s cubic-bezier(.55,0,.25,1) infinite}
-@media (prefers-reduced-motion:reduce){
-.arm,.base,.sq{animation:none}
+"""
+# The open mark, for readers who prefer reduced motion. A media query inside an SVG
+# served as an image did not stop the motion when tested, so the README swaps files.
+MARK_STILL_STYLE = """
+.arm,.base{stroke-dasharray:100 100}
 .arm{stroke-dashoffset:14}
 .base{stroke-dashoffset:100}
 .sq{transform:translateY(-44px)}
-}
 """
 MARK_TILE = dict(light="#edf1f6", dark="#21262d")
 MARK_BLUE = "#3268f5"
 
 
-def animated_mark(c, theme, x, y, size):
-    c.style = MARK_STYLE
+def mark_group(c, theme, x, y, size, style):
+    c.style = style
     c.raw(
         f'<g transform="translate({x:.2f} {y:.2f}) scale({size / 120:.4f})">'
         f'<rect width="120" height="120" rx="26" fill="{MARK_TILE[theme]}"/>'
@@ -58,20 +60,20 @@ def animated_mark(c, theme, x, y, size):
     )
 
 
-def brand(theme):
+def brand(theme, still=False):
     c = Canvas(
         1200,
         300,
         theme,
         "UNLOCK. Design for the day it breaks.",
-        "The UNLOCK logo, whose frame unlatches so a blue square floats out through the "
-        "opening, above the tagline, Design for the day it breaks.",
+        "The UNLOCK logo, a frame with a blue square floating out through its opening, "
+        "above the tagline, Design for the day it breaks.",
     )
     word = "UNLOCK"
     mark, gap, size, tracking = 104, 24, 46, 0.2
     wide = text_width(word, "sans600", size, tracking)
     x = 600 - (mark + gap + wide) / 2
-    animated_mark(c, theme, x, 4, mark)
+    mark_group(c, theme, x, 4, mark, MARK_STILL_STYLE if still else MARK_STYLE)
     c.text(x + mark + gap, 4 + mark / 2 + size * 0.36, word, "sans600", size, "ink", tracking=tracking)
     c.text(600, 212, "Design for the day it breaks.", "sans600", 88, "ink", "middle", tracking=-0.038)
     c.text(
@@ -389,6 +391,7 @@ def architecture(theme):
 def main():
     outputs = dict(
         brand=brand,
+        **{"brand-still": lambda theme: brand(theme, still=True)},
         **{"trust-boundary": trust_boundary, "verification-ledger": ledger, "architecture": architecture},
     )
     for name, build in outputs.items():
