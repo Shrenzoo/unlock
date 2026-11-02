@@ -259,6 +259,47 @@ Full budgets, decision tables and token usage are in [the agent loop](docs/agent
 
 The full definition of every check is in [verification](docs/verification.md).
 
+## 08 · Real results
+
+Six assemblies, four kinds of answer. Each outcome was written down [before its run](backend/src/unlock_engine/fixture_catalog.py), and the job runner refuses to record a mismatch.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/readme/gallery-poster-dark.png">
+    <source media="(prefers-reduced-motion: reduce)" srcset="assets/readme/gallery-poster-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/gallery-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/gallery-light.gif">
+    <img src="assets/readme/gallery-light.gif" width="100%" alt="Six real CAD renders side by side. B02, B04 and B06: a relief is cut and the part lifts out. B05: a strap moves and the pack lifts out. B07: a screwdriver is blocked by a fixed shield and no result is claimed. B08: two screws come out and a filter lifts out with no redesign.">
+  </picture>
+</p>
+
+| Fixture | Assembly | Recorded outcome | Why |
+|:--|:--|:--|:--|
+| [`B02`](https://unlock-labs.pages.dev/projects/fixture_B02) | Trapped service component | **Verified improvement** | Scripted policy: relief 24×8 leaves too little clearance and is rejected; 24×12 verifies |
+| [`B04`](https://unlock-labs.pages.dev/projects/fixture_B04) | Pump cartridge under a crossbar | **Verified improvement** | The smallest relief still blocks the lift; the next size verifies |
+| [`B05`](https://unlock-labs.pages.dev/projects/fixture_B05) | Battery pack under a strap | **Verified improvement** | Only T02 is allowed. The strap moves −12 mm and nothing is cut |
+| [`B06`](https://unlock-labs.pages.dev/projects/fixture_B06) | Sensor pod under a light bracket | **Verified improvement** | A 1,200 mm³ cut budget leaves only small reliefs; the first passes |
+| [`B07`](https://unlock-labs.pages.dev/projects/fixture_B07) | Service hatch behind a shield | **Incomplete analysis** | The screw is under a fixed shield, and no allowed edit frees it. The verifier rejects each one as `TOOL_ACCESS_BLOCKED` until the turn budget ends. No claim is made |
+| [`B08`](https://unlock-labs.pages.dev/projects/fixture_B08) | Filter cartridge, already serviceable | **No supported candidate** | An existing route works: two screws, then a lift. There is no bracket to edit, and nothing to redesign |
+
+The last two rows matter as much as the first four. A system that can only say yes isn't checking anything.
+
+### What produced each record
+
+These are different kinds of evidence, and they should not be blurred.
+
+| Record | Decisions by | Geometry | Evidence |
+|:--|:--|:--|:--|
+| **Six-project gallery** (the public demo) | Offline scripted policy. **No model inference** | Real, on a private Modal CPU worker, 2026-11-01 | [`gallery-release-lighter/`](backend/evidence/gallery-release-lighter/validation.json) |
+| **Live redesign, B02** | Muse Spark 1.3 | Real, local, 2026-10-29 | [`live-b02/`](backend/evidence/live-b02/), [write-up](backend/docs/LIVE_B02_REDESIGN.md) |
+| **Live redesign, B05** | Muse Spark 1.3 | Real, local, 2026-11-01 | [`live-b05/`](backend/evidence/live-b05/), [write-up](backend/docs/LIVE_B05_REDESIGN.md) |
+| **Live tool-calling check, B01** | Muse Spark 1.3, read-only, 2 requests | Unchanged | [`meta-tool-smoke/`](backend/evidence/meta-tool-smoke/live_report.json), [write-up](backend/docs/META_TOOL_CALLING_VERIFICATION.md) |
+| **Judge upload** | Offline scripted policy | Real, a genuine upload on the deployed worker, 2026-10-31 | [`judge-access/`](backend/docs/judge-access/verification.json), [write-up](backend/docs/JUDGE_ACCESS.md) |
+
+So B02 has two results that differ on purpose. The live run chose 40×16; the public gallery's scripted policy verifies 24×12. Both are recorded, and neither is presented as the other.
+
+Corrections along the way are [kept in the record](backend/docs/GALLERY.md#corrections-made-on-the-way-recorded-rather-than-hidden), including B07, whose first registered expectation was wrong.
+
 ## 09 · Engineering architecture
 
 <p align="center">
@@ -278,3 +319,25 @@ The full definition of every check is in [verification](docs/verification.md).
 **The interface only reports.** The React workspace [renders what reports say](frontend/src/ui/Evidence.tsx), and it has no code path that decides an engineering status.
 
 Security detail is in the [security model](docs/security-model.md), and routes are in the [API reference](docs/api.md).
+
+## 10 · Measured evidence
+
+Each number has a source, and none generalizes beyond these synthetic fixtures.
+
+| Measurement | Result | Source |
+|:--|:--|:--|
+| Live redesign runs | 2 of 2 reached `VERIFIED_IMPROVEMENT_FOUND` | [B02](backend/evidence/live-b02/live_summary.txt), [B05](backend/evidence/live-b05/live_summary.txt) |
+| Live tool calls recorded | 14 across 3 sessions: 13 executed, 1 refused by validation | [B01](backend/evidence/meta-tool-smoke/live_report.json), `tool_results` in each run report |
+| Tools exercised live | 7 of 8 (`inspect_constraints` has not been) | Same |
+| Live run time | B02 48.1 s, B05 73.3 s, against a 120 s budget | Run reports |
+| Live API use | About 31,000 to 33,000 tokens per redesign, about $0.03 at list price (an estimate, not a billed figure) | [Agent loop](docs/agent-loop.md#api-usage) |
+| Constructed CAD | B02: 2,560 mm³ removed, 0 mm³ outside the editable region. B05: 11,328 mm³ changed | [`live_changed_bridge.step`](backend/evidence/live-b02/live_changed_bridge.step) and run reports |
+| Deterministic comparison, B02 | `geometry_ranked`: verified, 1,152 mm³, 24.1 s. `stable_enumeration`: none verified, 30.3 s. **Muse matched the first and did not beat it** | [`selector_*.json`](backend/evidence/live-b02/selector_geometry_ranked.json) |
+| Cloud execution | 6 of 6 Modal jobs matched pre-registered outcomes, 58 to 154 s each | [`validation.json`](backend/evidence/gallery-release-lighter/validation.json) |
+| Export integrity | First gallery release: 71 of 71 artifacts hash-exact, 28 of 28 write attempts refused | [`gallery-release/validation.json`](backend/evidence/gallery-release/validation.json) |
+| Genuine upload on the deployed worker | `VERIFIED_IMPROVEMENT_FOUND` in 76.3 s, downloaded bytes matched the recorded hash | [`JUDGE_ACCESS.md`](backend/docs/JUDGE_ACCESS.md#published-verification-2026-10-31) |
+| Test suite | 389 tests collected, 357 in the default selection. Last recorded full run: 342 passed, 27 deselected, 2026-10-31. Paid tests never run by default | [`backend-tests.txt`](backend/docs/judge-access/backend-tests.txt) |
+
+The test count moved after that recorded run, and this documentation-only change did not rerun the CAD suite. See the [validation report](docs/validation-report.md) for what was and wasn't executed.
+
+Timing conditions and limits are in [performance](docs/performance.md).
