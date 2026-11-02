@@ -91,9 +91,9 @@ What comes out is an inspectable engineering record. The model's own opinion of 
   </picture>
 </p>
 
-Every frame on this page is rendered from the engine's own geometry, by [scripts in this repository](assets/readme/src/README.md) that refuse to run unless the redesigned part's hash matches the design recorded in evidence.
+Every 3D render on this page comes from the engine's own geometry, through [scripts in this repository](assets/readme/src/README.md) that refuse to run unless the redesigned part's hash matches the design recorded in evidence.
 
-The [live demo](https://unlock-labs.pages.dev) lets you open the same assemblies, turn the exact BRep models, read each check and play the route. Be clear about what is computed where:
+The [live demo](https://unlock-labs.pages.dev) lets you open the same assemblies, turn their tessellated BRep models, read each check and play the route. What gets computed depends on the path you take:
 
 | Path | What you can do | What runs |
 |:--|:--|:--|
@@ -373,7 +373,11 @@ python3.12 -m venv .venv
 ```
 
 ```bash
-.venv/bin/python -m pip install -r requirements.lock && .venv/bin/python -m pip install --no-deps --no-build-isolation -e .
+.venv/bin/python -m pip install -r requirements.lock
+```
+
+```bash
+.venv/bin/python -m pip install --no-deps --no-build-isolation -e .
 ```
 
 Then pick one.
@@ -398,13 +402,13 @@ Open <http://localhost:5183/projects>. The first backend start generates and imp
 
 ### Live Meta inference
 
-This spends API credits. It needs a key from the [Meta Model API](https://dev.meta.ai).
+This spends API credits. It needs a key from the [Meta Model API](https://dev.meta.ai). From the repository root:
 
 ```bash
 cp -n backend/.env.example backend/.env
 ```
 
-Put your key in `backend/.env` as `MODEL_API_KEY`, leave `AI_PROVIDER=meta`, and restart the backend. Keys belong only in `backend/.env`, which Git ignores at every depth. Redesign requests then call Muse Spark 1.3. If no key is configured the baseline still works, and redesign reports `Model unavailable` instead of quietly falling back to the scripted policy.
+Put your key in `backend/.env` as `MODEL_API_KEY`, leave `AI_PROVIDER=meta`, and restart the backend without the `AI_PROVIDER=mock` prefix. Keys belong only in `backend/.env`, which Git ignores at every depth. Redesign requests then call Muse Spark 1.3. If no key is configured the baseline still works, and redesign ends as `MODEL_UNAVAILABLE` instead of quietly falling back to the scripted policy.
 
 Paid tests never run by accident: they need both a key and `RUN_META_LIVE_TESTS=1`, and ordinary `pytest` deselects them.
 

@@ -196,7 +196,7 @@ def ledger(theme):
         "and B05. Editable region applies only to the T01 cut on B02. Strength, fatigue, electrical "
         "safety, manufacturing feasibility and restored function are not assessed.",
     )
-    name_x, why_x, a_x, b_x = 0, 268, 866, 1046
+    name_x, why_x, a_x, b_x = 0, 240, 866, 1046
     c.text(a_x, 30, "B02  T01 cut", "sans600", 17, "ink")
     c.text(a_x, 52, "40 × 16 mm relief", "mono", 12.5, "ink3")
     c.text(a_x, 70, b02["run_id"], "mono", 10.5, "ink3")
@@ -210,7 +210,7 @@ def ledger(theme):
         if result == "pass":
             c.check(x, y - 12, "verified", 15)
             if note:
-                c.text(x + 22, y, note, "mono500", 12.5, "verified")
+                c.text(x + 22, y, note, "mono500", 13, "verified")
         elif result == "none":
             c.text(x + 2, y, note or "not applicable", "sans", 12.5, "ink3")
         else:
@@ -222,8 +222,8 @@ def ledger(theme):
     y = head + 4
     for i, (name, why) in enumerate(CHECK_ROWS):
         row = y + i * row_h
-        c.text(name_x, row, name, "mono500", 13.5, "ink")
-        c.text(why_x, row, why, "sans", 14.5, "ink2")
+        c.text(name_x, row, name, "mono500", 15, "ink")
+        c.text(why_x, row, why, "sans", 16, "ink2")
         for idx, x in enumerate((a_x, b_x)):
             found = checks[idx].get(name)
             if found is None:
@@ -247,8 +247,8 @@ def ledger(theme):
         )
     ):
         row = route + i * row_h
-        c.text(name_x, row, name, "mono500", 13.5, "ink")
-        c.text(why_x, row, why, "sans", 14.5, "ink2")
+        c.text(name_x, row, name, "mono500", 15, "ink")
+        c.text(why_x, row, why, "sans", 16, "ink2")
         for idx, (x, v) in enumerate(((a_x, b02v), (b_x, b05v))):
             mark(x, row, getter(idx, v))
         c.line(0, row + 12, 1200, row + 12, "rule", 0.75)
@@ -273,9 +273,11 @@ def ledger(theme):
 
 def box(c, x, y, w, h, title, lines=(), fill="canvas", stroke="rule", accent=None, title_size=16):
     c.rect(x + 0.5, y + 0.5, w, h, fill=fill, stroke=stroke, r=8)
-    c.text(x + 16, y + 28, title, "sans600", title_size, accent or "ink", tracking=-0.005)
+    c.text(x + 14, y + 27, title, "sans600", title_size, accent or "ink", tracking=-0.005)
     for i, line in enumerate(lines):
-        c.text(x + 16, y + 50 + i * 18, line, "sans", 13.5, "ink2")
+        if text_width(line, "sans", 14.5) > w - 22:
+            raise SystemExit(f"architecture: line too wide for its box: {line}")
+        c.text(x + 14, y + 49 + i * 19, line, "sans", 14.5, "ink2")
 
 
 def architecture(theme):
@@ -298,10 +300,10 @@ def architecture(theme):
 
     # Deployed lane
     lane(0, 298, "DEPLOYED", "public demonstration. No Meta inference runs here.")
-    box(c, 24, 54, 256, 106, "Cloudflare Pages", ["unlock-labs.pages.dev", "React 19, TypeScript, Three.js.", "The browser calls the two APIs."], accent="cobalt")
-    box(c, 344, 54, 256, 106, "Modal: unlock-demo", ["Read-only FastAPI", "Serves recorded runs. Anonymous", "POST returns 403. Mock provider."], accent="cobalt")
-    box(c, 344, 176, 256, 106, "Modal: unlock-judges", ["Private access code, sessions,", "owned results. 10 MiB uploads,", "six attempts in total."], accent="signal")
-    box(c, 664, 176, 256, 106, "Modal: unlock-engineering", ["Private CPU worker, live=False.", "Fresh offline analysis, and", "gallery composition."])
+    box(c, 24, 54, 256, 106, "Cloudflare Pages", ["unlock-labs.pages.dev", "React, TypeScript, Three.js.", "The browser calls two APIs."], accent="cobalt")
+    box(c, 344, 54, 256, 106, "Modal: unlock-demo", ["Read-only FastAPI, recorded", "runs, mock provider. Anonymous", "POST returns 403."], accent="cobalt")
+    box(c, 344, 176, 256, 106, "Modal: unlock-judges", ["Private code, owned results,", "10 MiB uploads, six attempts", "in total."], accent="signal")
+    box(c, 664, 176, 256, 106, "Modal: unlock-engineering", ["Private CPU worker, live=False.", "Fresh offline analysis and", "gallery composition."])
     box(c, 960, 54, 216, 228, "Modal Volume", ["Immutable job snapshots", "Composed gallery", "Judge ledger", "Artifacts by SHA-256", "", "Public API mounts one", "subdirectory, read-only."])
     c.arrow(282, 106, 342, 106, "ink3")
     c.arrow(282, 145, 342, 205, "ink3")
@@ -312,10 +314,10 @@ def architecture(theme):
 
     # Local lane
     lane(316, 196, "LOCAL", "the full interactive workflow, on your machine.")
-    box(c, 24, 370, 216, 124, "React workspace", ["Same frontend", "Renders what reports say;", "never derives a status", "localhost:5183"], accent="cobalt")
-    box(c, 288, 370, 262, 124, "FastAPI coordinator", ["Loopback. One serial job queue,", "SQLite, resumable SSE, immutable", "revisions, append-only decisions."])
+    box(c, 24, 370, 216, 124, "React workspace", ["localhost:5183", "Renders what reports say;", "never derives a status."], accent="cobalt")
+    box(c, 288, 370, 262, 124, "FastAPI coordinator", ["Loopback, one serial job queue,", "SQLite, resumable events,", "immutable revisions."])
     box(c, 598, 370, 288, 124, "Bounded agent controller", ["8 tools, 3 candidates, 12 calls,", "6 turns, 16,000 tokens, 120 s.", "Outcome derived from evidence."], accent="verified")
-    box(c, 934, 370, 242, 124, "Meta Model API", ["muse-spark-1.3, tool calling", "AI_PROVIDER=meta, or a labelled", "offline policy with mock"], accent="cobalt")
+    box(c, 934, 370, 242, 124, "Meta Model API", ["muse-spark-1.3, tool calling.", "Or AI_PROVIDER=mock, a", "labelled offline policy."], accent="cobalt")
     c.arrow(242, 432, 286, 432, "ink3")
     c.arrow(552, 432, 596, 432, "ink3")
     c.arrow(888, 420, 932, 420, "cobalt", 1.5)
@@ -326,12 +328,12 @@ def architecture(theme):
     c.text(24, 562, "ENGINE", "mono500", 13, "verified", tracking=0.09)
     c.text(24 + text_width("ENGINE", "mono500", 13, 0.09) + 14, 562, "one codebase behind both paths: backend/src/unlock_engine", "sans", 14, "ink2")
     steps = [
-        ("Package gate", ["Flat STEP + manifest", "AP214/AP242, mm", "Bounded before parsing"]),
-        ("Import", ["STEP to rigid solids", "Measured inventory", "Immutable revision"]),
-        ("Planner", ["Six-axis state search", "Analytic sweep checks", "Rejections with witness"]),
-        ("Templates", ["T01 relief, T02 offset", "Finite server domains", "Trusted constructor"]),
-        ("Verifier", ["Fresh rebuild", "Mandatory checks", "Replay and reverse"]),
-        ("Export", ["STEP, real reimport", "Recheck, then bundle", "SHA-256 artifacts"]),
+        ("Package gate", ["STEP + manifest", "AP214/AP242, mm", "Bounded first"]),
+        ("Import", ["Rigid solids", "Measured inventory", "Immutable revision"]),
+        ("Planner", ["Six-axis search", "Analytic sweeps", "BRep witnesses"]),
+        ("Templates", ["T01 relief", "T02 offset", "Finite domains"]),
+        ("Verifier", ["Fresh rebuild", "Mandatory checks", "Replay, reverse"]),
+        ("Export", ["Real reimport", "Recheck, bundle", "SHA-256 artifacts"]),
     ]
     w = 180
     for i, (title, lines) in enumerate(steps):
