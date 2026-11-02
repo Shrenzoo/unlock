@@ -54,6 +54,17 @@
    "matches_live_run": true,
    "removed_mm3": 2560.0,
    "added_mm3": 0.0
+  },
+  "gallery_design": {
+   "template": "T01",
+   "parameters": {
+    "center_x_mm": 0.0,
+    "center_y_mm": -20.0,
+    "width_mm": 24.0,
+    "depth_mm": 12.0
+   },
+   "geometry_hash": "23bd79900e32fd8e9679226a21aa74e4c1ba1c9de1a935ab42d9a878c2075aa7",
+   "removed_mm3": 1152.0
   }
  },
  "B04": {

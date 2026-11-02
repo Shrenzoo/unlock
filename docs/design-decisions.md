@@ -38,7 +38,7 @@ Every interesting engineering choice is a trade we accepted somewhere. These are
 
 ## 5. Per-operation subprocess isolation
 
-**Decision.** Every native operation runs in its own subprocess with a 30 s wall limit. Credentials are stripped from worker environments before any process starts.
+**Decision.** Every native operation runs in its own subprocess under a wall-clock limit, 30 s for an operation or verifier phase. Credentials are stripped from worker environments before any process starts.
 
 **What it cost.** Process-spawn overhead on every operation, and a warm standby worker to offset OCCT's import cost. Peak worker RSS on B02 is about 440 MiB.
 

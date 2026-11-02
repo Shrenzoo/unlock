@@ -20,7 +20,7 @@
 
 <p align="center">
   <strong>A broken part shouldn't make a product disposable.</strong><br>
-  UNLOCK reads a CAD assembly, finds exactly what stops a failed part from coming out, lets Meta's Muse Spark 1.3 propose a constrained design change, builds that change in real CAD, and checks the result with a verifier the model cannot influence.
+  UNLOCK reads a CAD assembly, finds exactly what stops a failed part from coming out, lets Meta's Muse Spark 1.3 propose a constrained design change, builds that change in real CAD, and checks the result with a verifier whose verdict the model cannot change.
 </p>
 
 <p align="center">
@@ -203,3 +203,78 @@ Muse decides what to inspect, which edit to try, and how to size it. On B05 its 
 It does not beat a good rule on these fixtures. On B02 a deterministic `geometry_ranked` selector found a verified design with less material removed, in half the time, for free. On B05 the offline scripted policy picks the same offset. What the live runs show is that a frontier model can work inside this boundary and reach a verified result on two assemblies with two different edit types. How it compares on constraints a hand-written rule doesn't anticipate has not been measured.
 
 Full budgets, decision tables and token usage are in [the agent loop](docs/agent-loop.md).
+
+## 06 · The engineering engine
+
+**STEP and BRep.** Assemblies arrive as STEP files (ISO 10303, AP214 or AP242). A STEP file carries a boundary representation: exact surfaces and edges, in millimetres, the form CAD systems treat as the source of truth. A mesh is only an approximation of that. UNLOCK does all engineering on the BRep through [CadQuery](https://github.com/CadQuery/cadquery) and [OpenCASCADE](https://dev.opencascade.org/) (via OCP). Preview meshes are marked `authoritative: false` and never enter verification.
+
+**Assembly topology.** A manifest declares each part's role, what retains what, and how the target may leave. Import measures the real solids, and the revision is immutable: constraints, keep-outs and envelope are hashed into its identity.
+
+**Finding the obstruction.** The [planner](backend/docs/PLANNER.md) runs a state search over which parts have been removed, along six world axes. It admits a translation only with validated analytic coverage of the whole sweep plus the policy's 0.5 mm clearance. Sampled BRep queries can reject a move or leave it `unknown`, and can never admit it. A rejection carries a witness: on B05, the pack overlaps the strap by 1,397 mm³ after 12 mm of travel.
+
+**Fastener access.** A screw is removed by a declared driver, whose shaft and handle solids are checked along the way. That is why B07, with its screw under a fixed shield, reports `TOOL_ACCESS_BLOCKED`.
+
+**Constrained edits.** The model never describes a shape. It picks a template and values, and the [constructor](backend/src/unlock_engine/templates.py) builds the solid.
+
+| Template | What changes | Allowed values | Recorded live |
+|:--|:--|:--|:--|
+| **T01** relief | A rectangular window through the bracket's web | Centre x 3, centre y 4, width 4, depth 4: 192 designs | B02: 40 × 16 mm, 2,560 mm³ removed |
+| **T02** offset | The web moves sideways; feet and posts stay | Offset y: −12, +12, +24, +36 mm | B05: −12 mm, nothing cut |
+
+<p align="center">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/readme/relief-poster-dark.png">
+    <source media="(prefers-reduced-motion: reduce)" srcset="assets/readme/relief-poster-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/relief-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/relief-light.gif">
+    <img src="assets/readme/relief-light.gif" width="78%" alt="Real CAD render of fixture B02. The material of a 40 by 16 millimetre relief, 2,560 cubic millimetres, is highlighted in the bracket's web and lifts away, then the service part rises through the opening.">
+  </picture>
+</p>
+
+<p align="center"><sub>T01 on B02, the design the live run chose. The highlighted block is the actual boolean difference between the original and revised brackets.</sub></p>
+
+**Frozen policy.** Tolerances and limits live in one [`Policy`](backend/src/unlock_engine/contracts.py#L60), and its full value is part of evidence identity. Change a tolerance and every hash derived under the old one goes stale.
+
+## 07 · Independent verification
+
+<h3 align="center">The model proposes. The verifier decides.</h3>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/verification-ledger-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/verification-ledger-light.svg">
+    <img src="assets/readme/verification-ledger-light.svg" width="100%" alt="A ledger read from the two live run reports. Twelve static checks, plus target path, forward replay and reverse insertion, all pass on B02 and B05. B02 changed 2,560 cubic millimetres with 0 outside the editable region. B05 changed 11,328 cubic millimetres; editable region applies only to T01. Not assessed: structural strength and fatigue, electrical safety, manufacturing feasibility, restored product function.">
+  </picture>
+</p>
+
+**The count depends on the edit, and on who is counting.** A T01 cut has 12 mandatory static checks and a T02 move has 11, since `editable_region` only applies to cuts. Adding `target_path`, the live reports list 13 and 12 at plan level. With forward replay and reverse insertion, that makes 15 and 14 distinct checks. The workspace shows a higher figure, 25 on B05, because it lists the static checks a second time as route constraints.
+
+**What "independent" means here.** The verifier runs in a fresh process, re-imports the frozen package and rebuilds the candidate from its parameters, then compares solids by two-way BRep difference. It is independent of the model and of the candidate record: [a forged candidate with recomputed hashes fails](backend/tests/test_templates_verification.py#L135). It is not a second implementation of the constructor. It [uses the same trusted `modify`](backend/src/unlock_engine/verification.py#L238), so a constructor bug would not show up in `trusted_reconstruction`. The other checks and the planner's own search examine the resulting material directly.
+
+**Unknown is not a pass.** A missing or unknown mandatory check [prevents a passing result](backend/src/unlock_engine/verification.py#L66). In the interface, [a pass is only green when computed evidence backs it](frontend/src/ui/Evidence.tsx#L53).
+
+**Export is checked too.** [`export_bundle`](backend/src/unlock_engine/export.py#L30) refuses a candidate with no current passing report, then reads the written STEP back and verifies the reimported geometry before calling it a success.
+
+**What a pass means.** Under stated assumptions, on this synthetic geometry, a rigid part can follow this translation without the modelled collisions, and the edit respected the declared constraints. It does not establish strength, fatigue life, electrical safety, manufacturability or that the repaired product works. Every run report [says so in its own `limitations` field](backend/evidence/live-b02/live_run.json).
+
+The full definition of every check is in [verification](docs/verification.md).
+
+## 09 · Engineering architecture
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/architecture-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/architecture-light.svg">
+    <img src="assets/readme/architecture-light.svg" width="100%" alt="Three bands. Deployed: Cloudflare Pages serves the React and Three.js site; the browser calls a read-only Modal API and a separate judge gateway, which starts a private Modal worker; a Modal Volume holds snapshots. Local: a React workspace talks to a FastAPI coordinator and a bounded agent controller, which calls the Meta Model API or a labelled offline policy. Engine: both paths reach the same code, from package gate through import, planner, templates, verifier and export, with isolated native workers on CadQuery and OpenCASCADE.">
+  </picture>
+</p>
+
+**One engine, two ways in.** The interactive workflow runs locally, where a [FastAPI coordinator](backend/src/unlock_engine/api/) keeps immutable revisions, a single serial job queue and resumable event streams. The cloud deployment reuses the same engine for private jobs and publishes only composed snapshots.
+
+**The public path computes nothing.** [`unlock-demo`](backend/modal_web.py) mounts one read-only Volume subdirectory. A [publication guard](backend/src/unlock_engine/deployment/publication.py) refuses to serve unless each project has a recorded offline run, a license grant and its pre-registered outcome, and verified exports pass their hash checks. The gallery release attached no Meta secret, and `/health` reports a mock provider with no credentials.
+
+**Native work is contained.** Each CAD operation runs in its own subprocess, with a wall-clock limit, an allowlisted operation and credentials stripped from its environment. A hung kernel call costs one operation.
+
+**The interface only reports.** The React workspace [renders what reports say](frontend/src/ui/Evidence.tsx), and it has no code path that decides an engineering status.
+
+Security detail is in the [security model](docs/security-model.md), and routes are in the [API reference](docs/api.md).

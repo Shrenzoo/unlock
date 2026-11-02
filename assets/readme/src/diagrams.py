@@ -341,7 +341,7 @@ def architecture(theme):
             c.arrow(round(x + w + 0.5, 1), 638, round(x + w + 9.2, 1), 638, "verified", 1.2, 5)
     c.rect(24.5, 712.5, 1152, 104, fill="canvas", stroke="rule", r=8)
     c.text(40, 742, "Isolated native workers", "sans600", 15.5, "ink")
-    c.text(40, 766, "Each CAD operation runs in its own subprocess, 30 s wall limit, credentials stripped.", "sans", 14, "ink2")
+    c.text(40, 766, "Each CAD operation runs in its own subprocess, with wall-clock limits and credentials stripped.", "sans", 14, "ink2")
     c.text(40, 790, "CadQuery 2.6.1 on OpenCASCADE 7.8 (OCP). Exact BReps in millimetres; meshes are preview only.", "sans", 14, "ink2")
     c.arrow(419, 495, 419, 529, "ink3")
     c.arrow(742, 495, 742, 529, "ink3")

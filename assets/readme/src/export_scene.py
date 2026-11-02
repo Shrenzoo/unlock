@@ -47,6 +47,12 @@ DESIGNS = {
         template="T01", center_x_mm=0.0, center_y_mm=-20.0, width_mm=24.0, depth_mm=8.0
     ),
 }
+# B02's public gallery run verified a different design from its live run.
+GALLERY_DESIGNS = {
+    "B02": dict(
+        template="T01", center_x_mm=0.0, center_y_mm=-20.0, width_mm=24.0, depth_mm=12.0
+    ),
+}
 WEB_MOTION_FRAMES = 61
 LIVE_REPORTS = dict(
     B02=EVIDENCE / "live-b02/live_run.json", B05=EVIDENCE / "live-b05/live_run.json"
@@ -212,6 +218,22 @@ def export_fixture(code):
             revised=solid_payload(revised),
             removed=solid_payload(removed) if volume(removed) > 1e-6 else None,
         )
+    if code in GALLERY_DESIGNS:
+        chosen = GALLERY_DESIGNS[code]
+        parameters = {k: v for k, v in chosen.items() if k != "template"}
+        candidate = construct_candidate(
+            revision, "bridge", chosen["template"], parameters
+        )
+        revised = candidate.shapes["bridge"]
+        removed = boolean("cut", shapes["bridge"], revised)
+        scene["gallery_design"] = dict(
+            template=chosen["template"],
+            parameters=parameters,
+            geometry_hash=candidate.geometry_hash,
+            removed_mm3=round(volume(removed), 3),
+            revised=solid_payload(revised),
+            removed=solid_payload(removed),
+        )
     if design and design["template"] == "T02":
         # Every position the server allows, drawn so the finite choice is visible.
         scene["allowed_positions"] = [
@@ -270,6 +292,11 @@ def main():
             if design
             else None,
         )
+        if "gallery_design" in scene:
+            provenance[code]["gallery_design"] = {
+                k: scene["gallery_design"][k]
+                for k in ("template", "parameters", "geometry_hash", "removed_mm3")
+            }
         print(code, scene["baseline_status"], flush=True)
     (HERE / "scene_provenance.json").write_text(
         json.dumps(provenance, indent=1) + "\n"

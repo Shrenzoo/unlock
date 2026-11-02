@@ -19,7 +19,7 @@ Nothing on the README page is modelled or drawn by hand from imagination. The 3D
 
 **Geometry is the engine's.** `export_scene.py` generates each fixture with `fixtures.generate_fixture`, imports it with `service.import_revision`, and tessellates the BReps. Vertices stay per face, so smooth shading never crosses a CAD edge, and the lines you see are the real BRep edges.
 
-**Redesigns are the recorded ones.** Brackets are rebuilt by `service.construct_candidate`. For B02 and B05 the script exits unless the rebuilt geometry hash equals the live run's verified design (`7aebefb8…`, `c9b46d5a…`). B04 and B06 use the designs the gallery recorded under the offline policy.
+**Redesigns are the recorded ones.** Brackets are rebuilt by `service.construct_candidate`. For B02 and B05 the script exits unless the rebuilt geometry hash equals the live run's verified design (`7aebefb8…`, `c9b46d5a…`). B04, B06 and the gallery's B02 cell use the designs recorded under the offline policy, as the public API reports them. The T01 clip shows the live run's 40 × 16 and the gallery shows its 24 × 12: they are different records of the same fixture.
 
 **The interference is the witness.** The orange solid is a boolean intersection of the target, moved by the planner's recorded `travel_mm`, with the bracket. On B02 this reproduces the 640 mm³ in the run's notes. On B05 it gives 1,397 mm³.
 
@@ -41,7 +41,8 @@ From the repository root. The backend's virtual environment provides step 1, and
 PYTHONPATH=backend/src backend/.venv/bin/python assets/readme/src/export_scene.py
 cd assets/readme/src
 Blender -b -P render_hero.py
-for code in B02 B04 B05 B06 B07 B08; do Blender -b -P render_cells.py -- --code $code --size 440x275 --samples 16; done
+Blender -b -P render_cells.py -- --code B02 --size 440x275 --samples 16 --gallery-design
+for code in B04 B05 B06 B07 B08; do Blender -b -P render_cells.py -- --code $code --size 440x275 --samples 16; done
 Blender -b -P render_cells.py -- --code B02 --size 780x485 --samples 24 --tag relief --close
 UNLOCK_FONT_DIR=<fonts> python compose.py
 UNLOCK_FONT_DIR=<fonts> python compose_cells.py

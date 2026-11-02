@@ -20,7 +20,7 @@ Artifacts are addressed by SHA-256 rather than caller-supplied paths, so nothing
 
 ## How the geometry process is contained
 
-Every native operation runs in its **own subprocess** with a 30 s wall limit and a 120 s parent budget. Operations and work directories are allowlisted *before* a process is spawned, not discovered after. **Credentials are stripped from the worker environment before any process starts**, and the live tool-calling smoke test scans its report, stdout and stderr for the key and asserts it is absent.
+Every native operation runs in its **own subprocess** under a wall-clock limit (30 s for an operation or verifier phase) and a 120 s run budget. Operations and work directories are allowlisted *before* a process is spawned, not discovered after. **Credentials are stripped from the worker environment before any process starts**, and the live tool-calling smoke test scans its report, stdout and stderr for the key and asserts it is absent.
 
 A hung or corrupt OCCT call can't take the coordinator down, and a native crash costs exactly one operation.
 

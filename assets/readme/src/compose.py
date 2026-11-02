@@ -186,7 +186,7 @@ def stabilize(frames, threshold=5, refresh_every=8):
         previous = current
 
 
-def pinned_palette(out, listing, background, colors, ramp_steps=24):
+def pinned_palette(out, listing, background, colors, ramp_steps=24, extra=()):
     """A palette with the exact page colour and a fine ramp for soft shadows.
 
     Without dithering, the shadows would otherwise fall into a few visible bands.
@@ -194,13 +194,14 @@ def pinned_palette(out, listing, background, colors, ramp_steps=24):
     palette = out / "palette.png"
     subprocess.run(
         ["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
-         "-vf", f"palettegen=max_colors={colors - ramp_steps - 1}:stats_mode=full:reserve_transparent=0", str(palette)],
+         "-vf", f"palettegen=max_colors={colors - ramp_steps - 1 - len(extra)}:stats_mode=full:reserve_transparent=0", str(palette)],
         check=True,
     )
     entries = np.array(Image.open(palette).convert("RGB")).reshape(-1, 3).astype(int)
     want = np.array([int(background[i : i + 2], 16) for i in (1, 3, 5)])
     ramp = [want * (1 - 0.32 * step / ramp_steps) for step in range(ramp_steps + 1)]
-    merged = np.vstack([entries[:colors - ramp_steps - 1], np.round(ramp).astype(int)])
+    tones = [[int(c[i : i + 2], 16) for i in (1, 3, 5)] for c in extra]
+    merged = np.vstack([entries, np.round(ramp).astype(int), np.array(tones, int).reshape(-1, 3)])
     merged = np.unique(merged, axis=0)
     padded = np.vstack([merged, np.repeat(want[None, :], 256 - len(merged), axis=0)])
     Image.fromarray(padded.reshape(16, 16, 3).astype(np.uint8)).save(palette)
