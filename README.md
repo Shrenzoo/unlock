@@ -468,3 +468,54 @@ cd backend && .venv/bin/python -m pytest -q tests/test_ai_toolbox.py tests/test_
 | [`assets/readme/src/`](assets/readme/src/README.md) | Scripts that regenerate this page's visuals from the engine and evidence |
 
 The [claim ledger](docs/claims.md) maps each substantive claim on this page to its source. The [audit](docs/readme-audit.md) lists the errors found in the previous version of this README.
+
+## 13 · Scope and limitations
+
+UNLOCK is a research prototype. These limits are what make its claims defensible, so they belong here and not in a footnote.
+
+| Area | The boundary |
+|:--|:--|
+| **Evidence** | All fixtures are synthetic, built by this team on one bracket constructor with simplified mating and floating workholding. No commercial product has been tested. Nothing here measures a real repair or real waste. |
+| **Edits** | T01 and T02 on one parametric family, `bridge_bracket_v1`. UNLOCK cannot redesign arbitrary CAD. |
+| **Inputs** | 5–12 rigid single-solid parts, at most 500 mm, AP214 or AP242 with uniform millimetres, and a manifest declaring roles and constraints. A bare STEP file is not enough. |
+| **Motion** | Rigid translations along six world axes, isolated planar contacts and annotated reusable screws. No rotation or free-form path. |
+| **Physics** | Torque, threads, forces, cables, clips, adhesives and flexible parts are not modelled. |
+| **What a pass means** | A geometric result under stated assumptions. It does not establish structural strength, fatigue life, electrical safety, manufacturability or restored function, and it is not release approval. |
+| **The model** | Two redesign runs on two fixtures: no reliability rate, no statistical comparison, no effort study. A deterministic rule does as well or better on these fixtures. |
+| **Time budgets** | Limits are wall-clock, so heavy machine load can end a run as `INCOMPLETE_ANALYSIS`. That happened during this documentation work, and it is the correct outcome. |
+| **Hosting** | The public site is read-only and the judge path is private and capped. Neither path runs live inference, and neither is a multi-user product. The local coordinator has no authentication and must stay on loopback. |
+
+**Not manufacturing-ready, and not claiming to be.**
+
+## 14 · Future direction
+
+None of this is implemented. These are the steps from a prototype to something an engineering team could rely on.
+
+- **Real assemblies.** Run authorized real CAD through the system, and measure where its assumptions break.
+- **More edit families.** Additional server-owned templates, each with finite domains, geometric preconditions and tests, beyond one bracket family.
+- **A measured model question.** Run the model and deterministic rules across fixtures designed so that a hand-written rule fails, and report reliability over many runs.
+- **Richer physics.** Cables, clips and adhesives as first-class obstructions, and a conservative strength pre-screen that reports `unknown` instead of staying silent.
+- **Harder targets.** Multi-part targets and ordering problems, not just a single path.
+- **Human review.** Engineering change control around acceptance, and a portable certificate a third party can re-run.
+
+Each of these should widen what the engine can check. None should widen what the model can decide.
+
+## 15 · Credits and licenses
+
+Built by [Shreyas Pabbathi](https://github.com/Shrenzoo) and [Maanas Pabbathi](https://github.com/maanas-pab) for the Meta Global AI Developer Hackathon 2026. Taking part in the event implies no result, and Meta has not reviewed or endorsed this project.
+
+**Built with** [Muse Spark 1.3](https://dev.meta.ai/docs/models) through the Meta Model API, [CadQuery](https://github.com/CadQuery/cadquery), [OpenCASCADE](https://dev.opencascade.org/) via [OCP](https://github.com/CadQuery/OCP), [FastAPI](https://fastapi.tiangolo.com/), [Pydantic](https://docs.pydantic.dev/), [React](https://react.dev/), [Three.js](https://threejs.org/), [Modal](https://modal.com/) and [Cloudflare Pages](https://pages.cloudflare.com/). Visuals are rendered with [Blender](https://www.blender.org/) and set in Instrument Sans and IBM Plex Mono.
+
+**Licenses are separate for each kind of material.**
+
+| Material | Terms |
+|:--|:--|
+| Fixtures **B02, B04, B05, B06, B07, B08**, their generated demonstration assets, and the renders of them in this README | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribute the UNLOCK team, link this repository, and identify modifications. Provenance: [B02](backend/docs/B02_PROVENANCE.md), [gallery](backend/docs/GALLERY.md#rights). No endorsement, safety, fitness or manufacturing approval is implied. |
+| Fixtures **B01, B03** and the held-out B02 variant | Not covered by that grant. They are not published in the public demo. |
+| **Application source code** | No license file has been chosen yet, so default copyright applies. The CC BY grant does not cover it. |
+| **Third-party software** | Each keeps its own terms. See [`THIRD_PARTY_NOTICES.txt`](frontend/public/THIRD_PARTY_NOTICES.txt) and the notices in each export. |
+
+<p align="center">
+  <br>
+  <sub>The model proposes. The verifier decides.</sub>
+</p>
