@@ -40,7 +40,7 @@
   font-size: var(--t-xl);
   font-weight: 600;
   letter-spacing: -0.025em;
-  font-variation-settings: 'wdth' 80;
+  font-variation-settings: 'wdth' 100;
   line-height: 1;
 }
 .dash__lede {
