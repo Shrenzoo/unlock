@@ -9,8 +9,6 @@ usage (from the repository root, standard library only):
 import re
 import subprocess
 import sys
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -137,16 +135,13 @@ def check_secrets():
 def check_external(urls):
     problems = []
     for url in sorted(urls):
-        request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 unlock-docs-check"})
-        try:
-            with urllib.request.urlopen(request, timeout=25) as response:
-                status = response.status
-        except urllib.error.HTTPError as exc:
-            status = exc.code
-        except Exception as exc:  # noqa: BLE001
-            status = f"{type(exc).__name__}"
+        result = subprocess.run(
+            ["curl", "-sL", "-o", "/dev/null", "-m", "30", "-A", "Mozilla/5.0", "-w", "%{http_code}", url],
+            capture_output=True, text=True,
+        )
+        status = result.stdout.strip()
         print(f"  {status}  {url}")
-        if status != 200:
+        if status != "200":
             problems.append(f"{url}: {status}")
     return problems
 
