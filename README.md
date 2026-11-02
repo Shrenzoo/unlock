@@ -70,3 +70,53 @@ A failed part is trapped. UNLOCK works through the problem the way an engineer w
 6. **Export.** A person accepts the result. The STEP file is written, reimported and rechecked, and every artifact is addressed by SHA-256.
 
 What comes out is an inspectable engineering record. The model's own opinion of that record is stored alongside it, marked as carrying no authority.
+
+## 03 · See it work
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/sequence-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/sequence-light.png">
+    <img src="assets/readme/sequence-light.png" width="100%" alt="Five stills of the B05 battery bay. Original: the pack sits under a strap. Obstruction: the pack's lift overlaps the strap by 1,397 cubic millimetres. Modification: the strap's web moves 12 millimetres. Verification: the strap turns green and the pack lifts out. Export: a checked STEP bundle.">
+  </picture>
+</p>
+
+Every frame on this page is rendered from the engine's own geometry, by [scripts in this repository](assets/readme/src/README.md) that refuse to run unless the redesigned part's hash matches the design recorded in evidence.
+
+The [live demo](https://unlock-labs.pages.dev) lets you open the same assemblies, turn the exact BRep models, read each check and play the route. Be clear about what is computed where:
+
+| Path | What you can do | What runs |
+|:--|:--|:--|
+| **[Public demo](https://unlock-labs.pages.dev)** | Open six projects, inspect geometry and evidence, download checked exports | Nothing new. The site serves recorded runs from a read-only snapshot and refuses every write. |
+| **Judge access** | Enter a private code, upload a supported package | Fresh offline analysis on a private cloud worker, using the scripted policy. No Meta inference. |
+| **Local** | The whole workflow, including live Muse Spark 1.3 with your own key | Everything, on your machine. See [Try UNLOCK](#11--try-unlock). |
+
+<p align="center">
+  <a href="https://unlock-labs.pages.dev/projects/fixture_B05"><img src="assets/readme/workspace.png" width="100%" alt="The live UNLOCK workspace comparing the original and revised B05 battery bay. The strap is green on the revised side. The panel reads no_path_supported then feasible, states that strength, electrical safety, manufacturing feasibility and restored function were not assessed, and lists 25 passes, 0 failures and 0 unknown."></a>
+</p>
+
+## 04 · The trust boundary
+
+Language models are good at reading messy evidence and deciding what to try next. They can also state something false, fluently and with confidence. In a chat that is an inconvenience. In engineering it can't be what declares a part removable.
+
+So UNLOCK gives the model plenty of room to investigate and no authority at all.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/trust-boundary-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/trust-boundary-light.svg">
+    <img src="assets/readme/trust-boundary-light.svg" width="100%" alt="Three panels. Probabilistic: Muse Spark 1.3 proposes. It reads structured evidence, never sees a STEP file, calls eight allowlisted tools, picks values from finite lists, cites evidence the run issued, and writes no code or geometry. The dispatcher validates every call against an allowlist, strict schema, frozen identity, cited evidence, the finite domain and budgets. Deterministic: the CAD engine decides. It builds, rebuilds, checks, replans, replays and compares under one frozen policy. Below: the stored message reads authority none, model statement, not engineering evidence.">
+  </picture>
+</p>
+
+Three decisions follow from that.
+
+**Bounded tools instead of generated code.** A generated CAD script is an unbounded action space: it can build any solid, and it can quietly break a constraint in ways nobody sees until much later. UNLOCK's model chooses from [`SERVER_DOMAINS`](backend/src/unlock_engine/templates.py#L21), 196 possible designs that you can read in one dictionary. The cost is real generality. It can only make edits it has a template for.
+
+**Verification that re-derives the result.** Reading the model's account of a candidate, or even the candidate's own record, would only show that the system agrees with itself. The verifier starts again from the frozen inputs and measures actual material.
+
+**No authority for the model's assertions.** The outcome is [computed from candidate records and the planner's comparison](backend/src/unlock_engine/ai/controller.py#L252). A [test](backend/tests/test_ai_controller.py#L197) has the model claim success on failing candidates, and the verdict doesn't move.
+
+None of the parts are new on their own. Disassembly planning, tool-access analysis and redesign for part access all have substantial prior art, and [our own requirements document](backend/docs/source/UNLOCK_PRD.txt) says novelty is not established. What UNLOCK contributes is a working combination: a frontier model driving real CAD redesign, inside a system where nothing it says can make a result pass.
+
+More in [design decisions](docs/design-decisions.md) and [objections we would raise ourselves](docs/objections.md).

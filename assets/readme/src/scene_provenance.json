@@ -1,0 +1,251 @@
+{
+ "B02": {
+  "expected_outcome": "VERIFIED_IMPROVEMENT_FOUND",
+  "baseline_status": "no_path_supported",
+  "baseline_steps": [],
+  "parts": {
+   "base": "chassis",
+   "target": "service_module",
+   "cover": "cover",
+   "screw1": "fastener",
+   "screw2": "fastener",
+   "bridge": "bracket",
+   "board": "chassis",
+   "spacer": "chassis"
+  },
+  "witnesses": [
+   {
+    "axis": "Z+",
+    "point_mm": [
+     0.0,
+     -20.0,
+     36.0
+    ],
+    "travel_mm": 13.0,
+    "component_ids": [
+     "target",
+     "bridge"
+    ],
+    "overlap_mm3": 640.0
+   },
+   {
+    "axis": "Z+",
+    "point_mm": [
+     0.0,
+     -20.0,
+     36.0
+    ],
+    "travel_mm": 13.0,
+    "component_ids": [
+     "target",
+     "bridge"
+    ]
+   }
+  ],
+  "design": {
+   "template": "T01",
+   "parameters": {
+    "center_x_mm": 0.0,
+    "center_y_mm": -20.0,
+    "width_mm": 40.0,
+    "depth_mm": 16.0
+   },
+   "geometry_hash": "7aebefb8395f5414029a34e4d193b28685e0152bac14e37262c428d1c2c5bd6a",
+   "matches_live_run": true,
+   "removed_mm3": 2560.0,
+   "added_mm3": 0.0
+  }
+ },
+ "B04": {
+  "expected_outcome": "VERIFIED_IMPROVEMENT_FOUND",
+  "baseline_status": "no_path_supported",
+  "baseline_steps": [],
+  "parts": {
+   "target": "service_module",
+   "bridge": "bracket",
+   "base": "chassis",
+   "motor": "electronics",
+   "inlet": "chassis",
+   "outlet": "chassis",
+   "reservoir": "chassis",
+   "screw1": "fastener",
+   "screw2": "fastener"
+  },
+  "witnesses": [
+   {
+    "axis": "Z+",
+    "point_mm": [
+     0.0,
+     -0.0,
+     46.0
+    ],
+    "travel_mm": 19.0,
+    "component_ids": [
+     "target",
+     "bridge"
+    ],
+    "overlap_mm3": 788.48
+   }
+  ],
+  "design": {
+   "template": "T01",
+   "parameters": {
+    "center_x_mm": 0.0,
+    "center_y_mm": 0.0,
+    "width_mm": 24.0,
+    "depth_mm": 12.0
+   },
+   "geometry_hash": "98e262960f022602eb08b4eaaaed5a1fe280aa56b6ac43650a81319a46af9a47",
+   "matches_live_run": false,
+   "removed_mm3": 1152.0,
+   "added_mm3": 0.0
+  }
+ },
+ "B05": {
+  "expected_outcome": "VERIFIED_IMPROVEMENT_FOUND",
+  "baseline_status": "no_path_supported",
+  "baseline_steps": [],
+  "parts": {
+   "target": "service_module",
+   "bridge": "bracket",
+   "base": "chassis",
+   "spare": "electronics",
+   "cradle": "chassis",
+   "bms": "electronics",
+   "connector": "electronics",
+   "screw1": "fastener",
+   "screw2": "fastener"
+  },
+  "witnesses": [
+   {
+    "axis": "Z+",
+    "point_mm": [
+     -0.0,
+     8.026,
+     32.0
+    ],
+    "travel_mm": 12.0,
+    "component_ids": [
+     "target",
+     "bridge"
+    ],
+    "overlap_mm3": 1397.27
+   }
+  ],
+  "design": {
+   "template": "T02",
+   "parameters": {
+    "offset_y_mm": -12.0
+   },
+   "geometry_hash": "c9b46d5ad8a9b1784a1284c8e066a7157646a93900053359bde8fdc7baf1e2d2",
+   "matches_live_run": true,
+   "removed_mm3": 5376.0,
+   "added_mm3": 5952.0
+  }
+ },
+ "B06": {
+  "expected_outcome": "VERIFIED_IMPROVEMENT_FOUND",
+  "baseline_status": "no_path_supported",
+  "baseline_steps": [],
+  "parts": {
+   "target": "service_module",
+   "bridge": "bracket",
+   "base": "chassis",
+   "mount": "chassis",
+   "gland": "chassis",
+   "board": "electronics",
+   "antenna": "electronics",
+   "screw1": "fastener",
+   "screw2": "fastener"
+  },
+  "witnesses": [
+   {
+    "axis": "Z+",
+    "point_mm": [
+     -0.027,
+     -19.577,
+     29.406
+    ],
+    "travel_mm": 11.0,
+    "component_ids": [
+     "target",
+     "bridge"
+    ],
+    "overlap_mm3": 114.456
+   }
+  ],
+  "design": {
+   "template": "T01",
+   "parameters": {
+    "center_x_mm": 0.0,
+    "center_y_mm": -20.0,
+    "width_mm": 24.0,
+    "depth_mm": 8.0
+   },
+   "geometry_hash": "05fd3b4dca0c5f62e8e7bb48a9c664a88eab3356f341042bc00a863dc9789f55",
+   "matches_live_run": false,
+   "removed_mm3": 768.0,
+   "added_mm3": 0.0
+  }
+ },
+ "B07": {
+  "expected_outcome": "INCOMPLETE_ANALYSIS",
+  "baseline_status": "no_path_supported",
+  "baseline_steps": [],
+  "parts": {
+   "target": "cover",
+   "bridge": "bracket",
+   "base": "chassis",
+   "shield": "chassis",
+   "bay": "chassis",
+   "relay": "electronics",
+   "terminal": "electronics",
+   "screw1": "fastener",
+   "screw2": "fastener"
+  },
+  "witnesses": [],
+  "design": null
+ },
+ "B08": {
+  "expected_outcome": "NO_SUPPORTED_CANDIDATE",
+  "baseline_status": "feasible",
+  "baseline_steps": [
+   {
+    "kind": "REMOVE_FASTENER",
+    "component": "screw1",
+    "axis": "Z+",
+    "distance_mm": 30.0,
+    "tool": "driver"
+   },
+   {
+    "kind": "REMOVE_FASTENER",
+    "component": "screw2",
+    "axis": "Z+",
+    "distance_mm": 30.0,
+    "tool": "driver"
+   },
+   {
+    "kind": "TRANSLATE_PART",
+    "component": "target",
+    "axis": "Z+",
+    "distance_mm": 80.0,
+    "tool": null
+   }
+  ],
+  "parts": {
+   "target": "service_module",
+   "base": "chassis",
+   "tray": "chassis",
+   "fan": "electronics",
+   "wall_left": "chassis",
+   "wall_right": "chassis",
+   "board": "electronics",
+   "post1": "chassis",
+   "post2": "chassis",
+   "screw1": "fastener",
+   "screw2": "fastener"
+  },
+  "witnesses": [],
+  "design": null
+ }
+}
