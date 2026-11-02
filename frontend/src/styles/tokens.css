@@ -4,15 +4,15 @@
   verified green = a check that passed on computed evidence. Never decorative.
 */
 :root {
-  /* surfaces */
-  --paper: #f2f1ed;
-  --paper-2: #e8e7e2;
-  --paper-3: #dddcd6;
-  --rule: #cbc9c2;
-  --rule-strong: #a9a7a0;
-  --ink: #17191b;
-  --ink-2: #4f5357;
-  --ink-3: #74787c;
+  /* surfaces — cool neutrals in the landing field's blue; ink-3 holds 4.5:1 on paper */
+  --paper: #f7f9fc;
+  --paper-2: #edf1f6;
+  --paper-3: #e1e6ee;
+  --rule: #cdd3dc;
+  --rule-strong: #a3acb9;
+  --ink: #161a20;
+  --ink-2: #4b5360;
+  --ink-3: #667080;
 
   --graphite: #151719;
   --graphite-2: #1d2023;
