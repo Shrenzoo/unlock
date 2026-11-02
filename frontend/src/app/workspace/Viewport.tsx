@@ -307,10 +307,10 @@ function Scene({
 
   return (
     <>
-      <color attach="background" args={['#ebeae5']} />
+      <color attach="background" args={['#e9edf3']} />
       <Studio theme="light" shadow={false} />
       <CameraControls ref={controls} makeDefault minDistance={0.9} maxDistance={14} smoothTime={0.22} draggingSmoothTime={0.08} />
-      <Grid position={[0, -0.021, 0]} args={[12, 12]} cellSize={0.1} cellThickness={0.6} cellColor="#d3d1ca" sectionSize={0.5} sectionThickness={1} sectionColor="#b9b6ae" fadeDistance={9} fadeStrength={1.4} infiniteGrid />
+      <Grid position={[0, -0.021, 0]} args={[12, 12]} cellSize={0.1} cellThickness={0.6} cellColor="#cfd6e0" sectionSize={0.5} sectionThickness={1} sectionColor="#b1bac7" fadeDistance={9} fadeStrength={1.4} infiniteGrid />
       <ModuleAssembly view={view} interactive onSelect={onSelect} onHover={onHover} />
       {diff && <ChangedRegion diff={diff} />}
     </>

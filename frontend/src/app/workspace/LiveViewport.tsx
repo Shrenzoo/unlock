@@ -146,7 +146,7 @@ export function LiveViewport({ revision, run, state, dispatch }: Props) {
       offsets[witness.component_id] = off
     }
     return <Canvas frameloop="demand" camera={{ position: camera, fov: 35, near: 0.001, far: 10 }} dpr={[1, 1.5]} onPointerMissed={() => dispatch({ type: 'select', id: null })}>
-      <color attach="background" args={['#eceeea']} />
+      <color attach="background" args={['#e9edf3']} />
       <ambientLight intensity={1.6} /><directionalLight position={[1, 2, 1]} intensity={3} />
       <group rotation={[-Math.PI / 2, 0, 0]}>
         {mesh.components.map((c) => {

@@ -212,7 +212,7 @@ function Footer() {
         <p className="footer__line">Make replacement a design decision.</p>
         <Link to={SAMPLE_PROJECT_PATH} className="btn btn--paper">
           <span className="btn__key" aria-hidden="true" />
-          Open the sample assembly
+          Open the sample project
         </Link>
       </div>
       <div className="footer__meta">

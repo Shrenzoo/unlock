@@ -278,7 +278,7 @@ kbd {
   position: relative;
   min-width: 0;
   min-height: 0;
-  background: #ebeae5;
+  background: #e9edf3;
 }
 .vp {
   position: absolute;
@@ -312,7 +312,7 @@ kbd {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: #ebeae5;
+  background: #e9edf3;
 }
 .vp__label {
   position: absolute;
