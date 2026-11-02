@@ -8,7 +8,7 @@ Start the backend with `AI_PROVIDER=mock` and the frontend, then open <http://lo
 
 ## 1. Watch it fail
 
-Open **B02**. Select `target` in the tree and choose **Set as repair target**, then **Run baseline analysis**.
+Open **B02**. Select `target` in the tree and choose **Set as repair target**. Go to **Analyze** and choose **Run baseline analysis**.
 
 The planner reports `no_path_supported`, complete, with two `CONFIRMED_GEOMETRIC_OBSTRUCTION` rejections and a BRep witness at (0, −20, 36) mm after 13 mm of travel, where 640 mm³ of the target overlaps the bracket. There is no invented operation count. The original has no route, so no percentage improvement can be reported later.
 
@@ -27,11 +27,11 @@ Open the verification panel on the accepted candidate. Each check carries its pr
 
 ## 4. Compare
 
-Switch to the comparison. Left: `no_path_supported`. Right: `feasible`, `target TRANSLATE Z+ 80 mm`, cost (0, 0, 0, 1), with forward replay and reverse insertion passed.
+Choose **Compare with the original**. Left: `no_path_supported`. Right: `feasible`, with one operation and no unrelated parts or fasteners removed. The panel shows 27 mandatory passes, because it lists the static checks again as route constraints: 15 are distinct. See [verification](verification.md#the-checks).
 
 ## 5. Export
 
-Accept the candidate and export. The bundle is reimported and rechecked before it is reported as a success. Open the STEP in any CAD tool to see the relief.
+Choose **Accept for export**, go to **Export**, and choose **Create checked package**. The package is reported as ready only after the STEP has been written, reimported and rechecked: "Export full assembly; STEP round trip passed." Download the ZIP and open the STEP in any CAD tool to see the relief.
 
 ## With a key
 

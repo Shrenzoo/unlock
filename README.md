@@ -247,7 +247,7 @@ Full budgets, decision tables and token usage are in [the agent loop](docs/agent
   </picture>
 </p>
 
-**The count depends on the edit, and on who is counting.** A T01 cut has 12 mandatory static checks and a T02 move has 11, since `editable_region` only applies to cuts. Adding `target_path`, the live reports list 13 and 12 at plan level. With forward replay and reverse insertion, that makes 15 and 14 distinct checks. The workspace shows a higher figure, 25 on B05, because it lists the static checks a second time as route constraints.
+**The count depends on the edit, and on who is counting.** A T01 cut has 12 mandatory static checks and a T02 move has 11, since `editable_region` only applies to cuts. Adding `target_path`, the live reports list 13 and 12 at plan level. With forward replay and reverse insertion, that makes 15 and 14 distinct checks. The workspace shows a higher figure, 25 on B05 and 27 on B02, because it lists the static checks a second time as route constraints.
 
 **What "independent" means here.** The verifier runs in a fresh process, re-imports the frozen package and rebuilds the candidate from its parameters, then compares solids by two-way BRep difference. It is independent of the model and of the candidate record: [a forged candidate with recomputed hashes fails](backend/tests/test_templates_verification.py#L135). It is not a second implementation of the constructor. It [uses the same trusted `modify`](backend/src/unlock_engine/verification.py#L238), so a constructor bug would not show up in `trusted_reconstruction`. The other checks and the planner's own search examine the resulting material directly.
 
@@ -341,3 +341,130 @@ Each number has a source, and none generalizes beyond these synthetic fixtures.
 The test count moved after that recorded run, and this documentation-only change did not rerun the CAD suite. See the [validation report](docs/validation-report.md) for what was and wasn't executed.
 
 Timing conditions and limits are in [performance](docs/performance.md).
+
+## 11 · Try UNLOCK
+
+### Hosted, no install
+
+Open **<https://unlock-labs.pages.dev>**. No account, key or code is needed. Everything is read-only.
+
+### Judge access
+
+Judges with a private code can enter it on the [projects page](https://unlock-labs.pages.dev/projects) to upload a supported package and start a fresh offline analysis on a private worker. Uploads are limited to 10 MiB, and six attempts are shared across the whole event, so failed attempts count. There is no live model inference on this path. [Details](backend/docs/JUDGE_ACCESS.md).
+
+### Local, offline, no key
+
+This runs the real CAD engine and planner with the labelled scripted policy. It makes no paid calls.
+
+| Prerequisite | Version | Why |
+|:--|:--|:--|
+| Python | 3.12 | Pinned `>=3.12,<3.13`, because OCP wheels are version-specific |
+| Node | 20.19+ or 22.12+ | Required by Vite 7 |
+| Disk | About 1.5 GB | CadQuery, OCP and VTK wheels are large |
+
+Tested on macOS ARM64. Linux is exercised through the Modal image.
+
+```bash
+git clone https://github.com/Shrenzoo/unlock.git && cd unlock/backend
+```
+
+```bash
+python3.12 -m venv .venv
+```
+
+```bash
+.venv/bin/python -m pip install -r requirements.lock && .venv/bin/python -m pip install --no-deps --no-build-isolation -e .
+```
+
+Then pick one.
+
+**Command line only.** One complete run prints its outcome and writes a full report.
+
+```bash
+.venv/bin/python -m unlock_engine.ai demo --offline --fixture B05 --output .work/b05
+```
+
+**Full workspace.** Start the backend, then the frontend in a second terminal from the repository root.
+
+```bash
+AI_PROVIDER=mock .venv/bin/python -m unlock_engine.api --port 8000
+```
+
+```bash
+cd frontend && npm ci && npm run dev -- --host 127.0.0.1 --port 5183 --strictPort
+```
+
+Open <http://localhost:5183/projects>. The first backend start generates and imports the fixtures, so give it a minute or two. The [five-minute walkthrough](docs/demo-walkthrough.md) goes screen by screen, from the failed baseline to a checked STEP package.
+
+### Live Meta inference
+
+This spends API credits. It needs a key from the [Meta Model API](https://dev.meta.ai).
+
+```bash
+cp -n backend/.env.example backend/.env
+```
+
+Put your key in `backend/.env` as `MODEL_API_KEY`, leave `AI_PROVIDER=meta`, and restart the backend. Keys belong only in `backend/.env`, which Git ignores at every depth. Redesign requests then call Muse Spark 1.3. If no key is configured the baseline still works, and redesign reports `Model unavailable` instead of quietly falling back to the scripted policy.
+
+Paid tests never run by accident: they need both a key and `RUN_META_LIVE_TESTS=1`, and ordinary `pytest` deselects them.
+
+## 12 · Reproducibility
+
+Everything below runs from the repository root, and needs nothing except [`jq`](https://jqlang.org/). No key, no network.
+
+**The live outcome, and what the model's claim is worth:**
+
+```bash
+jq -r '.outcome, .live_model, .model.model_id, .final_model_message.authority' backend/evidence/live-b02/live_run.json
+```
+
+**Every live tool call and its status, including the refusal:**
+
+```bash
+jq -r '.engineering_evidence.tool_results[] | "\(.tool) \(.status) \(.feedback.category // "")"' backend/evidence/live-b02/live_run.json
+```
+
+**Every plan-level check on the T02 run:**
+
+```bash
+jq -r '.candidates[0].revised_plan.constraint_checks[] | "\(.constraint_id) \(.result)"' backend/evidence/live-b05/live_run.json
+```
+
+**The constructed bracket's bytes match its recorded hash** (`3963ce4d…`):
+
+```bash
+shasum -a 256 backend/evidence/live-b02/live_changed_bridge.step
+```
+
+**It is a real AP214 STEP file:**
+
+```bash
+grep -m1 FILE_SCHEMA backend/evidence/live-b02/live_changed_bridge.step
+```
+
+**The tool-calling check's 15 outcomes:**
+
+```bash
+jq -r '.checks[] | "\(.name) \(.result)"' backend/evidence/meta-tool-smoke/live_report.json
+```
+
+With the backend installed, the checks that matter most cover forged geometry, invalid proposals, unknown checks and false success claims:
+
+```bash
+cd backend && .venv/bin/python -m pytest -q tests/test_ai_toolbox.py tests/test_ai_controller.py tests/test_templates_verification.py
+```
+
+### Where things are
+
+| Path | Contents |
+|:--|:--|
+| [`backend/evidence/live-b02/`](backend/evidence/live-b02/), [`live-b05/`](backend/evidence/live-b05/) | Complete live reports, constructed brackets, selector controls, timing benchmarks |
+| [`backend/evidence/meta-tool-smoke/`](backend/evidence/meta-tool-smoke/) | The live tool-calling check |
+| [`backend/evidence/gallery-release-lighter/`](backend/evidence/gallery-release-lighter/) | Current public gallery: jobs, outcomes, export hashes |
+| [`backend/evidence/meta/`](backend/evidence/meta/) | Frozen integration record, with a checked export and its [`SHA256.json`](backend/evidence/meta/SHA256.json) |
+| [`backend/evidence/browser-acceptance/`](backend/evidence/browser-acceptance/) | Real-browser acceptance report and screenshots |
+| [`backend/src/unlock_engine/fixtures.py`](backend/src/unlock_engine/fixtures.py), [`fixture_parts.py`](backend/src/unlock_engine/fixture_parts.py) | Source of every fixture, deterministic |
+| [`backend/schemas/`](backend/schemas/) | JSON Schemas for reports, plans and certificates |
+| [`assets/readme/src/`](assets/readme/src/README.md) | Scripts that regenerate this page's visuals from the engine and evidence |
+
+The [claim ledger](docs/claims.md) maps each substantive claim on this page to its source. The [audit](docs/readme-audit.md) lists the errors found in the previous version of this README.

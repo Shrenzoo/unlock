@@ -44,7 +44,7 @@ These are the labels and explanations recorded in the live reports (`engineering
 
 **The count depends on the edit.** A T01 cut has 12 mandatory static checks. A T02 move has 11. At plan level, adding `target_path`, the reports list 13 and 12, and all pass. With forward replay and reverse insertion that makes 15 and 14 distinct checks. T02's `actual_change` adds removed and added material: 5,376 + 5,952 mm³.
 
-**Why the workspace shows 25 on B05.** The candidate view (`GET /v1/candidates/{id}`) lists 11 static checks, forward replay, reverse insertion, and 12 `route:` entries, which repeat those 11 and add `target_path`. That is 25 passes covering 14 distinct checks.
+**Why the workspace shows 25 on B05.** The candidate view (`GET /v1/candidates/{id}`) lists 11 static checks, forward replay, reverse insertion, and 12 `route:` entries, which repeat those 11 and add `target_path`. That is 25 passes covering 14 distinct checks. A T01 cut shows 27 in the same way, covering 15.
 
 ## How independent is it?
 
