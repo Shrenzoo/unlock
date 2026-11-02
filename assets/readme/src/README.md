@@ -13,6 +13,8 @@ Nothing on the README page is modelled or drawn by hand from imagination. The 3D
 | 3. Composite and encode | `compose.py`, `compose_cells.py` | Python with Pillow | `hero-*`, `relief-*`, `gallery-*`, `sequence-*` |
 | 4. Diagrams | `diagrams.py` | Python with HarfBuzz and fontTools | `brand-*`, `trust-boundary-*`, `verification-ledger-*`, `architecture-*` |
 
+The logo animation in `brand-*.svg` is CSS inside the SVG, restored from the original README and recoloured with the site's tokens. It is an illustration, drawn from no evidence, and readers who prefer reduced motion get its open state as a still.
+
 `.build/` is not committed: it is large and regenerates exactly. [`scene_provenance.json`](scene_provenance.json) is committed, and records each fixture's witness, plan and design hash.
 
 ## What each step guarantees

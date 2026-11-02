@@ -3,7 +3,7 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="assets/readme/brand-dark.svg">
       <source media="(prefers-color-scheme: light)" srcset="assets/readme/brand-light.svg">
-      <img src="assets/readme/brand-light.svg" width="760" alt="UNLOCK. Design for the day it breaks. AI-assisted redesign for mechanical repairability.">
+      <img src="assets/readme/brand-light.svg" width="760" alt="The UNLOCK logo, whose frame unlatches so a blue square floats out through the opening. Design for the day it breaks. AI-assisted redesign for mechanical repairability.">
     </picture>
   </a>
 </p>
