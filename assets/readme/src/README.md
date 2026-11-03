@@ -32,6 +32,7 @@ The logo animation in `brand-*.svg` is CSS inside the SVG, restored from the ori
 ## What the animations simplify
 
 - Timing is presentation, not a measurement. Colours and captions are annotations, and the hero's twelve ticks stand for twelve recorded results.
+- Shadows are softened and faded out at the frame's border, so they have no clipped edge on the page. Parts and their edges are untouched.
 - The offline clips show each fixture's recorded outcome, not a replay of its events. B07's driver is drawn from the manifest's declared dimensions and stops at the fixed shield's top face, where the recorded `TOOL_ACCESS_BLOCKED` occurs.
 - A static preview render is not evidence. Only the reports are.
 

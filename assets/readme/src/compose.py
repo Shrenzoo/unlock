@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from timeline import BEATS, CAPTIONS, DISSOLVE_FRAMES, FPS, LAST_FRAME, ramp, state
 
@@ -28,6 +28,33 @@ THEMES = dict(
     light=dict(bg="#ffffff", ink="#161a20", ink2="#4b5360", tick="#2a6e57", route="#2253d6"),
     dark=dict(bg="#0d1117", ink="#e6edf3", ink2="#b1bac4", tick="#57c09c", route="#7ea3ff"),
 )
+
+
+def soften_shadow(image, edge_px=26):
+    """Fade the catcher's shadow to nothing, so it has no clipped edge on the page.
+
+    Shadow pixels are near-black and translucent. They are smoothed to remove denoiser
+    scallops, given a soft knee at low opacity, and faded out at the frame's border.
+    Parts and their antialiased edges keep their values.
+    """
+    pixels = np.array(image).astype(np.float32)
+    alpha = pixels[..., 3] / 255
+    shadow = (pixels[..., :3].max(axis=2) < 40) & (alpha < 0.7)
+    layer = Image.fromarray(np.uint8(np.where(shadow, alpha, 0) * 255))
+    smooth = np.array(layer.filter(ImageFilter.GaussianBlur(5))).astype(np.float32) / 255
+    # Blurring against the empty parts region would thin the shadow where it meets them.
+    weight = np.array(Image.fromarray(np.uint8(shadow * 255)).filter(ImageFilter.GaussianBlur(5))).astype(np.float32) / 255
+    smooth = np.where(weight > 0.02, smooth / np.maximum(weight, 0.02), 0)
+    knee = np.clip((smooth - 0.012) / 0.11, 0, 1)
+    knee = knee * knee * (3 - 2 * knee)
+    height, width = alpha.shape
+    xs = np.minimum(np.arange(width), np.arange(width)[::-1])[None, :]
+    ys = np.minimum(np.arange(height), np.arange(height)[::-1])[:, None]
+    border = np.clip(np.minimum(xs, ys) / edge_px, 0, 1)
+    border = border * border * (3 - 2 * border)
+    alpha = np.where(shadow, smooth * knee * border, alpha)
+    pixels[..., 3] = alpha * 255
+    return Image.fromarray(np.uint8(np.round(pixels)))
 
 
 def check_captions():
@@ -126,10 +153,7 @@ def compose(theme, width):
         if not path.exists():
             continue
         base = Image.open(path).convert("RGBA").resize((width, height), Image.LANCZOS)
-        # The faintest shadow tail costs bytes on every frame and is invisible.
-        pixels = np.array(base)
-        pixels[pixels[..., 3] < 4, 3] = 0
-        base = Image.fromarray(pixels)
+        base = soften_shadow(base)
         canvas = Image.new("RGBA", (width, height), colors["bg"])
         # Lift the model slightly, so the plate's near corner has a margin.
         canvas.alpha_composite(base, dest=(0, 0), source=(0, RAISE_PX))
@@ -271,7 +295,7 @@ def sequence(theme):
         keys.setdefault(json.dumps(state(frame), sort_keys=True), frame)
     for i, (frame, name, line1, line2) in enumerate(SEQUENCE):
         path = HERO / f"f{keys[json.dumps(state(frame), sort_keys=True)]:04d}.png"
-        im = Image.open(path).convert("RGBA")
+        im = soften_shadow(Image.open(path).convert("RGBA"))
         w, h = im.size
         # Same framing in every panel: the model, with room for the lift.
         box = (int(w * 0.235), int(h * 0.14), int(w * 0.95), int(h * 0.14) + int(w * 0.715 * panel_h / panel_w))

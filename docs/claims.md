@@ -33,6 +33,10 @@ Every substantive claim on the README, where it comes from and how it was checke
 | B05's recorded rationale, quoted | `candidates[0].proposal.rationale` in `live-b05/live_run.json` | Ran |
 | Seven of eight tools exercised live | Distinct `tool` values in both reports, plus the B01 check | Ran |
 | `geometry_ranked` 1,152 mm³ at 24.1 s, 2 calls; `stable_enumeration` none verified at 30.3 s; Muse matched and did not beat the first | `selector_*.json`, `live_run.json` | Ran |
+| The deterministic selector ranks predefined modifications and does not investigate | `ai/baseline.py`; `tool_results` in `selector_*.json` hold only `construct_candidate` and `verify_candidate` | Ran |
+| Muse revises its proposal when the validation system rejects it | B02 `tool_results`: `INVALID_PROPOSAL`, then a new design. This is a dispatcher refusal; no live candidate was rejected by the verifier | Ran |
+| Muse examines constraints and obstruction evidence, and selects a strategy | Tool calls in both live reports. `inspect_constraints` itself has not run live; constraints reached the model through its context and other tools | Ran |
+| The value of the model beyond deterministic rules, and the "frontier" framing | The project's stated position, not a measurement. The section above it reports that a deterministic rule matches or beats the model on these fixtures | Read |
 | The B05 offline policy picks the same −12 mm | `LIVE_B05_REDESIGN.md`; candidate `offset_y -12` from the public API | Live |
 
 ## The engine and verification

@@ -67,13 +67,13 @@ The GIFs animate on the page and their backgrounds match GitHub's default light 
 - Every `<img>` has alt text, and every asset in `assets/readme/` is referenced.
 - No tracked document matches the credential patterns. A wider scan of the branch's diff for emails, key prefixes and tokens found none.
 
-**Asset weight.** 19 old SVGs were removed and 23 new assets added, 8 MB in total across both themes. A reader downloads only one theme: about 4 MB, of which the hero is 2.2 to 2.7 MB. The first hero encode was 8.4 MB.
+**Asset weight.** 19 old SVGs were removed and 23 new assets added, 8 MB in total across both themes. A reader downloads only one theme: about 4 MB, of which the hero is 2.2 to 2.4 MB. The first hero encode was 8.4 MB.
 
 | Asset | Light | Dark |
 |:--|--:|--:|
-| Hero GIF, 1000 × 563, 12.2 s | 2.7 MB | 2.1 MB |
-| Gallery GIF, 1000 × 554, 6.9 s | 0.55 MB | 0.45 MB |
-| T01 GIF, 780 × 485, 6.9 s | 0.44 MB | 0.33 MB |
+| Hero GIF, 1000 × 563, 12.2 s | 2.4 MB | 2.2 MB |
+| Gallery GIF, 1000 × 554, 6.9 s | 0.52 MB | 0.45 MB |
+| T01 GIF, 780 × 485, 6.9 s | 0.41 MB | 0.34 MB |
 
 ## What was not run
 

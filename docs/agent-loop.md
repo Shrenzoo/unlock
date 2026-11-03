@@ -146,6 +146,8 @@ Full record: [`LIVE_B05_REDESIGN.md`](../backend/docs/LIVE_B05_REDESIGN.md).
 
 Across the live records, seven of the eight tools have run: five distinct tools on B02, seven on B05. `inspect_constraints` has not been called live. All eight are covered offline in `tests/test_ai_toolbox.py`.
 
+No live run has had a constructed candidate rejected by the verifier. The only live rejection is the dispatcher's refusal on B02, so revising a design after a verifier rejection has so far been exercised only by the offline policy, for example on B02 and B04.
+
 ## Model against deterministic baselines
 
 | | Muse Spark 1.3 (live) | `geometry_ranked` | `stable_enumeration` |
