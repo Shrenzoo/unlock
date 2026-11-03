@@ -56,7 +56,7 @@ Real Chrome against `github.com/Shrenzoo/unlock/tree/docs/readme-redesign`, not 
 
 The GIFs animate on the page and their backgrounds match GitHub's default light and dark canvas exactly. The Mermaid diagram renders natively, and all tables and code blocks render. On a phone, wide tables scroll inside their own frames and the page itself does not scroll sideways.
 
-**The logo animation, added afterwards.** Measured by comparing six screenshots of the header on the real page, 0.8 s apart. It moves on desktop and phone, in light and dark, and only the logo's pixels change. A `prefers-reduced-motion` rule inside the SVG did not stop the motion in this test, so the README now switches to a separate still image, as it does for the GIFs. Re-measured after that change, see the table in the pull request that added it.
+**The logo animation, added afterwards.** Measured by comparing six screenshots of the header on the real page, 0.8 s apart. It moves on desktop and phone, in light and dark, and only the logo's pixels change. A `prefers-reduced-motion` rule inside the SVG did not stop the motion in this test, so the README switches to a separate still image, as it does for the GIFs. With reduced motion on, GitHub then serves `brand-still-*.svg` and no pixels change between screenshots.
 
 ## Documents and assets
 
