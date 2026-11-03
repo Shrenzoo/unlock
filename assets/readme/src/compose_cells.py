@@ -10,11 +10,10 @@ import shutil
 import subprocess
 from pathlib import Path
 
-import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from cell_timeline import CELL_FPS, CELL_FRAMES, cell_state
-from compose import pinned_palette, stabilize
+from compose import pinned_palette, soften_shadow, stabilize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -102,13 +101,6 @@ def encode(directory, theme, dest, fps=CELL_FPS, colors=256):
     return len(entries), dest.stat().st_size
 
 
-def shape_only(image):
-    """Drop the shadow's faintest tail, which would outline the frame on the page."""
-    pixels = np.array(image)
-    pixels[pixels[..., 3] < 10, 3] = 0
-    return Image.fromarray(pixels)
-
-
 def poster(canvas, directory, dest):
     """The final frame on the GIF's own palette, so colours match the animation."""
     palette = Image.open(directory / "palette.png").convert("P", palette=Image.Palette.ADAPTIVE, colors=256)
@@ -135,7 +127,7 @@ def gallery(theme):
             x = (i % 3) * (cell_w + gap)
             y = (i // 3) * (cell_h + label_h + 14)
             im = Image.open(render_for(code, "cell", frame)).convert("RGBA").resize((cell_w, cell_h), Image.LANCZOS)
-            canvas.alpha_composite(shape_only(im), (x, y))
+            canvas.alpha_composite(soften_shadow(im, 16), (x, y))
             baseline = y + cell_h + 18
             draw.text((x + 8, baseline), code, font=mono, fill=c["ink3"], anchor="ls")
             draw.text((x + 40, baseline), name, font=small, fill=c["ink2"], anchor="ls")
@@ -167,7 +159,7 @@ def relief(theme):
     for frame in range(CELL_FRAMES):
         canvas = Image.new("RGBA", (width, height), c["bg"])
         im = Image.open(render_for("B02", "relief", frame)).convert("RGBA").resize((width, height), Image.LANCZOS)
-        canvas.alpha_composite(shape_only(im))
+        canvas.alpha_composite(soften_shadow(im))
         draw = ImageDraw.Draw(canvas)
         for start, end, title, data in captions:
             if start <= frame < end:
