@@ -123,6 +123,7 @@ class Canvas:
         self.desc = desc
         self.defs = {}
         self.body = []
+        self.style = ""
 
     def _glyph(self, f, name):
         key = f"{f.key}-{name}"
@@ -233,8 +234,14 @@ class Canvas:
         )
         self.rect(round(x + 9.5 * s, 2), round(y + 2 * s, 2), round(5 * s, 2), round(5 * s, 2), fill=accent)
 
+    def raw(self, fragment):
+        """Append prepared SVG markup, for parts text and shape helpers can't express."""
+        self.body.append(fragment)
+
     def svg(self):
         defs = "".join(f'<path id="{i}" d="{d}"/>' for i, d in self.defs.values())
+        if self.style:
+            defs = f"<style>{self.style}</style>" + defs
         return (
             f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {self.width} {self.height}" '
             f'width="{self.width}" height="{self.height}" role="img" aria-labelledby="t d">'

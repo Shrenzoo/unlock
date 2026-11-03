@@ -21,27 +21,64 @@ def live(code):
     return report, verified
 
 
-def brand(theme):
+# The logo animation restored from the original README, on a 120-unit grid: the
+# frame unlatches, its base retracts, and the square floats out through the opening.
+MARK_STYLE = """
+@keyframes unlatch-top{0%,6%{stroke-dashoffset:0}24%,76%{stroke-dashoffset:14}94%,100%{stroke-dashoffset:0}}
+@keyframes unlatch-bottom{0%,6%{stroke-dashoffset:0}22%,78%{stroke-dashoffset:100}94%,100%{stroke-dashoffset:0}}
+@keyframes float-up{0%,20%{transform:translateY(0)}48%{transform:translateY(-46px)}54%,60%{transform:translateY(-44px)}86%,100%{transform:translateY(0)}}
+.arm,.base{stroke-dasharray:100 100}
+.arm{animation:unlatch-top 4.6s cubic-bezier(.65,0,.35,1) infinite}
+.base{animation:unlatch-bottom 4.6s cubic-bezier(.65,0,.35,1) infinite}
+.sq{transform-origin:60px 65px;animation:float-up 4.6s cubic-bezier(.55,0,.25,1) infinite}
+"""
+# The open mark, for readers who prefer reduced motion. A media query inside an SVG
+# served as an image did not stop the motion when tested, so the README swaps files.
+MARK_STILL_STYLE = """
+.arm,.base{stroke-dasharray:100 100}
+.arm{stroke-dashoffset:14}
+.base{stroke-dashoffset:100}
+.sq{transform:translateY(-44px)}
+"""
+MARK_TILE = dict(light="#edf1f6", dark="#21262d")
+MARK_BLUE = "#3268f5"
+
+
+def mark_group(c, theme, x, y, size, style):
+    c.style = style
+    c.raw(
+        f'<g transform="translate({x:.2f} {y:.2f}) scale({size / 120:.4f})">'
+        f'<rect width="120" height="120" rx="26" fill="{MARK_TILE[theme]}"/>'
+        f'<g fill="none" stroke="{c.t["ink"]}" stroke-width="6.5" stroke-linejoin="miter">'
+        '<path class="arm" pathLength="100" d="M28 84V46H60.5"/>'
+        '<path class="arm" pathLength="100" d="M92 84V46H59.5"/>'
+        '<path class="base" pathLength="100" d="M24.75 84H60.5"/>'
+        '<path class="base" pathLength="100" d="M95.25 84H59.5"/>'
+        "</g>"
+        f'<rect class="sq" x="52.5" y="57.5" width="15" height="15" fill="{MARK_BLUE}"/>'
+        "</g>"
+    )
+
+
+def brand(theme, still=False):
     c = Canvas(
         1200,
-        252,
+        300,
         theme,
         "UNLOCK. Design for the day it breaks.",
-        "The UNLOCK mark and wordmark above the tagline, Design for the day it breaks.",
+        "The UNLOCK logo, a frame with a blue square floating out through its opening, "
+        "above the tagline, Design for the day it breaks.",
     )
     word = "UNLOCK"
-    size = 25
-    tracking = 0.2
+    mark, gap, size, tracking = 104, 24, 46, 0.2
     wide = text_width(word, "sans600", size, tracking)
-    mark = 40
-    gap = 14
     x = 600 - (mark + gap + wide) / 2
-    c.mark(x, 22, mark, color="ink")
-    c.text(x + mark + gap, 53, word, "sans600", size, "ink", tracking=tracking)
-    c.text(600, 164, "Design for the day it breaks.", "sans600", 88, "ink", "middle", tracking=-0.038)
+    mark_group(c, theme, x, 4, mark, MARK_STILL_STYLE if still else MARK_STYLE)
+    c.text(x + mark + gap, 4 + mark / 2 + size * 0.36, word, "sans600", size, "ink", tracking=tracking)
+    c.text(600, 212, "Design for the day it breaks.", "sans600", 88, "ink", "middle", tracking=-0.038)
     c.text(
         600,
-        222,
+        270,
         "AI-assisted redesign for mechanical repairability.",
         "sans",
         27,
@@ -354,6 +391,7 @@ def architecture(theme):
 def main():
     outputs = dict(
         brand=brand,
+        **{"brand-still": lambda theme: brand(theme, still=True)},
         **{"trust-boundary": trust_boundary, "verification-ledger": ledger, "architecture": architecture},
     )
     for name, build in outputs.items():
