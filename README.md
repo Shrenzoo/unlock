@@ -522,9 +522,10 @@ Built by [Shreyas Pabbathi](https://github.com/Shrenzoo) and [Maanas Pabbathi](h
 
 | Material | Terms |
 |:--|:--|
+| **Source code and documentation** | [Apache License 2.0](LICENSE). [`NOTICE`](NOTICE) sets out exactly what it covers. |
 | Fixtures **B02, B04, B05, B06, B07, B08**, their generated demonstration assets, and the renders of them in this README | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribute the UNLOCK team, link this repository, and identify modifications. Provenance: [B02](backend/docs/B02_PROVENANCE.md), [gallery](backend/docs/GALLERY.md#rights). No endorsement, safety, fitness or manufacturing approval is implied. |
-| Fixtures **B01, B03** and the held-out B02 variant | Not covered by that grant. They are not published in the public demo. |
-| **Application source code** | No license file has been chosen yet, so default copyright applies. The CC BY grant does not cover it. |
+| Generated assets of fixtures **B01, B03** and the held-out B02 variant | No redistribution grant. They are not published in the public demo. |
+| **Artwork, design references, and the UNLOCK name and logo** | Not covered by either license. See [`NOTICE`](NOTICE). |
 | **Third-party software** | Each keeps its own terms. See [`THIRD_PARTY_NOTICES.txt`](frontend/public/THIRD_PARTY_NOTICES.txt) and the notices in each export. |
 
 <p align="center">

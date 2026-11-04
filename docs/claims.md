@@ -87,7 +87,7 @@ Every substantive claim on the README, where it comes from and how it was checke
 |:--|:--|:--|
 | B02 and B04–B08 are CC BY 4.0, covering demonstration assets and not software | `fixture_license.py`; `B02_PROVENANCE.md`; `GALLERY.md`, Rights | Read |
 | B01, B03 and held-out B02 are not covered | `fixture_license.GRANTS`; `GALLERY.md` | Read |
-| No software license file | No `LICENSE` at the repository root on `main`; `gh repo view` reports none | Ran |
+| Source code and documentation are Apache-2.0, with exclusions listed in `NOTICE` | `LICENSE` is byte-identical to apache.org's `LICENSE-2.0.txt`; chosen by the account holder on 2026-11-04, who confirmed Maanas Pabbathi's agreement when asked | Ran |
 
 ## Visuals
 
