@@ -8,7 +8,7 @@ Every substantive claim on the README, where it comes from and how it was checke
 
 | Claim | Source | Check |
 |:--|:--|:--|
-| Indie Developer track, Push the Frontier theme | PRD section 1 names Indie and Startup tracks; public event guides name the Build for Your World and Push the Frontier themes; track and theme as stated by the maintainer. The organizer's own page was not reachable when checked | Read |
+| Indie Developer track, Push the Frontier theme | PRD section 1 names Indie and Startup tracks; public event guides name the Build for Your World and Push the Frontier themes; the maintainer confirmed this project's track and theme on 2026-11-03. The organizer's own page was not reachable when checked | Read |
 | Not affiliated with or endorsed by Meta | No such relationship appears anywhere in the repository | Read |
 | Disassembly planning and related areas have substantial prior art; novelty not established | `backend/docs/source/UNLOCK_PRD.txt`, section 1 | Read |
 | 62 million tonnes of e-waste in 2022, 22.3% documented as formally collected and recycled | Global E-waste Monitor 2024, UNITAR press release | Read |

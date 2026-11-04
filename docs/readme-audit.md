@@ -59,7 +59,7 @@ An audit of the README as it stood on `main` at `6604c31` (1,589 lines), carried
 
 These sit outside a documentation pass, and each needs a decision from the maintainers.
 
-- **GitHub repository description** still says "proves the redesign is safe with a CAD kernel before anyone cuts metal". It is a repository setting, not a file. A suggested replacement is in the pull request.
+- **GitHub repository description** said "proves the redesign is safe with a CAD kernel before anyone cuts metal". It is a repository setting, not a file, so the maintainer approved the change separately. Since 2026-11-03 it reads: "AI-assisted redesign for mechanical repairability: Muse Spark 1.3 proposes bounded CAD edits, and a separate verifier decides." No other tracked file or the site's metadata carried the old wording.
 - **No software license.** The repository has no `LICENSE` file. Open pull request [#8](https://github.com/Shrenzoo/unlock/pull/8) proposes Apache-2.0, but choosing one is the authors' decision, so this pass states the current position and does not add one.
 - **Fixture provenance strings.** `B01`, `B03` and the held-out B02 variant still carry "Redistribution license pending author approval". That is correct: they were not relicensed and are not published.
 - **The workspace's check count.** The Compare panel's "25 pass" on B05 lists the static checks twice, once directly and once as `route:` constraints. No result is wrong, but the distinct count is 14. This is a display choice in the live product, so it is explained in the docs and left unchanged.
