@@ -86,7 +86,7 @@ These were skipped deliberately, as the task required.
 
 ## What could not be confirmed
 
-- **The organizer's event page** was not reachable at the URL tried. Track and theme names come from the PRD's record of that page, a public event guide, and the maintainer. Please confirm them against your submission.
+- **The organizer's event page** was not reachable at the URL tried. Track and theme names come from the PRD's record of that page and a public event guide, and the maintainer confirmed this project's Indie Developer track and Push the Frontier theme on 2026-11-03.
 - **Other clients.** Safari, Firefox, GitHub's mobile apps and the "dark dimmed" theme were not inspected. On "dark dimmed", the GIFs' dark background will show as a slightly different rectangle.
 - **A cold install's time.** The fresh-clone install used a warm pip cache.
 - **The demo film.** It has no public URL yet, so the README has no film link. A comment in the README marks where it goes.
