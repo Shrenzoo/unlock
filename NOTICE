@@ -1,0 +1,25 @@
+UNLOCK
+Copyright 2026 the UNLOCK team (Shreyas Pabbathi and Maanas Pabbathi).
+
+The source code and documentation in this repository are licensed under the
+Apache License, Version 2.0. See LICENSE.
+
+That license does not cover the following:
+
+- Synthetic CAD fixtures B02, B04, B05, B06, B07 and B08, their generated
+  demonstration assets and engineering evidence, and renders of them, are
+  licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+  See backend/docs/B02_PROVENANCE.md and backend/docs/GALLERY.md.
+
+- Generated assets of fixtures B01 and B03 and the held-out B02 variant have
+  no redistribution grant.
+
+- Artwork and design references, including assets/hero/, frontend/design/ and
+  the landing page's background images (frontend/src/landing/field-*.webp).
+
+- Third-party software, which keeps its own license. See
+  frontend/public/THIRD_PARTY_NOTICES.txt and the notices in each export.
+
+- The UNLOCK name and logo, as Section 6 of the License provides.
+
+No endorsement, physical safety, fitness or manufacturing approval is implied.
