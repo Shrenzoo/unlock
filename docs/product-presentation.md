@@ -46,6 +46,13 @@ underlying work was built.
   passed. Existing browser assertions now follow the gallery entry point and use
   the private demo labels.
 - `git diff --check`: passed.
+- Built asset inspection: all 22 public files were inventoried; compiled scripts
+  contain the new labels, no old event branding, and the existing private API
+  origin. No source maps or server source files are in the upload.
+- Safari visual review: the current React components were bundled into an
+  isolated file preview and inspected at 1440 × 1000 and 390 × 844. Hero copy,
+  3D presentation, footer layout and the 390-pixel private access form rendered
+  correctly. This was a layout review, not an end-to-end backend test.
 
 No CAD algorithms, model selection, authentication rules, quotas or billing
 settings were changed. The geometry regression suite was not rerun for these
