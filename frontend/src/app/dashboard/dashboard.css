@@ -268,9 +268,12 @@
   }
 }
 
-.judge-access form { display: grid; gap: 16px; margin: 24px 0; }
-.judge-access label { display: grid; gap: 8px; font-size: 14px; }
-.judge-access input { box-sizing: border-box; min-width: 0; width: 100%; padding: 12px; border: 1px solid var(--line, #aaa); background: transparent; color: inherit; font: inherit; border-radius: 2px; }
-.judge-access input:focus-visible { outline: 2px solid #245bff; outline-offset: 3px; }
-.judge-access p { overflow-wrap: anywhere; }
-.judge-access ul { padding-inline-start: 18px; }
+.demo-access form { display: grid; gap: var(--s-4); margin: var(--s-5) 0; }
+.demo-access label { display: grid; gap: var(--s-2); font-size: var(--t-sm); font-weight: 500; }
+.demo-access input { box-sizing: border-box; min-width: 0; width: 100%; padding: var(--s-3); border: 1px solid var(--rule-strong); background: var(--paper); color: var(--ink); caret-color: var(--cobalt-ink); font: inherit; border-radius: var(--radius-control); }
+.demo-access input:focus-visible { outline: 2px solid var(--cobalt-ink); outline-offset: 3px; }
+.demo-access input:disabled { opacity: 0.6; cursor: wait; }
+.demo-access p { margin-top: var(--s-3); color: var(--ink-2); font-size: var(--t-sm); line-height: 1.6; overflow-wrap: anywhere; }
+.demo-access p[role="alert"] { color: var(--signal-ink); }
+.demo-access ul { margin-block: var(--s-4); padding-inline-start: var(--s-5); }
+.demo-access li + li { margin-top: var(--s-2); }

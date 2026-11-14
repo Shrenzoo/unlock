@@ -2,7 +2,7 @@
 
 [← Back to the README](../README.md)
 
-UNLOCK was built for the Meta Global AI Developer Hackathon 2026 (26 October to 4 November), Indie Developer track, Push the Frontier theme. Dates below come from commit history and the release records, not memory. No history has been rewritten.
+UNLOCK's initial development began in October 2026. Dates below come from commit history and the release records. The original planning documents and engineering records are preserved as historical context; the current product presentation is independent of any event.
 
 ## Timeline
 
@@ -13,7 +13,7 @@ UNLOCK was built for the Meta Global AI Developer Hackathon 2026 (26 October to 
 | Oct 29 | Direct Meta Model API, native tool calling, first live checks | [`META_TOOL_CALLING_VERIFICATION.md`](../backend/docs/META_TOOL_CALLING_VERIFICATION.md) |
 | Oct 29 (UTC Oct 30) | First live redesign, B02: `VERIFIED_IMPROVEMENT_FOUND` in 48.1 s | [`LIVE_B02_REDESIGN.md`](../backend/docs/LIVE_B02_REDESIGN.md) |
 | Oct 30 | Browser acceptance suite; public read-only launch on Cloudflare and Modal, one project | [`BROWSER_ACCEPTANCE.md`](../backend/docs/BROWSER_ACCEPTANCE.md), [`CLOUDFLARE_DEPLOYMENT.md`](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) |
-| Oct 31 | Judge access with private uploads, verified on the deployed worker | [`JUDGE_ACCESS.md`](../backend/docs/JUDGE_ACCESS.md) |
+| Oct 31 | Private demo access with authenticated uploads, verified on the deployed worker | [`JUDGE_ACCESS.md`](../backend/docs/JUDGE_ACCESS.md) |
 | Nov 1 | Six-project gallery released; detail cut after a failed Modal run; second live redesign, B05 | [`GALLERY.md`](../backend/docs/GALLERY.md), [`LIVE_B05_REDESIGN.md`](../backend/docs/LIVE_B05_REDESIGN.md) |
 
 ## Defects worth reading
@@ -22,7 +22,7 @@ UNLOCK was built for the Meta Global AI Developer Hackathon 2026 (26 October to 
 
 **Gallery expectations.** Each gallery fixture's outcome was written down before its run, and the job runner refuses to record a mismatch. It refused several times. B05's first offset timed out during a parallel build. B07's expectation was wrong about the turn budget and was revised to the outcome the engine recorded. B08's first layout gave `unknown` because a conservative tool box overlapped the target. The first detailed geometry passed locally and failed on Modal's single CPU. All of it is recorded in [`GALLERY.md`](../backend/docs/GALLERY.md#corrections-made-on-the-way-recorded-rather-than-hidden).
 
-**Judge access lost and restored.** PR #15 merged into a stale base, so later frontend builds from `main` dropped the judge form. PR #23 restored it. [`JUDGE_ACCESS.md`](../backend/docs/JUDGE_ACCESS.md#restored-on-main-2026-11-01).
+**Private access lost and restored.** PR #15 merged into a stale base, so later frontend builds from `main` dropped the access form. PR #23 restored it. [`JUDGE_ACCESS.md`](../backend/docs/JUDGE_ACCESS.md#restored-on-main-2026-11-01).
 
 ## Scale at `6604c31`
 

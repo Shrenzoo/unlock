@@ -50,4 +50,4 @@ Every state-changing POST accepts an `Idempotency-Key` header. Retrying a redesi
 
 This is the local coordinator: one serial queue, loopback clients, trusted hosts and explicit CORS origins. It is a development tool with real concurrency limits, not a multi-user scheduler.
 
-The public deployment serves the same read routes from a read-only snapshot, and it refuses every write. The judge gateway has its own authenticated routes. See [the security model](security-model.md) and [`JUDGE_ACCESS.md`](../backend/docs/JUDGE_ACCESS.md).
+The public deployment serves the same read routes from a read-only snapshot, and it refuses every write. The private demo gateway has its own authenticated routes. See [the security model](security-model.md) and the [original access-service record](../backend/docs/JUDGE_ACCESS.md).

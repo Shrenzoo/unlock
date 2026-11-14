@@ -122,7 +122,7 @@ def test_b02_first_time_user_journey(browser, stack, evidence_dir):
     evidence = report["correlation"]
     evidence.update(project_id=project["id"], revision_id=revision["id"], target=target)
 
-    # A. Landing: loads, labels its illustration honestly, primary CTA opens B02.
+    # A. Landing: loads, labels its illustration honestly, CTA opens the gallery.
     with steps("landing_load_s"):
         page.goto(stack.web + "/")
         page.get_by_role("heading", level=1).wait_for()
@@ -135,10 +135,7 @@ def test_b02_first_time_user_journey(browser, stack, evidence_dir):
         " load_ms: Math.round(n.loadEventEnd)} }"
     )
     shot(page, "01-landing")
-    page.get_by_role("link", name="Explore UNLOCK").click()
-    page.wait_for_url(f"**/projects/{project['id']}")
-    page.locator(f'[role="treeitem"][data-id="{target}"]').wait_for()
-    page.get_by_role("link", name="Back to projects").click()
+    page.get_by_role("link", name="Explore the demo", exact=True).first.click()
 
     # B. Projects: every row is the backend's, no duplicates, truthful readiness.
     with steps("projects_load_s"):

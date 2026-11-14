@@ -53,7 +53,7 @@ The B05 live run took 73.3 s: 16.8 s of model latency and 37.0 s of geometry.
 |:--|:--|
 | Components per assembly | 5–12 |
 | Maximum envelope | 500 mm |
-| Archive package | ≤ 25 MiB compressed, 100 MiB expanded (10 MiB through the judge gateway) |
+| Archive package | ≤ 25 MiB compressed, 100 MiB expanded (10 MiB through the private demo gateway) |
 | Faces / preview triangles | ≤ 30,000 / ≤ 200,000 |
 | Native operation wall limit | 30 s |
 | Parent run budget | 120 s |
