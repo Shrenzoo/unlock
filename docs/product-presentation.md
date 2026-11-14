@@ -57,3 +57,29 @@ underlying work was built.
 No CAD algorithms, model selection, authentication rules, quotas or billing
 settings were changed. The geometry regression suite was not rerun for these
 presentation changes.
+
+## Production release
+
+Published to the existing Cloudflare Pages project `unlock-labs` on
+2026-11-14 at 21:15 UTC, from application commit
+`5d3a497eec3053db7c380ae30d7b81ce740b8968` (merged PR #33).
+
+- Website: <https://unlock-labs.pages.dev>.
+- Production deployment: `15a3e613-f031-4fb5-834d-8b7c379d29ff`.
+- Deployment URL: <https://15a3e613.unlock-labs.pages.dev>.
+- Upload: 22 static files, packaged as a 638,937-byte ZIP. Every archive member
+  and local build file matched the pre-upload SHA-256 inventory. Cloudflare
+  confirmed all 22 files uploaded and the production deployment succeeded.
+
+Safari checks on the live production origin confirmed the updated homepage
+copy, gallery entry point, independent product footer and resource links. All
+six assemblies loaded, and the private access form showed **Private demo access**
+and **Unlock private demo**. B02 loaded its recorded BRep geometry and evidence;
+its workspace URL survived a reload, and comparison displayed the original
+`no_path_supported` and revised `feasible` results side by side.
+
+The published build uses the existing public and private Modal origins. No new
+private analysis, model inference or private session was started for these checks.
+The full automated production browser suite was not rerun; these were targeted
+manual Safari checks following the earlier production build and responsive
+layout review.
