@@ -2,7 +2,6 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import * as THREE from 'three'
 import { b02Manifest } from '@/fixtures/b02'
-import { SAMPLE_PROJECT_PATH } from '@/api'
 import { Link } from '@/router'
 import { ModuleAssembly, PART_IDS, createView, type PartId } from '@/three/ModuleAssembly'
 import { Studio } from '@/three/Studio'
@@ -71,11 +70,11 @@ export function Hero() {
           <br /> the day it
           <br /> breaks.
         </h1>
-        <p className="hero__lede">Find what blocks repair. Change the design. Verify the way out.</p>
+        <p className="hero__lede">Find what blocks a repair. Redesign it with AI. Check the way out in CAD.</p>
         <div className="hero__ctas">
-          <Link to={SAMPLE_PROJECT_PATH} className="btn btn--primary">
+          <Link to="/projects" className="btn btn--primary">
             <span className="btn__key" aria-hidden="true" />
-            Explore UNLOCK
+            Explore the demo
           </Link>
           <a
             href="#story"

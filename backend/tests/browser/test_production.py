@@ -87,7 +87,9 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
             "() => document.scrollingElement.scrollWidth <= innerWidth + 1"
         )
         shot(page, "production-" + label + "-home")
-        page.get_by_role("link", name="Explore UNLOCK", exact=True).click()
+        page.get_by_role("link", name="Explore the demo", exact=True).first.click()
+        page.wait_for_url("**/projects")
+        page.locator('a[href="/projects/fixture_B02"]').click()
         page.wait_for_url("**/projects/fixture_B02*")
         expect(
             page.get_by_text("Read-only demonstration.", exact=False)
@@ -194,10 +196,10 @@ def test_public_recorded_demo_in_real_browser(browser, production, evidence_dir,
         page.get_by_role("link", name="Back to projects").click()
         page.wait_for_url("**/projects")
         expect(
-            page.get_by_role("heading", name="Judge access", exact=True)
+            page.get_by_role("heading", name="Private demo access", exact=True)
         ).to_be_visible()
         expect(
-            page.get_by_role("button", name="Unlock judge access", exact=True)
+            page.get_by_role("button", name="Unlock private demo", exact=True)
         ).to_be_visible()
         assert page.locator('input[type="file"]').count() == 0
         # One row per published project: B02 alone, or the composed gallery.

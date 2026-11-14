@@ -28,13 +28,14 @@
 |:--|:--|
 | [Claim ledger](claims.md) | Every substantive README claim, its source and how it was checked |
 | [Validation report](validation-report.md) | What was executed for this documentation, and what was not |
+| [Product presentation](product-presentation.md) | Current product positioning, private demo terminology and validation |
 | [README audit](readme-audit.md) | The errors found in the previous README |
 | [Objections](objections.md) | Questions we would ask ourselves, and what would change our mind |
 | [Build log](build-log.md) | Timeline, defects and scale |
 
 ## Engineering records
 
-Written at the time of each milestone, and left as they were. Older records describe the system as it then stood.
+Written at the time of each milestone, and left as they were. Older records describe the system as it then stood, including the original event-specific planning and access terminology. They are historical records, not current product positioning or participation requirements.
 
 | Record | Date (2026) |
 |:--|:--|
@@ -47,7 +48,7 @@ Written at the time of each milestone, and left as they were. Older records desc
 | [Browser acceptance](../backend/docs/BROWSER_ACCEPTANCE.md) | Oct 30 |
 | [Deployment preflight](../backend/docs/PUBLIC_DEPLOYMENT_PREFLIGHT.md), [Modal](../backend/docs/MODAL_DEPLOYMENT.md), [Cloudflare](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) | Oct 30 onward |
 | [B02 provenance](../backend/docs/B02_PROVENANCE.md) | Oct 30 |
-| [Judge access](../backend/docs/JUDGE_ACCESS.md) | Oct 31, Nov 1 |
+| [Private access service (original implementation record)](../backend/docs/JUDGE_ACCESS.md) | Oct 31, Nov 1 |
 | [Six-project gallery](../backend/docs/GALLERY.md) | Oct 31, Nov 1 |
 | [Live B05 redesign](../backend/docs/LIVE_B05_REDESIGN.md) | Nov 1 |
 | [Product requirements and sources](../backend/docs/source/UNLOCK_PRD.txt) | Oct 27 |

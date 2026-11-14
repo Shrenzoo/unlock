@@ -7,10 +7,10 @@ export function clearJudgeToken() { sessionStorage.removeItem(key) }
 export function judgeHeaders(): Record<string, string> { return { Authorization: `Bearer ${judgeToken()}` } }
 export function judgeJob() { return new URLSearchParams(location.search).get('judge') }
 export async function judgeCall<T>(path: string, init: RequestInit = {}): Promise<T> {
-  if (!judgeOrigin) throw new Error('Judge service is not configured.')
+  if (!judgeOrigin) throw new Error('Private demo access is not configured.')
   const r = await fetch(judgeOrigin + path, { ...init, headers: { ...judgeHeaders(), ...init.headers } })
   const body = await r.json()
   if (r.status === 401 && path !== '/sessions') clearJudgeToken()
-  if (!r.ok) throw new Error(body.message ?? 'Judge request failed.')
+  if (!r.ok) throw new Error(body.message ?? 'Private demo request failed. Try again.')
   return body as T
 }

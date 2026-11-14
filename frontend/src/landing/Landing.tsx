@@ -78,7 +78,7 @@ function Nav() {
         ))}
       </nav>
       <Link to="/projects" className="nav__cta">
-        Projects
+        Explore demo
       </Link>
     </header>
   )
@@ -210,17 +210,25 @@ function Footer() {
     <footer className="footer">
       <div className="footer__close">
         <p className="footer__line">Make replacement a design decision.</p>
-        <Link to={SAMPLE_PROJECT_PATH} className="btn btn--paper">
+        <Link to="/projects" className="btn btn--paper">
           <span className="btn__key" aria-hidden="true" />
-          Open the sample project
+          Explore the demo
         </Link>
       </div>
       <div className="footer__meta">
         <Logo tone="paper" />
         <p>
-          A prototype for the Meta Global AI Developer Hackathon, 2026. Redesign proposals use Muse Spark 1.3 through bounded tool calls when the backend is configured. Independent geometry checks determine the result.
+          AI-assisted CAD redesign for mechanical repairability. UNLOCK finds what blocks a replacement, proposes a bounded design change, and independently checks the geometry.
         </p>
-        <p>Fixture B02 is synthetic and authored by the team. This landing page uses illustrative geometry. The workspace shows each result’s source and computation history.</p>
+        <p>This landing page uses illustrative geometry. Explore six synthetic assemblies in the public demo, with recorded CAD results and each result’s computation history.</p>
+      </div>
+      <div className="footer__links">
+        <p>Built by Shreyas and Maanas Pabbathi.</p>
+        <nav aria-label="Project resources">
+          <a href="https://github.com/Shrenzoo/unlock">Source code</a>
+          <a href="https://github.com/Shrenzoo/unlock/blob/main/docs/README.md">Documentation</a>
+          <a href="https://github.com/Shrenzoo/unlock/blob/main/docs/verification.md">Verification and limits</a>
+        </nav>
       </div>
     </footer>
   )

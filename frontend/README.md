@@ -5,10 +5,10 @@ React 19 + TypeScript + Vite, with Three.js through React Three Fiber and Drei. 
 Public read-only B02 demonstration: <https://unlock-labs.pages.dev>. The previous
 Workers URL redirects here, including workspace paths and query parameters.
 Its Modal API serves recorded CAD results from an offline scripted decision policy.
-Anonymous uploads and engineering mutations are disabled. Judges can enter a
-private code on Projects to upload supported CAD packages for bounded fresh
+Anonymous uploads and engineering mutations are disabled. Visitors with an access
+code can use Private demo access on Projects to upload supported CAD packages for bounded fresh
 offline analysis. Live AI inference remains disabled. See the
-[judge access report](../backend/docs/JUDGE_ACCESS.md) for session ownership, quotas
+[original private access report](../backend/docs/JUDGE_ACCESS.md) for session ownership, quotas
 and actual cloud/browser verification, and the
 [launch report](../backend/docs/CLOUDFLARE_DEPLOYMENT.md) for licensing, usage,
 production browser evidence and deployment settings.
@@ -96,7 +96,7 @@ Upload only the contents of `dist/` to the existing **Pages** project
 has no top-level `404.html`. Keep `_headers`, `favicon.svg` and dependency notices
 in the upload. No Functions, runtime secrets or paid services are needed.
 
-The judge API is separately deployed with its code hash in a server-side Secret.
+The private demo API is separately deployed with its code hash in a server-side Secret.
 Never put the code, session token or any Modal/API token in a VITE variable.
 The public API's exact CORS origins include `https://unlock-labs.pages.dev`; its selected
 B02 job remains unchanged. Public builds reject localhost, missing or
@@ -107,6 +107,10 @@ now only redirects to Pages. Do not upload the app there for future releases.
 For that legacy redirect, the separately uploaded `_redirects` contains
 `/* https://unlock-labs.pages.dev/:splat 301`. Never include that rule in the
 Pages build itself.
+
+The private access service retains its original `VITE_UNLOCK_JUDGE_API` setting,
+`unlock-judges` deployment name, session storage key and `?judge=` result links
+for compatibility. The public interface calls this **Private demo access**.
 
 ## Browser acceptance
 

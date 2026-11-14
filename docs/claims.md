@@ -8,8 +8,6 @@ Every substantive claim on the README, where it comes from and how it was checke
 
 | Claim | Source | Check |
 |:--|:--|:--|
-| Indie Developer track, Push the Frontier theme | PRD section 1 names Indie and Startup tracks; public event guides name the Build for Your World and Push the Frontier themes; the maintainer confirmed this project's track and theme on 2026-11-03. The organizer's own page was not reachable when checked | Read |
-| Not affiliated with or endorsed by Meta | No such relationship appears anywhere in the repository | Read |
 | Disassembly planning and related areas have substantial prior art; novelty not established | `backend/docs/source/UNLOCK_PRD.txt`, section 1 | Read |
 | 62 million tonnes of e-waste in 2022, 22.3% documented as formally collected and recycled | Global E-waste Monitor 2024, UNITAR press release | Read |
 
@@ -70,8 +68,8 @@ Every substantive claim on the README, where it comes from and how it was checke
 | B08's route is two screws then a lift | `baseline_steps` from the planner, in `scene_provenance.json` | Ran |
 | Public API is read-only; anonymous POST refused | `/health` `mode: read_only`; POST returned 403 | Live |
 | Public site reached and made no write requests while opening B05 | Headless Chrome capture: 0 non-GET requests | Live |
-| Judge gateway: private code, 10 MiB, six attempts, no live inference | `JUDGE_ACCESS.md`; `deployment/judges.py`. The code itself was not used | Read |
-| Judge upload completed in 76.3 s on the deployed worker | `backend/docs/judge-access/` | Read |
+| Private demo gateway: access code, 10 MiB, six shared attempts, no live inference | `JUDGE_ACCESS.md`; `deployment/judges.py`. The code itself was not used | Read |
+| Private demo upload completed in 76.3 s on the deployed worker | `backend/docs/judge-access/` | Read |
 | 6 of 6 Modal jobs, 58 to 154 s | `gallery-release-lighter/validation.json`: 57.6 to 153.9 s | Ran |
 | 71 of 71 artifacts hash-exact, 28 of 28 writes refused, first gallery | `gallery-release/validation.json` | Ran |
 | Token usage and list-price estimates | `usage` in reports; `META_LIST_PRICES`, `ai/config.py` | Ran |

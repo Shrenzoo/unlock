@@ -22,7 +22,7 @@
 
 <p align="center">
   <strong>A broken part shouldn't make a product disposable.</strong><br>
-  UNLOCK reads a CAD assembly, finds exactly what stops a failed part from coming out, lets Meta's Muse Spark 1.3 propose a constrained design change, builds that change in real CAD, and checks the result with a verifier whose verdict the model cannot change.
+  UNLOCK reads a CAD assembly, finds what stops a failed part from coming out, uses an AI agent to propose a constrained design change, builds that change in real CAD, and checks the result with a verifier whose verdict the model cannot change.
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@
 <!-- A link to the demo film goes in the row above once the final video has a public URL. -->
 
 <p align="center">
-  <sub>A research prototype on synthetic CAD fixtures, built for the Meta Global AI Developer Hackathon 2026, Indie Developer track, Push the Frontier theme. Not affiliated with or endorsed by Meta.</sub>
+  <sub>An open-source research prototype for mechanical repairability. Explore six synthetic CAD assemblies, inspect the evidence, or run the full workflow locally.</sub>
 </p>
 
 <p align="center">
@@ -100,7 +100,7 @@ The [live demo](https://unlock-labs.pages.dev) lets you open the same assemblies
 | Path | What you can do | What runs |
 |:--|:--|:--|
 | **[Public demo](https://unlock-labs.pages.dev)** | Open six projects, inspect geometry and evidence, download checked exports | Nothing new. The site serves recorded runs from a read-only snapshot and refuses every write. |
-| **Judge access** | Enter a private code, upload a supported package | Fresh offline analysis on a private cloud worker, using the scripted policy. No Meta inference. |
+| **Private demo access** | Enter an access code, upload a supported package | Fresh offline analysis on a private cloud worker, using the scripted policy. No live model inference. |
 | **Local** | The whole workflow, including live Muse Spark 1.3 with your own key | Everything, on your machine. See [Try UNLOCK](#11--try-unlock). |
 
 <p align="center">
@@ -302,7 +302,7 @@ These are different kinds of evidence, and they should not be blurred.
 | **Live redesign, B02** | Muse Spark 1.3 | Real, local, 2026-10-29 | [`live-b02/`](backend/evidence/live-b02/), [write-up](backend/docs/LIVE_B02_REDESIGN.md) |
 | **Live redesign, B05** | Muse Spark 1.3 | Real, local, 2026-11-01 | [`live-b05/`](backend/evidence/live-b05/), [write-up](backend/docs/LIVE_B05_REDESIGN.md) |
 | **Live tool-calling check, B01** | Muse Spark 1.3, read-only, 2 requests | Unchanged | [`meta-tool-smoke/`](backend/evidence/meta-tool-smoke/live_report.json), [write-up](backend/docs/META_TOOL_CALLING_VERIFICATION.md) |
-| **Judge upload** | Offline scripted policy | Real, a genuine upload on the deployed worker, 2026-10-31 | [`judge-access/`](backend/docs/judge-access/verification.json), [write-up](backend/docs/JUDGE_ACCESS.md) |
+| **Private demo upload** | Offline scripted policy | Real, a genuine upload on the deployed worker, 2026-10-31 | [`judge-access/`](backend/docs/judge-access/verification.json), [write-up](backend/docs/JUDGE_ACCESS.md) |
 
 So B02 has two results that differ on purpose. The live run chose 40×16; the public gallery's scripted policy verifies 24×12. Both are recorded, and neither is presented as the other.
 
@@ -314,7 +314,7 @@ Corrections along the way are [kept in the record](backend/docs/GALLERY.md#corre
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/architecture-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/architecture-light.svg">
-    <img src="assets/readme/architecture-light.svg" width="100%" alt="Three bands. Deployed: Cloudflare Pages serves the React and Three.js site; the browser calls a read-only Modal API and a separate judge gateway, which starts a private Modal worker; a Modal Volume holds snapshots. Local: a React workspace talks to a FastAPI coordinator and a bounded agent controller, which calls the Meta Model API or a labelled offline policy. Engine: both paths reach the same code, from package gate through import, planner, templates, verifier and export, with isolated native workers on CadQuery and OpenCASCADE.">
+    <img src="assets/readme/architecture-light.svg" width="100%" alt="Three bands. Deployed: Cloudflare Pages serves the React and Three.js site; the browser calls a read-only Modal API and a separate private demo gateway, which starts a private Modal worker; a Modal Volume holds snapshots. Local: a React workspace talks to a FastAPI coordinator and a bounded agent controller, which calls the Meta Model API or a labelled offline policy. Engine: both paths reach the same code, from package gate through import, planner, templates, verifier and export, with isolated native workers on CadQuery and OpenCASCADE.">
   </picture>
 </p>
 
@@ -356,9 +356,9 @@ Timing conditions and limits are in [performance](docs/performance.md).
 
 Open **<https://unlock-labs.pages.dev>**. No account, key or code is needed. Everything is read-only.
 
-### Judge access
+### Private demo access
 
-Judges with a private code can enter it on the [projects page](https://unlock-labs.pages.dev/projects) to upload a supported package and start a fresh offline analysis on a private worker. Uploads are limited to 10 MiB, and six attempts are shared across the whole event, so failed attempts count. There is no live model inference on this path. [Details](backend/docs/JUDGE_ACCESS.md).
+With an access code, you can use the [projects page](https://unlock-labs.pages.dev/projects) to upload a supported package and start a fresh offline analysis on a private worker. Uploads are limited to 10 MiB. The deployed service has a shared cap of six attempts, with up to two per session; failed attempts count. There is no live model inference on this path. The [original access-service record](backend/docs/JUDGE_ACCESS.md) documents these limits. The public gallery needs no code.
 
 ### Local, offline, no key
 
@@ -495,7 +495,7 @@ UNLOCK is a research prototype. These limits are what make its claims defensible
 | **What a pass means** | A geometric result under stated assumptions. It does not establish structural strength, fatigue life, electrical safety, manufacturability or restored function, and it is not release approval. |
 | **The model** | Two redesign runs on two fixtures: no reliability rate, no statistical comparison, no effort study. A deterministic rule does as well or better on these fixtures. |
 | **Time budgets** | Limits are wall-clock, so heavy machine load can end a run as `INCOMPLETE_ANALYSIS`. That happened during this documentation work, and it is the correct outcome. |
-| **Hosting** | The public site is read-only and the judge path is private and capped. Neither path runs live inference, and neither is a multi-user product. The local coordinator has no authentication and must stay on loopback. |
+| **Hosting** | The public site is read-only and the private demo path is authenticated and capped. Neither path runs live inference, and neither is a multi-user product. The local coordinator has no authentication and must stay on loopback. |
 
 **Not manufacturing-ready, and not claiming to be.**
 
@@ -514,7 +514,7 @@ Each of these should widen what the engine can check. None should widen what the
 
 ## 15 · Credits and licenses
 
-Built by [Shreyas Pabbathi](https://github.com/Shrenzoo) and [Maanas Pabbathi](https://github.com/maanas-pab) for the Meta Global AI Developer Hackathon 2026. Taking part in the event implies no result, and Meta has not reviewed or endorsed this project.
+Built by [Shreyas Pabbathi](https://github.com/Shrenzoo) and [Maanas Pabbathi](https://github.com/maanas-pab). UNLOCK is an independent open-source project.
 
 **Built with** [Muse Spark 1.3](https://dev.meta.ai/docs/models) through the Meta Model API, [CadQuery](https://github.com/CadQuery/cadquery), [OpenCASCADE](https://dev.opencascade.org/) via [OCP](https://github.com/CadQuery/OCP), [FastAPI](https://fastapi.tiangolo.com/), [Pydantic](https://docs.pydantic.dev/), [React](https://react.dev/), [Three.js](https://threejs.org/), [Modal](https://modal.com/) and [Cloudflare Pages](https://pages.cloudflare.com/). Visuals are rendered with [Blender](https://www.blender.org/) and set in Instrument Sans and IBM Plex Mono.
 
